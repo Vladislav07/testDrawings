@@ -48,33 +48,11 @@ namespace FormSW_Tree
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            // check for lightweight components
-            if (swMainAssy.GetLightWeightComponentCount() > 0)
-            {
-                DialogResult dr = MessageBox.Show("All lightweight components will be fully resolved.  Continue?",
-                                                  "Lightweight Components",
-                                                  MessageBoxButtons.YesNo);
-                if (dr == DialogResult.Yes)
-                {
-                    this.txtStatus.Text = "Resolving lightweight components...";
-                    swMainAssy.ResolveAllLightWeightComponents(false);
-                    this.txtStatus.Text = "Proceding with scan";
-                }
-                else
-                {
-                    this.txtStatus.Text = "Some components still lightweight";
-                    return;
-                }
-            }
-
-            // scan once
-            //DoScan();
-
-            // create and start the scanning thread
-            this.thdScan = new Thread(new ThreadStart(ScanControl));
+           
+            thdScan = new Thread(new ThreadStart(ScanControl));
             thdScan.Start();
 
-            // change button config
+       
             this.btnRefresh.Visible = false;
             //this.cmdCancel.Enabled = true;
         }
@@ -122,25 +100,16 @@ namespace FormSW_Tree
             }
 
 
-            // Set the initial BOM level
-            int intLevel = 0;
+    
 
-            // Find the root node.  This is only done ONCE for the entire assembly structure
+
             Component2 swRootComp = (Component2)swMainConfig.GetRootComponent();
 
             // Get name of configuration containing properties
             string strMainConfig = swMainConfig.Name;
             string strMainPath = swMainModel.GetPathName();
 
-            // write custom properties for main model
-            //DbWriteConfigs(swMainModel, strMainPath, true);
-            DbWriteConfig(swMainModel, strMainPath, strMainConfig);
-
-            // Recursively traverse the assembly
-            if (swRootComp != null)
-            {
-                TraverseAssy(swRootComp, strMainPath, strMainConfig, intLevel);
-            }
+  
 
             return (null);
 
@@ -192,7 +161,6 @@ namespace FormSW_Tree
 
             ModelDoc2 swDoc;
             DrawingDoc swDrawDoc;
-            SolidWorks.Interop.sldworks.View swDrawView;
             swDocumentTypes_e swDocType;
 
             string strModelFile;
@@ -218,29 +186,7 @@ namespace FormSW_Tree
             strModelName = strModelFile.Substring(strModelFile.LastIndexOf("\\") + 1, strModelFile.Length - strModelFile.LastIndexOf("\\") - 1);
             swDocType = (swDocumentTypes_e)swDoc.GetType();
 
-            // get model document from drawing document
-            if (swDocType == swDocumentTypes_e.swDocDRAWING)
-            {
-
-                swDrawDoc = (DrawingDoc)swDoc;
-                swDrawView = (SolidWorks.Interop.sldworks.View)swDrawDoc.GetFirstView();
-                swDrawView = (SolidWorks.Interop.sldworks.View)swDrawView.GetNextView();
-
-                strModelFile = swDrawView.GetReferencedModelName();
-                strConfigName = swDrawView.ReferencedConfiguration;
-                strModelName = strModelFile.Substring(strModelFile.LastIndexOf("\\") + 1, strModelFile.Length - strModelFile.LastIndexOf("\\") - 1);
-                swDocType = (swDocumentTypes_e)GetTypeFromString(strModelFile);
-
-                if (swDocType != swDocumentTypes_e.swDocASSEMBLY & swDocType != swDocumentTypes_e.swDocPART)
-                {
-                    strReturn[0] = "error getting file type from drawing view's referenced model";
-                    return (strReturn);
-                }
-
-            }
-
-            // if the document is not an assembly then send
-            // an error message to the user.
+         
             if (swDocType != swDocumentTypes_e.swDocASSEMBLY)
             {
                 strReturn[0] = "This program only works with assemblies";
@@ -269,25 +215,7 @@ namespace FormSW_Tree
             }
             swMainAssy = (AssemblyDoc)swMainModel;
 
-            // check for lightweight components
-            if (swMainAssy.GetLightWeightComponentCount() > 0)
-            {
-                DialogResult dr = MessageBox.Show("All lightweight components will be fully resolved.  Continue?",
-                                                  "Lightweight Components",
-                                                  MessageBoxButtons.YesNo);
-                if (dr == DialogResult.Yes)
-                {
-                    this.txtStatus.Text = "Resolving lightweight components...";
-                    swMainAssy.ResolveAllLightWeightComponents(false);
-                    this.txtStatus.Text = "Proceding with scan";
-                }
-                else
-                {
-                    this.txtStatus.Text = "Some components still lightweight";
-                    return (strReturn);
-                }
-            }
-
+          
             // Write model info to return array
             strReturn[1] = strModelFile;
             strReturn[2] = strModelName;
@@ -295,96 +223,7 @@ namespace FormSW_Tree
             return (strReturn);
 
         }
-        ThreadInterruptedException TraverseAssy(Component2 swParentComp, string strParentPath, string strParentConfig, int intStartLevel)
-        {
-
-            // Check for cancel button
-            try
-            {
-                Thread.Sleep(0);
-            }
-            catch (ThreadInterruptedException e)
-            {
-                return (e);
-            }
-
-            // If no component, then exit
-            if (swParentComp == null)
-            {
-                return (null);
-            }
-
-            // Prepare to write status label
-            MethodInvoker WriteLabelDelegate = new MethodInvoker(WriteLabel);
-
-            // increment BOM level
-            int intNextLevel = intStartLevel + 1;
-
-            // Get the list of children (if any)
-            object oChildren = swParentComp.GetChildren();
-            System.Array aChildren = (Array)oChildren;
-            //Component2[] swChildren = (Component2[])aChildren;
-            //Component2[] swChildren = (Component2[])swParentComp.GetChildren();
-
-            // die if array contains no children
-            if (aChildren == null)
-            {
-                return (null);
-            }
-
-            // get children for each Child in this subassembly
-            foreach (Component2 swChildComp in aChildren)
-            {
-
-                // Skip suppressed/excluded parts
-                if ((swComponentSuppressionState_e)swChildComp.GetSuppression() != swComponentSuppressionState_e.swComponentSuppressed && !swChildComp.ExcludeFromBOM)
-                {
-
-                    // Get the model doc and info of the component
-                    ModelDoc2 swChildDoc = (ModelDoc2)swChildComp.GetModelDoc();
-                    string strChildPath = swChildComp.GetPathName();
-                    string strChildConfig = swChildComp.ReferencedConfiguration;
-
-                    // write status to form label
-                    string strModelName = strChildPath.Substring(strChildPath.LastIndexOf("\\") + 1,
-                                                                 strChildPath.Length - strChildPath.LastIndexOf("\\") - 1);
-                    this.statLabel = strModelName;
-                    Invoke(WriteLabelDelegate);
-
-                    // Write custom properties for this config of this child 
-                    //DbWriteConfig( swChildDoc, strChildPath, strChildConfig );
-                    DbWriteConfig(swChildComp, strChildPath, strChildConfig);
-
-                    // Write BOM adjacency
-                    DbWriteAdjacency(strParentPath, strParentConfig, strChildPath, strChildConfig);
-
-                    // If this component not already traversed
-                    cmdCheckAdjacency.Parameters[0].Value = strChildPath;
-                    cmdCheckAdjacency.Parameters[1].Value = strChildConfig;
-                    long intExists = Convert.ToInt64(cmdCheckAdjacency.ExecuteScalar());
-                    if (intExists == 0)
-                    {
-
-                        // If components not hidden from BOM
-                        cmdShowChildren.Parameters[0].Value = strChildPath;
-                        cmdShowChildren.Parameters[1].Value = strChildConfig;
-                        long intShow = Convert.ToInt64(cmdShowChildren.ExecuteScalar());
-                        if (intShow != 0)
-                        {
-
-                            // Recurse into this child
-                            TraverseAssy(swChildComp, strChildPath, strChildConfig, intNextLevel);
-
-                        }
-                    }
-
-                }
-
-            }
-
-            return (null);
-
-        }
+      
         swDocumentTypes_e GetTypeFromString(string strModelPathName)
         {
             
