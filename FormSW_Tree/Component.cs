@@ -11,7 +11,8 @@ namespace FormSW_Tree
     {
         public string CubyNumber { get; private set; }
         public string FullPath { get; private set; }
-   
+
+        IEdmFile5 _File = null;
         public int CurVersion { get; set; }
         public IEdmState5 State { get; set; }
         public int bFolder { get; set; }
@@ -29,6 +30,42 @@ namespace FormSW_Tree
             listRefChildError = new Dictionary<string, string>();
             listParent = new List<string>();
             IsRebuild = false;
+        }
+
+        public IEdmFile5 File
+        {
+            get { return _File; }
+            set
+            {
+                _File = value;
+                CurVersion = _File.CurrentVersion;
+                State = _File.CurrentState;
+
+            }
+        }
+
+        public void isNeedsRebuld()
+        {
+            if (listRefChild.Count == 0) return;
+            foreach (KeyValuePair<string, int> item in listRefChild)
+            {
+
+                int isVers = Tree.Part_IsChild(item.Key, item.Value);
+                if (isVers != -1)
+                {
+                    IsRebuild = true;
+                    listRefChildError.Add(item.Key, item.Value.ToString() + "/" + isVers.ToString());
+                }
+
+            }
+            if (IsRebuild)
+            {
+                foreach (string item in listParent)
+                {
+                    Tree.SearchForOldLinks(item);
+                }
+            }
+
         }
     }
 }
