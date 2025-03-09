@@ -36,6 +36,7 @@
             this.txtActiveDoc = new System.Windows.Forms.TextBox();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.btn_RefreshPDM = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -62,7 +63,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(204, 9);
+            this.btnCancel.Location = new System.Drawing.Point(328, 9);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 2;
@@ -86,6 +87,8 @@
             // 
             // dataGridView
             // 
+            this.dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
+            this.dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllHeaders;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.dataGridView.Location = new System.Drawing.Point(0, 77);
@@ -93,11 +96,22 @@
             this.dataGridView.Size = new System.Drawing.Size(800, 373);
             this.dataGridView.TabIndex = 5;
             // 
+            // btn_RefreshPDM
+            // 
+            this.btn_RefreshPDM.Location = new System.Drawing.Point(210, 9);
+            this.btn_RefreshPDM.Name = "btn_RefreshPDM";
+            this.btn_RefreshPDM.Size = new System.Drawing.Size(90, 23);
+            this.btn_RefreshPDM.TabIndex = 6;
+            this.btn_RefreshPDM.Text = "&RefreshPDM";
+            this.btn_RefreshPDM.UseVisualStyleBackColor = true;
+            this.btn_RefreshPDM.Click += new System.EventHandler(this.btn_RefreshPDM_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btn_RefreshPDM);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.txtActiveDoc);
             this.Controls.Add(this.txtStatus);
@@ -122,6 +136,7 @@
         private System.Windows.Forms.TextBox txtActiveDoc;
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.Button btn_RefreshPDM;
     }
 }
 

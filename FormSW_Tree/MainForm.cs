@@ -17,19 +17,27 @@ namespace FormSW_Tree
     {
 
         SW sw;
-        DataTable dt;
 
         public MainForm()
         {
             InitializeComponent();
+           
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            this.dataGridView.AutoGenerateColumns = true;
+            
+
         }
 
         private void btnConnectSW_Click(object sender, EventArgs e)
         {
-            sw= new SW();
+            sw = new SW();
             sw.action += Sw_action;
-            sw.btnConnectSW();
             sw.numberModel += Sw_numberModel;
+            sw.btnConnectSW();
+            sw.BuildTree();
         }
 
         private void Sw_numberModel(string numberCuby)
@@ -44,8 +52,14 @@ namespace FormSW_Tree
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            sw.Refresh();
-            this.btnRefresh.Enabled = false;
+           Tree.SearchParentFromChild();
+            Tree.FillCollection();
+            Tree.CompareVersions();
+            DataTable dt = new DataTable();
+           // Tree.FillToListIsRebuild(ref dt);
+            FillDataGridView1();
+            this.Refresh();
+           // this.btnRefresh.Enabled = false;
             //this.cmdCancel.Enabled = true;
         }
 
@@ -70,13 +84,37 @@ namespace FormSW_Tree
             dataGridView.Cursor = Cursors.Default;
         }
 
+        private void btn_RefreshPDM_Click(object sender, EventArgs e)
+        {
 
+        }
+        public void FillDataGridView1()
+        {
 
+            dataGridView.Cursor = Cursors.WaitCursor;
+            dataGridView.ColumnCount = 7;
+            dataGridView.Columns[0].Name = "Structure Number";
+            dataGridView.Columns[1].Name = "Cuby Number";
+            dataGridView.Columns[2].Name = "Current Version";
+            dataGridView.Columns[3].Name = "List of Ref Child Errors";
+            dataGridView.Columns[4].Name = "Child";
+            dataGridView.Columns[5].Name = "Child info";
+            dataGridView.Columns[6].Name = "State";
 
-
-
-
-
+       
+            foreach (Component comp in Tree.listComp)
+            {
+                dataGridView.Rows.Add("", comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString());
+                if (comp.listRefChildError != null)
+                {
+                    foreach (KeyValuePair<string, string> i in comp.listRefChildError)
+                    {
+                        dataGridView.Rows.Add("", "", "", "", i.Key, i.Value);
+                    }
+                }
+            }
+            dataGridView.Cursor = Cursors.Default;
+        }
     }
 
 }

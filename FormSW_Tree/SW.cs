@@ -155,7 +155,7 @@ namespace FormSW_Tree
             return (strReturn);
 
         }
-        public void Refresh()
+        public void BuildTree()
         {
             GetRootComponent();
             GetBomTable();
@@ -178,10 +178,12 @@ namespace FormSW_Tree
          void GetBomTable()
         {
             ModelDocExtension Ext = default(ModelDocExtension);
+            Ext=swMainModel.Extension;
             BomFeature swBOMFeature = default(BomFeature);
             BomTableAnnotation swBOMAnnotation = default(BomTableAnnotation);
-            string Configuration = ".";
-            string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
+            string Configuration = swMainConfig.Name;
+            //   string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
+            string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
             int nbrType = (int)swNumberingType_e.swNumberingType_Detailed;
             int BomType = (int)swBomType_e.swBomType_Indented;
             // Stopwatch stopwatch = new Stopwatch();

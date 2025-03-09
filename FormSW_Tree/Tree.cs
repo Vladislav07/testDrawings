@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Data;
+using System.Windows.Forms;
 
 namespace FormSW_Tree
 {
@@ -110,6 +112,38 @@ namespace FormSW_Tree
             Component comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
             if (comp == null) return;
             comp.IsRebuild = true;
+        }
+
+        public static void FillToListIsRebuild(ref DataTable table)
+        {
+
+            table.Columns.Add("Level");
+            table.Columns.Add("Cuby Number");
+            table.Columns.Add("Current Version");
+            table.Columns.Add("List of Ref Child Errors");
+            table.Columns.Add("Child");
+            table.Columns.Add("Child info");
+            table.Columns.Add("State");
+         
+           // int level = 0;
+
+            foreach (Component comp in listComp)
+            {
+               // DataRow workRow = table.NewRow();
+
+                table.Rows.Add(comp.Level.ToString(), comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString());
+              
+               if (comp.listRefChildError.Count != 0)
+              {
+                   foreach (KeyValuePair<string, string> i in comp.listRefChildError)
+
+                    {
+                        table.Rows.Add("", "", "", "", i.Key, i.Value, "");
+                    }
+                }
+              
+              //  level++;
+            }
         }
 
         public static void PossibilityOfUpdating()
