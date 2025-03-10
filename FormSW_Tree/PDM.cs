@@ -33,11 +33,20 @@ namespace FormSW_Tree
            
             IEdmFile5 File = null;
             IEdmFolder5 ParentFolder = null;
+            try
+            {
+                File = vault1.GetFileFromPath(item.FullPath, out ParentFolder);
+
+                item.File = File;
+                item.bFolder = ParentFolder.ID; 
+            }
+            catch (Exception)
+            {
+
+                
+            }
          
-            File = vault1.GetFileFromPath(item.FullPath, out ParentFolder);
-            //if File==null
-            item.File = File;
-            item.bFolder = ParentFolder.ID;    
+            
         }
 
         public static void GetReferenceFromAssemble(this Component ass)
@@ -140,15 +149,42 @@ namespace FormSW_Tree
                 MessageBox.Show(ex.Message);
             }
         }
-        
 
-         static void  ConnectingPDM()
+        public static void DocBatchUnLock()
+        {
+            try
+            {
+
+                batchUnlocker = (IEdmBatchUnlock2)vault.CreateUtility(EdmUtility.EdmUtil_BatchUnlock);
+                batchUnlocker.AddSelection((EdmVault5)vault1, ref ppoSelection);
+                batchUnlocker.CreateTree(0, (int)EdmUnlockBuildTreeFlags.Eubtf_MayUnlock);
+
+                batchUnlocker.Comment = "Refresh";
+                bool retVal = batchUnlocker.ShowDlg(0);
+                if ((retVal))
+                {
+                    batchUnlocker.UnlockFiles(0, null);
+                }
+
+
+            }
+            catch (System.Runtime.InteropServices.COMException ex)
+            {
+                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+        static void  ConnectingPDM()
          {
             try
             {
                 if (!vault1.IsLoggedIn)
                 {
-                    vault1.LoginAuto("My", 0);
+                    vault1.LoginAuto("CUBY_PDM", 0);
                 }
                 vault = (IEdmVault7)vault1;
             }

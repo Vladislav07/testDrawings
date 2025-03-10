@@ -56,10 +56,11 @@ namespace FormSW_Tree
             Tree.FillCollection();
             Tree.CompareVersions();
             DataTable dt = new DataTable();
-           // Tree.FillToListIsRebuild(ref dt);
-            FillDataGridView1();
-            this.Refresh();
-           // this.btnRefresh.Enabled = false;
+            Tree.FillToListIsRebuild(ref dt);
+            FillDataGridView(dt);
+             FillDataGridView1();
+            //dataGridView.Refresh();
+            // this.btnRefresh.Enabled = false;
             //this.cmdCancel.Enabled = true;
         }
 
@@ -114,6 +115,22 @@ namespace FormSW_Tree
                 }
             }
             dataGridView.Cursor = Cursors.Default;
+        }
+
+        private void btn_RefreshTree_Click(object sender, EventArgs e)
+        {
+
+            List<Component> l = Tree.listComp.Where(c => c.IsRebuild == true && c.State.Name== "In work").ToList();
+            if (l.Count == 0)
+            {
+                MessageBox.Show("Updating is not possible");
+                return;
+            }
+            PDM.BatchGet(l);
+            l.Reverse();
+            sw.OpenAndRefresh(l);
+            PDM.AddSelItemToList(l);
+            PDM.DocBatchUnLock();
         }
     }
 

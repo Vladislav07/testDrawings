@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.IO;
 namespace FormSW_Tree
 {
     public class Component
     {
         public string CubyNumber { get; private set; }
         public string FullPath { get; private set; }
-
+        public string Ext { get; private set; }
         IEdmFile5 _File = null;
         public int CurVersion { get; set; }
         public IEdmState5 State { get; set; }
@@ -30,6 +30,7 @@ namespace FormSW_Tree
             listRefChildError = new Dictionary<string, string>();
             listParent = new List<string>();
             IsRebuild = false;
+            Ext = Path.GetExtension(FullPath);
         }
 
         public IEdmFile5 File

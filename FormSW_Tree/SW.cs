@@ -182,8 +182,8 @@ namespace FormSW_Tree
             BomFeature swBOMFeature = default(BomFeature);
             BomTableAnnotation swBOMAnnotation = default(BomTableAnnotation);
             string Configuration = swMainConfig.Name;
-            //   string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
-            string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
+            string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
+           // string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
             int nbrType = (int)swNumberingType_e.swNumberingType_Detailed;
             int BomType = (int)swBomType_e.swBomType_Indented;
             // Stopwatch stopwatch = new Stopwatch();
@@ -267,6 +267,44 @@ namespace FormSW_Tree
 
         }
 
+        public void OpenAndRefresh(List<Component> list)
+        {
+            ModelDoc2 swModelDoc = default(ModelDoc2);
+            int errors = 0;
+            int warnings = 0;
+            int lErrors = 0;
+            int lWarnings = 0;
+            ModelDocExtension extMod;
+            string fileName = null;
+            //swApp.CloseAllDocuments()
+
+            try
+            {
+                foreach (Component item in list)
+                {
+                    fileName = item.FullPath;
+                    if(item.Ext==".sldpart" || item.Ext == ".SLDPART")
+                    {
+                        swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                    }
+                    else if(item.Ext == ".sldasm" || item.Ext == ".SLDASM")
+                    {
+                       swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocASSEMBLY, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                    }
+                  
+                    extMod = swModelDoc.Extension;
+                    extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
+                    swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
+                    swApp.CloseDoc(fileName);
+                    swModelDoc = null;
+                }
+            }
+            catch (Exception error)
+            {
+                MessageBox.Show(error.ToString());
+
+            }
+        }
     }
 }
 

@@ -117,21 +117,21 @@ namespace FormSW_Tree
         public static void FillToListIsRebuild(ref DataTable table)
         {
 
-            table.Columns.Add("Level");
-            table.Columns.Add("Cuby Number");
-            table.Columns.Add("Current Version");
-            table.Columns.Add("List of Ref Child Errors");
-            table.Columns.Add("Child");
-            table.Columns.Add("Child info");
-            table.Columns.Add("State");
-         
+            table.Columns.Add("Level", typeof(string));
+            table.Columns.Add("Cuby Number", typeof(string));
+            table.Columns.Add("Current Version", typeof(string));
+            table.Columns.Add("List of Ref Child Errors", typeof(string));
+            table.Columns.Add("Child", typeof(string));
+            table.Columns.Add("Child info", typeof(string));
+            table.Columns.Add("State", typeof(string));
+           
            // int level = 0;
 
             foreach (Component comp in listComp)
             {
                // DataRow workRow = table.NewRow();
-
-                table.Rows.Add(comp.Level.ToString(), comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString());
+                
+                table.Rows.Add(comp.Level.ToString(), comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", "comp.State.Name.ToString()");
               
                if (comp.listRefChildError.Count != 0)
               {
