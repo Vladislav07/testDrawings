@@ -283,6 +283,7 @@ namespace FormSW_Tree
                 foreach (Component item in list)
                 {
                     fileName = item.FullPath;
+
                     if(item.Ext==".sldpart" || item.Ext == ".SLDPART")
                     {
                         swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);

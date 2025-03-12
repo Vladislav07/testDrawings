@@ -98,6 +98,7 @@ namespace FormSW_Tree
             int i = 0;
             try
             {
+                ppoSelection = new EdmSelItem[updateList.Count];
                 foreach (Component item in updateList)
                 {
                     ppoSelection[i] = new EdmSelItem();
@@ -125,12 +126,15 @@ namespace FormSW_Tree
             {
 
                 batchGetter = (IEdmBatchGet)vault.CreateUtility(EdmUtility.EdmUtil_BatchGet);
+                /*
                 foreach (Component item in updateList)
                 {
          
                     batchGetter.AddSelectionEx((EdmVault5)vault1, item.File.ID, item.bFolder, item.CurVersion);
                     i++;
                 }
+                */
+                batchGetter.AddSelection((EdmVault5)vault1, ppoSelection);
 
                 if ((batchGetter != null))
                 {

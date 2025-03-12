@@ -126,10 +126,10 @@ namespace FormSW_Tree
                 MessageBox.Show("Updating is not possible");
                 return;
             }
+            PDM.AddSelItemToList(l);
             PDM.BatchGet(l);
             l.Reverse();
-            sw.OpenAndRefresh(l);
-            PDM.AddSelItemToList(l);
+            sw.OpenAndRefresh(l);        
             PDM.DocBatchUnLock();
         }
     }
