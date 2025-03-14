@@ -38,6 +38,7 @@ namespace FormSW_Tree
             sw.numberModel += Sw_numberModel;
             sw.btnConnectSW();
             sw.BuildTree();
+            Tree.SearchParentFromChild();
         }
 
         private void Sw_numberModel(string numberCuby)
@@ -52,13 +53,13 @@ namespace FormSW_Tree
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-           Tree.SearchParentFromChild();
-            Tree.FillCollection();
-            Tree.CompareVersions();
-            DataTable dt = new DataTable();
-            Tree.FillToListIsRebuild(ref dt);
-            FillDataGridView(dt);
-             FillDataGridView1();
+           
+           Tree.FillCollection();
+           Tree.CompareVersions();
+           // DataTable dt = new DataTable();
+           // Tree.FillToListIsRebuild(ref dt);
+           // FillDataGridView(dt);
+            FillDataGridView1();
             //dataGridView.Refresh();
             // this.btnRefresh.Enabled = false;
             //this.cmdCancel.Enabled = true;

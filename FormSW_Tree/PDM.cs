@@ -202,5 +202,57 @@ namespace FormSW_Tree
             }
 
         }
+
+        static bool IsDrawings(string p, ref Drawing draw)
+        {
+            int refDrToModel = -1;
+            bool NeedsRegeneration = false;
+            IEdmFile7 bFile = null;
+
+            bFile = (IEdmFile7)vault.GetFileFromPath(p, out IEdmFolder5 bFolder);
+
+            if (bFile != null)                                         
+            {
+
+                try
+                {
+                    draw.currentVers = bFile.CurrentVersion;
+                    draw.NeedsRegeneration = bFile.NeedsRegeneration(draw.currentVers, bFolder.ID);
+
+                    // Достаем из чертежа версию ссылки на родителя (VersionRef)
+                    IEdmReference5 ref5 = bFile.GetReferenceTree(bFolder.ID);
+                    IEdmReference10 ref10 = (IEdmReference10)ref5;
+                    IEdmPos5 pos = ref10.GetFirstChildPosition3("A", true, true, (int)EdmRefFlags.EdmRef_File, "", 0);
+                    while (!pos.IsNull)
+                    {
+
+                        IEdmReference10 @ref = (IEdmReference10)ref5.GetNextChild(pos);
+
+                        string extension = Path.GetExtension(@ref.Name);
+                        if (extension == ".sldasm" || extension == ".sldprt" || extension == ".SLDASM" || extension == ".SLDPRT")
+                        {
+                            refDrToModel = @ref.VersionRef;
+                            break;
+                        }
+                        else
+                        {
+                            ref5.GetNextChild(pos);
+                        }
+                    }
+
+                    if (!(refDrToModel == modelFile.CurrentVersion) || NeedsRegeneration)
+                    {
+                        draw = new Drawing(bFile.ID, bFolder.ID, d);
+                        Root.drawings.Add(draw);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("error:" + bFile.Name + ex.Message);
+
+                }
+            }
+        }
     }
 }
