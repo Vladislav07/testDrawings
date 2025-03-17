@@ -21,6 +21,8 @@ namespace FormSW_Tree
         public Dictionary<string, string> listRefChildError;
         public List<string> listParent;
         public bool IsRebuild { get; set; }
+        public bool isDraw { get; set; }
+        
 
         public Component(string cn, string fn)
         {
@@ -31,6 +33,7 @@ namespace FormSW_Tree
             listParent = new List<string>();
             IsRebuild = false;
             Ext = Path.GetExtension(FullPath);
+            isDraw = false;
         }
 
         public IEdmFile5 File
@@ -67,6 +70,11 @@ namespace FormSW_Tree
                 }
             }
 
+        }
+
+        public void IsDrawing()
+        {
+            isDraw = PDM.IsDrawings(this);
         }
     }
 }

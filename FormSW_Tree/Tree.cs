@@ -14,13 +14,14 @@ namespace FormSW_Tree
 
         static Dictionary<string, Component> ModelTree;
         public static List<Component> listComp;
-   
+        public static List<Drawing> listDraw;
         static Dictionary<string, string> structuralNumbers;
         static Tree()
         {
            
             ModelTree = new Dictionary<string, Component>();
             listComp = new List<Component>();
+            listDraw = new List<Drawing>();
             structuralNumbers = new Dictionary<string, string>();
         }
         public static void AddNode(string NodeNumber, string cubyNumber, string pathNode)

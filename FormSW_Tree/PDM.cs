@@ -20,9 +20,7 @@ namespace FormSW_Tree
         static EdmSelItem[] ppoSelection = null;
         static IEdmBatchUnlock2 batchUnlocker;
 
-
-
-         static PDM()
+        static PDM()
         {
             vault1 = new EdmVault5();
             ConnectingPDM();
@@ -89,9 +87,6 @@ namespace FormSW_Tree
            
             
         }
-
-
-
 
         public static void AddSelItemToList(List<Component>updateList)
         {
@@ -182,6 +177,7 @@ namespace FormSW_Tree
             }
 
         }
+
         static void  ConnectingPDM()
          {
             try
@@ -203,21 +199,19 @@ namespace FormSW_Tree
 
         }
 
-        static bool IsDrawings(string p, ref Drawing draw)
+        public static bool IsDrawings(this Component comp)
         {
             int refDrToModel = -1;
             bool NeedsRegeneration = false;
             IEdmFile7 bFile = null;
-
+            string p = Path.Combine(Path.GetDirectoryName(comp.FullPath), comp.CubyNumber, ".SLDDRW");
             bFile = (IEdmFile7)vault.GetFileFromPath(p, out IEdmFolder5 bFolder);
 
             if (bFile != null)                                         
-            {
-
+            {            
                 try
-                {
-                    draw.currentVers = bFile.CurrentVersion;
-                    draw.NeedsRegeneration = bFile.NeedsRegeneration(draw.currentVers, bFolder.ID);
+                {                 
+                    NeedsRegeneration = bFile.NeedsRegeneration(bFile.CurrentVersion, bFolder.ID);
 
                     // Достаем из чертежа версию ссылки на родителя (VersionRef)
                     IEdmReference5 ref5 = bFile.GetReferenceTree(bFolder.ID);
@@ -225,9 +219,7 @@ namespace FormSW_Tree
                     IEdmPos5 pos = ref10.GetFirstChildPosition3("A", true, true, (int)EdmRefFlags.EdmRef_File, "", 0);
                     while (!pos.IsNull)
                     {
-
                         IEdmReference10 @ref = (IEdmReference10)ref5.GetNextChild(pos);
-
                         string extension = Path.GetExtension(@ref.Name);
                         if (extension == ".sldasm" || extension == ".sldprt" || extension == ".SLDASM" || extension == ".SLDPRT")
                         {
@@ -240,19 +232,25 @@ namespace FormSW_Tree
                         }
                     }
 
-                    if (!(refDrToModel == modelFile.CurrentVersion) || NeedsRegeneration)
+                    if (!(refDrToModel == comp.CurVersion) || NeedsRegeneration)
                     {
-                        draw = new Drawing(bFile.ID, bFolder.ID, d);
-                        Root.drawings.Add(draw);
+                        Drawing draw = new Drawing(p, comp.CurVersion);
+                        draw.FileID = bFile.ID;
+                        draw.FolderID = bFolder.ID;
+                        draw.NeedsRegeneration = NeedsRegeneration;
+                        draw.currentVers = bFile.CurrentVersion;
+                        draw.State = bFile.CurrentState;
+                        draw.VersCompareToModel = comp.CurVersion.ToString() + "/" + refDrToModel.ToString();
+                        Tree.listDraw.Add(draw);
+                        return true;
                     }
-
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("error:" + bFile.Name + ex.Message);
-
                 }
             }
+            return false;
         }
     }
 }
