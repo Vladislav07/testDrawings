@@ -52,6 +52,20 @@ namespace FormSW_Tree
             }
             listComp.Reverse();
         }
+
+        public static bool IsDrawings()
+        {
+            foreach (Component item in listComp)
+            {
+                item.IsDrawing();
+            }
+            if (listDraw.Count>0)
+            {
+                return true;
+            }
+            return false;
+           
+        }
   
         public  static int Part_IsChild(string cubyNumber, int VersChild)
           {
@@ -89,6 +103,7 @@ namespace FormSW_Tree
       
         public static void FillCollection()
         {
+            
             char s = new char[] { '.' }[0];
             int level_ = 0;
             var uniqueComponentByGroup = ModelTree

@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace FormSW_Tree
 {
+   
    public static class PDM
     {
         static IEdmVault5 vault1 = null;
@@ -19,6 +20,7 @@ namespace FormSW_Tree
         static IEdmBatchGet batchGetter;
         static EdmSelItem[] ppoSelection = null;
         static IEdmBatchUnlock2 batchUnlocker;
+        public static event Action<string> UnLock;
 
         static PDM()
         {
@@ -163,6 +165,7 @@ namespace FormSW_Tree
                 if ((retVal))
                 {
                     batchUnlocker.UnlockFiles(0, null);
+                    EventProcess("Processing completed");
                 }
 
 
@@ -176,6 +179,14 @@ namespace FormSW_Tree
                 MessageBox.Show(ex.Message);
             }
 
+        }
+
+        static void EventProcess(string message)
+        {
+            if(UnLock != null)
+            {
+                UnLock.Invoke(message);
+            }
         }
 
         static void  ConnectingPDM()
@@ -204,7 +215,7 @@ namespace FormSW_Tree
             int refDrToModel = -1;
             bool NeedsRegeneration = false;
             IEdmFile7 bFile = null;
-            string p = Path.Combine(Path.GetDirectoryName(comp.FullPath), comp.CubyNumber, ".SLDDRW");
+            string p = Path.Combine(Path.GetDirectoryName(comp.FullPath), comp.CubyNumber + ".SLDDRW");
             bFile = (IEdmFile7)vault.GetFileFromPath(p, out IEdmFolder5 bFolder);
 
             if (bFile != null)                                         
@@ -232,18 +243,20 @@ namespace FormSW_Tree
                         }
                     }
 
-                    if (!(refDrToModel == comp.CurVersion) || NeedsRegeneration)
-                    {
+                   // if (!(refDrToModel == comp.CurVersion) || NeedsRegeneration)
+                   // {
                         Drawing draw = new Drawing(p, comp.CurVersion);
                         draw.FileID = bFile.ID;
                         draw.FolderID = bFolder.ID;
+                        draw.CubyNumber = comp.CubyNumber;
                         draw.NeedsRegeneration = NeedsRegeneration;
                         draw.currentVers = bFile.CurrentVersion;
                         draw.State = bFile.CurrentState;
+                        draw.CompareVersRef = true;
                         draw.VersCompareToModel = comp.CurVersion.ToString() + "/" + refDrToModel.ToString();
                         Tree.listDraw.Add(draw);
                         return true;
-                    }
+                  //  }
                 }
                 catch (Exception ex)
                 {

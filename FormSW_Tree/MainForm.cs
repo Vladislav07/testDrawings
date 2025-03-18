@@ -17,18 +17,24 @@ namespace FormSW_Tree
     {
 
         SW sw;
-
+        bool isClearTree = false;
+        bool isIncludeDraw = false;
         public MainForm()
         {
             InitializeComponent();
-           
+            checkBox1.Checked = isIncludeDraw;
+            PDM.UnLock += PDM_UnLock;
+        }
+
+        private void PDM_UnLock(string obj)
+        {
+            GetTree();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             this.dataGridView.AutoGenerateColumns = true;
             
-
         }
 
         private void btnConnectSW_Click(object sender, EventArgs e)
@@ -53,16 +59,15 @@ namespace FormSW_Tree
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-           
-           Tree.FillCollection();
-           Tree.CompareVersions();
-           // DataTable dt = new DataTable();
-           // Tree.FillToListIsRebuild(ref dt);
-           // FillDataGridView(dt);
+            GetTree();
+        }
+
+        private void GetTree()
+        {
+            Tree.FillCollection();
+            Tree.CompareVersions();
+            if (isIncludeDraw) Tree.IsDrawings();
             FillDataGridView1();
-            //dataGridView.Refresh();
-            // this.btnRefresh.Enabled = false;
-            //this.cmdCancel.Enabled = true;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -86,37 +91,48 @@ namespace FormSW_Tree
             dataGridView.Cursor = Cursors.Default;
         }
 
-        private void btn_RefreshPDM_Click(object sender, EventArgs e)
-        {
-
-        }
+       
         public void FillDataGridView1()
         {
 
             dataGridView.Cursor = Cursors.WaitCursor;
-            dataGridView.ColumnCount = 7;
-            dataGridView.Columns[0].Name = "Structure Number";
-            dataGridView.Columns[1].Name = "Cuby Number";
-            dataGridView.Columns[2].Name = "Current Version";
-            dataGridView.Columns[3].Name = "List of Ref Child Errors";
-            dataGridView.Columns[4].Name = "Child";
-            dataGridView.Columns[5].Name = "Child info";
-            dataGridView.Columns[6].Name = "State";
+            dataGridView.ColumnCount = 9;
+            dataGridView.Columns[0].Name = "Cuby Number";
+            dataGridView.Columns[1].Name = "Current Version";
+            dataGridView.Columns[2].Name = "List of Ref Child Errors";
+            dataGridView.Columns[3].Name = "Child";
+            dataGridView.Columns[4].Name = "Child info";
+            dataGridView.Columns[5].Name = "State";
+            dataGridView.Columns[6].Name = "VersRef/VersParent";
+            dataGridView.Columns[7].Name = "IsRebuildDraw";
+            dataGridView.Columns[8].Name = "StateDraw";
 
-       
             foreach (Component comp in Tree.listComp)
             {
-                dataGridView.Rows.Add("", comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString());
+                if (comp.isDraw && Tree.listDraw.Count>0)
+                {
+                    Drawing draw = Tree.listDraw.FirstOrDefault(d => d.CubyNumber == comp.CubyNumber);
+                   
+                    dataGridView.Rows.Add(comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString(),
+                    draw.VersCompareToModel, draw.NeedsRegeneration.ToString(),draw.State.ToString());
+                }
+                else
+                {
+                   dataGridView.Rows.Add(comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString(), "", "", "");
+                }
+                
                 if (comp.listRefChildError != null)
                 {
                     foreach (KeyValuePair<string, string> i in comp.listRefChildError)
                     {
-                        dataGridView.Rows.Add("", "", "", "", i.Key, i.Value);
+                        dataGridView.Rows.Add("", "", "", i.Key, i.Value, "", "", "", "");
                     }
                 }
             }
             dataGridView.Cursor = Cursors.Default;
         }
+
+ 
 
         private void btn_RefreshTree_Click(object sender, EventArgs e)
         {
@@ -132,6 +148,19 @@ namespace FormSW_Tree
             l.Reverse();
             sw.OpenAndRefresh(l);        
             PDM.DocBatchUnLock();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender; // приводим отправителя к элементу типа CheckBox
+            if (checkBox.Checked == true)
+            {
+                isIncludeDraw = true;
+            }
+            else
+            {
+                isIncludeDraw = false;
+            }
         }
     }
 
