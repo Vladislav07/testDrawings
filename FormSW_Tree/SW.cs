@@ -19,7 +19,9 @@ namespace FormSW_Tree
         private ModelDoc2 swMainModel;
         private AssemblyDoc swMainAssy;
         private Configuration swMainConfig;
+  
         private String statLabel;
+        
         public event Action<string> action;
         public event Action<string> numberModel;
 
@@ -170,8 +172,11 @@ namespace FormSW_Tree
 
          void GetRootComponent()
         {
+       
             string rootPath = swMainModel.GetPathName();
             string nameRoot = Path.GetFileNameWithoutExtension(rootPath);
+          
+
             Tree.AddNode("0", nameRoot, rootPath);
         }
 

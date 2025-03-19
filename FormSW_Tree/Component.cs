@@ -12,6 +12,7 @@ namespace FormSW_Tree
         public string CubyNumber { get; private set; }
         public string FullPath { get; private set; }
         public string Ext { get; private set; }
+        public string Section { get; set; }
         IEdmFile5 _File = null;
         public int CurVersion { get; set; }
         public IEdmState5 State { get; set; }
@@ -34,6 +35,7 @@ namespace FormSW_Tree
             IsRebuild = false;
             Ext = Path.GetExtension(FullPath);
             isDraw = false;
+            Section = "";
         }
 
         public IEdmFile5 File

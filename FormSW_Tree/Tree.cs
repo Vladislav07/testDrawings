@@ -28,6 +28,7 @@ namespace FormSW_Tree
         {
 
             ModelTree.Add(NodeNumber, GetComponentFromNumber(cubyNumber, pathNode));
+
             structuralNumbers.Add(NodeNumber, cubyNumber);
         }
 
@@ -40,6 +41,7 @@ namespace FormSW_Tree
                 if (numberCuby == comp.CubyNumber) return comp; 
             }
             comp = new Component(numberCuby, path);
+    
             return comp;
         }
 
@@ -114,6 +116,7 @@ namespace FormSW_Tree
             {
                 foreach (Component comp in item)
                 {
+                   
                     comp.Level = level_;
                     comp.GetEdmFile();
                     comp.GetReferenceFromAssemble();

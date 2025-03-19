@@ -20,6 +20,7 @@ namespace FormSW_Tree
         static IEdmBatchGet batchGetter;
         static EdmSelItem[] ppoSelection = null;
         static IEdmBatchUnlock2 batchUnlocker;
+        static IEdmEnumeratorVariable5 enumVar = default(IEdmEnumeratorVariable5);
         public static event Action<string> UnLock;
 
         static PDM()
@@ -38,7 +39,16 @@ namespace FormSW_Tree
                 File = vault1.GetFileFromPath(item.FullPath, out ParentFolder);
 
                 item.File = File;
-                item.bFolder = ParentFolder.ID; 
+                item.bFolder = ParentFolder.ID;
+                enumVar = File.GetEnumeratorVariable();
+                object val = null;
+                EdmStrLst5 listConf = File.GetConfigurations(0);
+
+                bool error = enumVar.GetVar("Раздел", ".", out val);
+                if (val != null)
+                {
+                    item.Section = (string)val;
+                }
             }
             catch (Exception)
             {
