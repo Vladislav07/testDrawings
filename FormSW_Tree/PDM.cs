@@ -253,8 +253,8 @@ namespace FormSW_Tree
                         }
                     }
 
-                   // if (!(refDrToModel == comp.CurVersion) || NeedsRegeneration)
-                   // {
+                    if (!(refDrToModel == comp.CurVersion) || NeedsRegeneration)
+                    {
                         Drawing draw = new Drawing(p, comp.CurVersion);
                         draw.FileID = bFile.ID;
                         draw.FolderID = bFolder.ID;
@@ -265,8 +265,9 @@ namespace FormSW_Tree
                         draw.CompareVersRef = true;
                         draw.VersCompareToModel = comp.CurVersion.ToString() + "/" + refDrToModel.ToString();
                         Tree.listDraw.Add(draw);
+                        comp.draw = draw;
                         return true;
-                  //  }
+                    }
                 }
                 catch (Exception ex)
                 {

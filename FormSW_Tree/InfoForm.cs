@@ -13,7 +13,7 @@ namespace FormSW_Tree
     public partial class InfoForm : Form
     {
 
-        bool onlyMistakes = false;
+      
         //public event EventHandler<string> OperationCompleted;
 
         public InfoForm()
@@ -82,21 +82,18 @@ namespace FormSW_Tree
 
             foreach (Component comp in Tree.listComp)
             {
-                if (onlyMistakes)
-                {
-                    if (!comp.IsRebuild) continue;
-                }
+             
                 if (comp.Section == "Стандартные изделия" || comp.Section == "") continue;
+
                 if (comp.isDraw && Tree.listDraw.Count > 0)
                 {
                     Drawing draw = Tree.listDraw.FirstOrDefault(d => d.CubyNumber == comp.CubyNumber);
-
-
                     dataGridView.Rows.Add(comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString(),
                     draw.VersCompareToModel, draw.NeedsRegeneration.ToString(), draw.State.Name, comp.Section);
                 }
                 else
                 {
+                    if (!comp.IsRebuild) continue;
                     dataGridView.Rows.Add(comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString(), "", "", "", comp.Section);
                 }
 
@@ -111,19 +108,6 @@ namespace FormSW_Tree
             dataGridView.Cursor = Cursors.Default;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            CheckBox checkBox1 = (CheckBox)sender;
-            if (checkBox1.Checked == true)
-            {
-                onlyMistakes = true;
-                FillDataGridView1();
-            }
-            else
-            {
-                onlyMistakes = false;
-                FillDataGridView1();
-            }
-        }
+       
     }
 }

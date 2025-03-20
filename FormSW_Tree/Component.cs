@@ -23,6 +23,7 @@ namespace FormSW_Tree
         public List<string> listParent;
         public bool IsRebuild { get; set; }
         public bool isDraw { get; set; }
+        public Drawing draw { get; set; }
         
 
         public Component(string cn, string fn)
