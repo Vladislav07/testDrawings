@@ -100,17 +100,17 @@ namespace FormSW_Tree
             
         }
 
-        public static void AddSelItemToList(List<Component>updateList)
+        public static void AddSelItemToList(List<PdmID>updateList)
         {
             int i = 0;
             try
             {
                 ppoSelection = new EdmSelItem[updateList.Count];
-                foreach (Component item in updateList)
+                foreach (PdmID item in updateList)
                 {
                     ppoSelection[i] = new EdmSelItem();
-                    ppoSelection[i].mlDocID = item.File.ID;
-                    ppoSelection[i].mlProjID = item.bFolder;
+                    ppoSelection[i].mlDocID = item.FileId;
+                    ppoSelection[i].mlProjID = item.FolderId;
                     i++;
                 }
 
@@ -125,24 +125,13 @@ namespace FormSW_Tree
             }
         }
 
-        public static  void BatchGet(List<Component> updateList)
-        {
-            int i = 0;
-
+        public static  void BatchGet()
+        {       
             try
             {
 
-                batchGetter = (IEdmBatchGet)vault.CreateUtility(EdmUtility.EdmUtil_BatchGet);
-                /*
-                foreach (Component item in updateList)
-                {
-         
-                    batchGetter.AddSelectionEx((EdmVault5)vault1, item.File.ID, item.bFolder, item.CurVersion);
-                    i++;
-                }
-                */
+                batchGetter = (IEdmBatchGet)vault.CreateUtility(EdmUtility.EdmUtil_BatchGet);        
                 batchGetter.AddSelection((EdmVault5)vault1, ppoSelection);
-
                 if ((batchGetter != null))
                 {
                     batchGetter.CreateTree(0, (int)EdmGetCmdFlags.Egcf_Lock + (int)EdmGetCmdFlags.Egcf_SkipOpenFileChecks);// + (int)EdmGetCmdFlags.Egcf_IncludeAutoCacheFiles);  
@@ -253,19 +242,9 @@ namespace FormSW_Tree
                         }
                     }
 
-                    if (!(refDrToModel == comp.CurVersion) || NeedsRegeneration)
+                    if (!(refDrToModel == comp.CurVersion) || NeedsRegeneration || comp.IsRebuild)
                     {
-                        Drawing draw = new Drawing(p, comp.CurVersion);
-                        draw.FileID = bFile.ID;
-                        draw.FolderID = bFolder.ID;
-                        draw.CubyNumber = comp.CubyNumber;
-                        draw.NeedsRegeneration = NeedsRegeneration;
-                        draw.currentVers = bFile.CurrentVersion;
-                        draw.State = bFile.CurrentState;
-                        draw.CompareVersRef = true;
-                        draw.VersCompareToModel = comp.CurVersion.ToString() + "/" + refDrToModel.ToString();
-                        Tree.listDraw.Add(draw);
-                        comp.draw = draw;
+                        GetDraw();
                         return true;
                     }
                 }
@@ -275,6 +254,22 @@ namespace FormSW_Tree
                 }
             }
             return false;
+
+            void GetDraw()
+            {
+                Drawing draw = new Drawing(p, comp.CurVersion);
+                draw.FileID = bFile.ID;
+                draw.FolderID = bFolder.ID;
+                draw.CubyNumber = comp.CubyNumber;
+                draw.NeedsRegeneration = NeedsRegeneration;
+                draw.currentVers = bFile.CurrentVersion;
+                draw.State = bFile.CurrentState;
+                draw.CompareVersRef = true;
+                draw.VersCompareToModel = comp.CurVersion.ToString() + "/" + refDrToModel.ToString();
+                Tree.listDraw.Add(draw);
+                comp.i
+                comp.draw = draw;
+            }
         }
     }
 }

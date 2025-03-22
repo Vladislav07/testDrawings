@@ -272,7 +272,7 @@ namespace FormSW_Tree
 
         }
 
-        public void OpenAndRefresh(List<Component> list)
+        public void OpenAndRefresh(List<PdmID> list)
         {
             ModelDoc2 swModelDoc = default(ModelDoc2);
             int errors = 0;
@@ -285,15 +285,16 @@ namespace FormSW_Tree
 
             try
             {
-                foreach (Component item in list)
+                foreach (PdmID item in list)
                 {
-                    fileName = item.FullPath;
+                    fileName = item.PathFile;
+                    string ext = Path.GetExtension(fileName);
 
-                    if(item.Ext==".sldpart" || item.Ext == ".SLDPART")
+                    if(ext == ".sldpart" || ext == ".SLDPART")
                     {
                         swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
                     }
-                    else if(item.Ext == ".sldasm" || item.Ext == ".SLDASM")
+                    else if(ext == ".sldasm" || ext == ".SLDASM")
                     {
                        swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocASSEMBLY, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
                     }

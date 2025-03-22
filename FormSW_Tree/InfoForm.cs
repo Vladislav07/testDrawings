@@ -56,11 +56,11 @@ namespace FormSW_Tree
             CheckBox checkBox = (CheckBox)sender; 
             if (checkBox.Checked == true)
             {
-                Controler.isIncludeDraw = true;
+               
             }
             else
             {
-                Controler.isIncludeDraw = false;
+                
             }
         }
 

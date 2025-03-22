@@ -17,6 +17,7 @@ namespace FormSW_Tree
         public int CurVersion { get; set; }
         public IEdmState5 State { get; set; }
         public int bFolder { get; set; }
+        public int bFile{ get; set; }
         public int Level { get; set; }
         public Dictionary<string, int> listRefChild;
         public Dictionary<string, string> listRefChildError;
