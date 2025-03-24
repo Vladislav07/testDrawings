@@ -21,7 +21,14 @@ namespace FormSW_Tree
             InitializeComponent();
 
             Controler.NumberModel += Controler_NumberModel;
+            Controler.ActionRebuild += Controler_ActionRebuild;
             Controler.Init();
+        }
+
+        private void Controler_ActionRebuild(string msg, List<Component> list)
+        {
+            FillDataGridView1(list);
+            label1.Text = msg;
         }
 
         private void Controler_NumberModel(string obj)
@@ -48,7 +55,7 @@ namespace FormSW_Tree
         private void btnGetInfo_Click(object sender, EventArgs e)
         {
             Controler.GetInfoFromPDM();
-            FillDataGridView1();
+            FillDataGridView1(Tree.listComp);
         }
 
         private void chboxIncludeDraw_CheckedChanged(object sender, EventArgs e)
@@ -64,7 +71,7 @@ namespace FormSW_Tree
             }
         }
 
-        public void FillDataGridView1()
+        public void FillDataGridView1(List<Component> listComp)
         {
             dataGridView.Rows.Clear();
             dataGridView.Cursor = Cursors.WaitCursor;
@@ -80,12 +87,12 @@ namespace FormSW_Tree
             dataGridView.Columns[8].Name = "StateDraw";
             dataGridView.Columns[9].Name = "Section";
 
-            foreach (Component comp in Tree.listComp)
+            foreach (Component comp in listComp)
             {
              
-                if (comp.Section == "Стандартные изделия" || comp.Section == "") continue;
+               // if (comp.Section == "Стандартные изделия" || comp.Section == "") continue;
 
-                if (comp.isDraw && Tree.listDraw.Count > 0)
+                if (comp.isDraw)
                 {
                     Drawing draw = Tree.listDraw.FirstOrDefault(d => d.CubyNumber == comp.CubyNumber);
                     dataGridView.Rows.Add(comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString(),
@@ -108,6 +115,9 @@ namespace FormSW_Tree
             dataGridView.Cursor = Cursors.Default;
         }
 
-       
+        private void btnRebuild_Click(object sender, EventArgs e)
+        {
+            Controler.RebuildTree();
+        }
     }
 }

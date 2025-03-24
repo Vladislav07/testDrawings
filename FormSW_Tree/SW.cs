@@ -281,7 +281,7 @@ namespace FormSW_Tree
             int lWarnings = 0;
             ModelDocExtension extMod;
             string fileName = null;
-            //swApp.CloseAllDocuments()
+            swApp.CloseAllDocuments(true);
 
             try
             {
@@ -309,6 +309,66 @@ namespace FormSW_Tree
             catch (Exception error)
             {
                 MessageBox.Show(error.ToString());
+
+            }
+        }
+
+        public void OpenAndRefreshDrawings(List<PdmID> list)
+        {
+            ModelDoc2 swModelDoc = default(ModelDoc2);
+            int errors = 0;
+            int warnings = 0;
+            int lErrors = 0;
+            int lWarnings = 0;
+            ModelDocExtension extMod;
+            string fileName = null;
+            DrawingDoc swDraw = default(DrawingDoc);
+            object[] vSheetName = null;
+            string sheetName;
+            int i = 0;
+            bool bRet = false;
+
+            try
+            {
+                foreach (PdmID item in list)
+                {
+                    fileName = item.PathFile;
+                    swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocDRAWING, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+
+                    extMod = swModelDoc.Extension;
+                    extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
+
+                    swDraw = (DrawingDoc)swModelDoc;
+                    extMod = swModelDoc.Extension;
+                    vSheetName = (object[])swDraw.GetSheetNames();
+                    for (i = 0; i < vSheetName.Length; i++)
+
+                    {
+
+                        sheetName = (string)vSheetName[i];
+
+                        bRet = swDraw.ActivateSheet(sheetName);
+
+                         extMod.Rebuild((int)swRebuildOptions_e.swCurrentSheetDisp);
+                        swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
+                        Sheet swSheet = default(Sheet);
+
+                         swSheet = (Sheet)swDraw.GetCurrentSheet();
+                         MessageBox.Show(sheetName);
+
+                    }
+ 
+
+                    swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
+                    MessageBox.Show(lWarnings.ToString());
+                    swApp.CloseDoc(fileName);
+                    swModelDoc = null;
+
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(errors.ToString());
 
             }
         }

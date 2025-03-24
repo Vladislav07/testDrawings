@@ -59,6 +59,7 @@ namespace FormSW_Tree
             {
 
                 int isVers = Tree.Part_IsChild(item.Key, item.Value);
+
                 if (isVers != -1)
                 {
                     IsRebuild = true;

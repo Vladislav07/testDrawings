@@ -40,6 +40,7 @@ namespace FormSW_Tree
 
                 item.File = File;
                 item.bFolder = ParentFolder.ID;
+                item.bFile = File.ID;
                 enumVar = File.GetEnumeratorVariable();
                 object val = null;
                 EdmStrLst5 listConf = File.GetConfigurations(0);
@@ -125,12 +126,18 @@ namespace FormSW_Tree
             }
         }
 
-        public static  void BatchGet()
+        public static  void BatchGet(List<PdmID> list)
         {       
             try
             {
 
-                batchGetter = (IEdmBatchGet)vault.CreateUtility(EdmUtility.EdmUtil_BatchGet);        
+                batchGetter = (IEdmBatchGet)vault.CreateUtility(EdmUtility.EdmUtil_BatchGet);
+                /*
+                foreach (PdmID item in list)
+                {
+                    batchGetter.AddSelectionEx((EdmVault5)vault1, item.FileId, item.FolderId, 0);
+                }
+                */
                 batchGetter.AddSelection((EdmVault5)vault1, ppoSelection);
                 if ((batchGetter != null))
                 {
@@ -243,10 +250,10 @@ namespace FormSW_Tree
                     }
 
                     if (!(refDrToModel == comp.CurVersion) || NeedsRegeneration || comp.IsRebuild)
-                    {
+                   {
                         GetDraw();
                         return true;
-                    }
+                   }
                 }
                 catch (Exception ex)
                 {
@@ -267,7 +274,7 @@ namespace FormSW_Tree
                 draw.CompareVersRef = true;
                 draw.VersCompareToModel = comp.CurVersion.ToString() + "/" + refDrToModel.ToString();
                 Tree.listDraw.Add(draw);
-                comp.i
+             
                 comp.draw = draw;
             }
         }
