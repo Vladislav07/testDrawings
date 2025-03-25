@@ -41,7 +41,7 @@ namespace FormSW_Tree
 
             // Get active model
             string[] strResult = LoadActiveModel();
-            statLabel = strResult[2];
+            statLabel = strResult[0];
             SendNumberModel(strResult[1]);
             SendMessage(statLabel);
         }
@@ -337,7 +337,6 @@ namespace FormSW_Tree
 
                     extMod = swModelDoc.Extension;
                     extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
-
                     swDraw = (DrawingDoc)swModelDoc;
                     extMod = swModelDoc.Extension;
                     vSheetName = (object[])swDraw.GetSheetNames();
@@ -352,15 +351,11 @@ namespace FormSW_Tree
                          extMod.Rebuild((int)swRebuildOptions_e.swCurrentSheetDisp);
                         swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
                         Sheet swSheet = default(Sheet);
-
-                         swSheet = (Sheet)swDraw.GetCurrentSheet();
-                         MessageBox.Show(sheetName);
-
+                        swSheet = (Sheet)swDraw.GetCurrentSheet();
                     }
- 
 
                     swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
-                    MessageBox.Show(lWarnings.ToString());
+                   // MessageBox.Show(lWarnings.ToString());
                     swApp.CloseDoc(fileName);
                     swModelDoc = null;
 

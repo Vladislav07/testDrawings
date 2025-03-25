@@ -9,7 +9,7 @@ namespace FormSW_Tree
 {
     public class Drawing
     {
-        string path;
+        public string path { get; set; }
         public int currentVers { get; set; }
         public bool NeedsRegeneration { get; set; }
         public bool CompareVersRef { get; set; }

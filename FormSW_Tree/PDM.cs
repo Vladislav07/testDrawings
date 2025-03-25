@@ -53,10 +53,8 @@ namespace FormSW_Tree
             }
             catch (Exception)
             {
-
                 
-            }
-         
+            }      
             
         }
 
@@ -95,7 +93,7 @@ namespace FormSW_Tree
             catch (Exception p)
             {
 
-                MessageBox.Show("uuu" + p.Message);
+               // MessageBox.Show("uuu" + p.Message);
             }
            
             
@@ -132,17 +130,12 @@ namespace FormSW_Tree
             {
 
                 batchGetter = (IEdmBatchGet)vault.CreateUtility(EdmUtility.EdmUtil_BatchGet);
-                /*
-                foreach (PdmID item in list)
-                {
-                    batchGetter.AddSelectionEx((EdmVault5)vault1, item.FileId, item.FolderId, 0);
-                }
-                */
+     
                 batchGetter.AddSelection((EdmVault5)vault1, ppoSelection);
                 if ((batchGetter != null))
                 {
                     batchGetter.CreateTree(0, (int)EdmGetCmdFlags.Egcf_Lock + (int)EdmGetCmdFlags.Egcf_SkipOpenFileChecks);// + (int)EdmGetCmdFlags.Egcf_IncludeAutoCacheFiles);  
-                    batchGetter.ShowDlg(0);
+                   // batchGetter.ShowDlg(0);
                     batchGetter.GetFiles(0, null);
                 }
 
@@ -167,12 +160,12 @@ namespace FormSW_Tree
                 batchUnlocker.CreateTree(0, (int)EdmUnlockBuildTreeFlags.Eubtf_MayUnlock);
 
                 batchUnlocker.Comment = "Refresh";
-                bool retVal = batchUnlocker.ShowDlg(0);
-                if ((retVal))
-                {
+              //  bool retVal = batchUnlocker.ShowDlg(0);
+              //  if ((retVal))
+              //  {
                     batchUnlocker.UnlockFiles(0, null);
                     EventProcess("Processing completed");
-                }
+              //  }
 
 
             }
@@ -267,6 +260,7 @@ namespace FormSW_Tree
                 Drawing draw = new Drawing(p, comp.CurVersion);
                 draw.FileID = bFile.ID;
                 draw.FolderID = bFolder.ID;
+   
                 draw.CubyNumber = comp.CubyNumber;
                 draw.NeedsRegeneration = NeedsRegeneration;
                 draw.currentVers = bFile.CurrentVersion;
@@ -274,7 +268,7 @@ namespace FormSW_Tree
                 draw.CompareVersRef = true;
                 draw.VersCompareToModel = comp.CurVersion.ToString() + "/" + refDrToModel.ToString();
                 Tree.listDraw.Add(draw);
-             
+   
                 comp.draw = draw;
             }
         }

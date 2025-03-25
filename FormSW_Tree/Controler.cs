@@ -35,6 +35,7 @@ namespace FormSW_Tree
    public static class Controler
     {
         public static event Action<string> NumberModel;
+        public static event Action<string> MsgState;
         public static event Action<string, List<Component>> ActionRebuild;
         static SW sw;
         private static List<Component> models { get; set; }
@@ -52,10 +53,16 @@ namespace FormSW_Tree
         {
             sw = new SW();
             sw.numberModel += Sw_numberModel;
+            sw.action += Sw_action;
             sw.btnConnectSW();
             sw.BuildTree();
             Tree.SearchParentFromChild();
             return true;
+        }
+
+        private static void Sw_action(string msg)
+        {
+            MsgState.Invoke(msg);
         }
 
         private static void Sw_numberModel(string obj)
@@ -75,16 +82,13 @@ namespace FormSW_Tree
             return true;
         }
 
-        private static List<Component> PossibilityOfUpdating()
-        {
-            return Tree.listComp.Where(comp => IsCuby(comp)).Where(comp => IsRebuidCuby(comp)).ToList();
-                
-        }
+   
 
         public static bool RebuildTree()
         {
             List<Component> list = Tree.listComp.Where(comp => IsCuby(comp)).ToList();
             List<Component> listNot = list.Where(comp => IsNotRebuidCuby(comp)).ToList();
+
             if (listNot.Count > 0)
             {
                 ActionRebuild.Invoke("Перестроение невозможно", listNot);
@@ -93,39 +97,42 @@ namespace FormSW_Tree
 
             List<Component> listParts = list.Where(comp => IsRebuidCuby(comp)).Where(comp => IsParts(comp)).ToList();
             List<Component> listAsm = list.Where(comp => IsRebuidCuby(comp)).Where(comp => IsAsm(comp)).ToList();
+            List<Component> listPartsDraw = list.Where(comp => IsParts(comp)).Where(c => IsDraw(c)).Where(comp => IsRebuidCubyDraw(comp)).ToList();
+            List<Component> listAsmDraw = list.Where(comp => IsAsm(comp)).Where(c => IsDraw(c)).Where(comp => IsRebuidCubyDraw(comp)).ToList();
+
+
             List<PdmID> listPdmParts = new List<PdmID>();
             List<PdmID> listPdmDrawParts = new List<PdmID>();
+            List<PdmID> listPdmModelPartsToDraw = new List<PdmID>();
+            List<PdmID> listPdmModelAsmToDraw = new List<PdmID>();
             List<PdmID> listPdmAsm = new List<PdmID>();
             List<PdmID> listPdmDrawAsm = new List<PdmID>();
 
+            listParts.ForEach(item => listPdmParts.Add(new PdmID(item.bFile, item.bFolder, item.FullPath)));
+            listAsm.ForEach(item =>
+                listPdmAsm.Add(new PdmID(item.bFile, item.bFolder, item.FullPath)));
 
-            foreach (Component item in listParts)
-            {
-                listPdmParts.Add(new PdmID(item.bFile, item.bFolder, item.FullPath));
-                if (item.isDraw)
+            listPartsDraw.ForEach(item =>
                 {
-                    listPdmDrawParts.Add(new PdmID(item.draw.FileID, item.draw.FolderID, item.FullPath));
-                }
-            }
+                    listPdmDrawParts.Add(new PdmID(item.draw.FileID, item.draw.FolderID, item.draw.path));
+                    listPdmModelPartsToDraw.Add(new PdmID(item.bFile, item.bFolder, item.FullPath));
+                });
+
+            listAsmDraw.ForEach(item =>
+             {
+                listPdmDrawAsm.Add(new PdmID(item.draw.FileID, item.draw.FolderID, item.draw.path));
+                listPdmModelAsmToDraw.Add(new PdmID(item.bFile, item.bFolder, item.FullPath));
+             });
 
             if (listPdmParts.Count > 0)Update(listPdmParts, listPdmParts);
 
-            if (listPdmDrawParts.Count>0) UpdateDraw(listPdmDrawParts.Concat(listPdmParts).ToList(), listPdmDrawParts);
-
-
-            foreach (Component item in listAsm)
-            {
-                listPdmAsm.Add(new PdmID(item.bFile, item.bFolder, item.FullPath));
-                if (item.isDraw)
-                {
-                    listPdmDrawAsm.Add(new PdmID(item.draw.FileID, item.draw.FolderID, item.FullPath));
-                }
-            }
+            if (listPdmDrawParts.Count>0) UpdateDraw(listPdmDrawParts.Concat(listPdmModelPartsToDraw).ToList(), listPdmDrawParts);
 
             if (listPdmAsm.Count>0)Update(listPdmAsm, listPdmAsm);
             
-            if(listPdmDrawAsm.Count>0) UpdateDraw(listPdmDrawAsm, listPdmDrawAsm);
-            
+            if(listPdmDrawAsm.Count>0) UpdateDraw(listPdmDrawAsm.Concat(listPdmModelAsmToDraw).ToList(), listPdmDrawAsm);
+
+           // GetInfoFromPDM();
 
             return true;
         } 
@@ -158,7 +165,7 @@ namespace FormSW_Tree
             {
                 PDM.AddSelItemToList(listToPdm);
                 PDM.BatchGet(listToPdm);
-                sw.OpenAndRefresh(listToSw);
+                sw.OpenAndRefreshDrawings(listToSw);
                 PDM.DocBatchUnLock();
             }
             catch (Exception)
@@ -176,9 +183,16 @@ namespace FormSW_Tree
         };
 
         static Predicate<Component> IsRebuidCuby = (comp) => (comp.State.Name == "In work" && comp.IsRebuild == true);
+
+        static Predicate<Component> IsRebuidCubyDraw = (comp) =>
+          ((comp.draw.State.Name == "In work" && (comp.draw.CompareVersRef == true || comp.draw.NeedsRegeneration == true))); 
+     
+        
+    
         static Predicate<Component> IsNotRebuidCuby = (comp) => (comp.IsRebuild == true && comp.State.Name != "In work"  );
-        static Predicate<Component> IsParts = (Component comp) => comp.Ext == ".sldpart" || comp.Ext == ".SLDPART";
+        static Predicate<Component> IsParts = (Component comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
         static Predicate<Component> IsAsm = (Component comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
+        static Predicate<Component> IsDraw = (Component comp) => comp.isDraw;
     }
 }
 

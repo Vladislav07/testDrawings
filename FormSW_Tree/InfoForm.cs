@@ -20,9 +20,11 @@ namespace FormSW_Tree
         {
             InitializeComponent();
 
-            Controler.NumberModel += Controler_NumberModel;
-            Controler.ActionRebuild += Controler_ActionRebuild;
-            Controler.Init();
+        }
+
+        private void Controler_MsgState(string MsgState)
+        {
+            label1.Text = MsgState;
         }
 
         private void Controler_ActionRebuild(string msg, List<Component> list)
@@ -36,40 +38,13 @@ namespace FormSW_Tree
             this.Text = obj;
         }
 
-        void  Grid()
-        {
-            dataGridView.Cursor = Cursors.WaitCursor;
-            dataGridView.ColumnCount = 9;
-            dataGridView.Columns[0].Name = "Cuby Number";
-            dataGridView.Columns[1].Name = "Current Version";
-            dataGridView.Columns[2].Name = "List of Ref Child Errors";
-            dataGridView.Columns[3].Name = "Child";
-            dataGridView.Columns[4].Name = "Child info";
-            dataGridView.Columns[5].Name = "State";
-            dataGridView.Columns[6].Name = "VersRef/VersParent";
-            dataGridView.Columns[7].Name = "IsRebuildDraw";
-            dataGridView.Columns[8].Name = "StateDraw";
-            dataGridView.Cursor = Cursors.Default;
-        }
-
         private void btnGetInfo_Click(object sender, EventArgs e)
         {
             Controler.GetInfoFromPDM();
             FillDataGridView1(Tree.listComp);
         }
 
-        private void chboxIncludeDraw_CheckedChanged(object sender, EventArgs e)
-        {
-            CheckBox checkBox = (CheckBox)sender; 
-            if (checkBox.Checked == true)
-            {
-               
-            }
-            else
-            {
-                
-            }
-        }
+      
 
         public void FillDataGridView1(List<Component> listComp)
         {
@@ -108,7 +83,7 @@ namespace FormSW_Tree
                 {
                     foreach (KeyValuePair<string, string> i in comp.listRefChildError)
                     {
-                        dataGridView.Rows.Add("", "", "", i.Key, i.Value, "", "", "", "",comp.Section);
+                        dataGridView.Rows.Add("", "", "", i.Key, i.Value, "", "", "", "","");
                     }
                 }
             }
@@ -118,6 +93,17 @@ namespace FormSW_Tree
         private void btnRebuild_Click(object sender, EventArgs e)
         {
             Controler.RebuildTree();
+            Tree.ClearCompTree();
+            Controler.GetInfoFromPDM();
+            FillDataGridView1(Tree.listComp);
+        }
+
+        private void InfoForm_Load(object sender, EventArgs e)
+        {
+            Controler.NumberModel += Controler_NumberModel;
+            Controler.ActionRebuild += Controler_ActionRebuild;
+            Controler.MsgState += Controler_MsgState;
+            Controler.Init();
         }
     }
 }

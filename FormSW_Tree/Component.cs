@@ -26,7 +26,14 @@ namespace FormSW_Tree
         public bool isDraw { get; set; }
         public Drawing draw { get; set; }
         
-
+        public void ClearComp()
+        {
+            isDraw = false;
+            IsRebuild = false;
+            listRefChild.Clear();
+            listRefChildError.Clear();
+            draw = null;
+        }
         public Component(string cn, string fn)
         {
             CubyNumber = cn;
@@ -52,28 +59,40 @@ namespace FormSW_Tree
             }
         }
 
+
+
         public void isNeedsRebuld()
         {
             if (listRefChild.Count == 0) return;
-            foreach (KeyValuePair<string, int> item in listRefChild)
+            listRefChildError.Clear();
+            try
+            {          
+                foreach (KeyValuePair<string, int> item in listRefChild)
+                {
+
+                    int isVers = Tree.Part_IsChild(item.Key, item.Value);
+
+                    if (isVers != -1)
+                    {
+                        IsRebuild = true;
+                        listRefChildError.Add(item.Key, item.Value.ToString() + "/" + isVers.ToString());
+                    }
+
+                }
+                if (IsRebuild || isDraw)
+                {
+                    foreach (string item in listParent)
+                    {
+                        Tree.SearchForOldLinks(item);
+                    }
+                }
+                }
+            catch (Exception)
             {
 
-                int isVers = Tree.Part_IsChild(item.Key, item.Value);
-
-                if (isVers != -1)
-                {
-                    IsRebuild = true;
-                    listRefChildError.Add(item.Key, item.Value.ToString() + "/" + isVers.ToString());
-                }
-
+               
             }
-            if (IsRebuild)
-            {
-                foreach (string item in listParent)
-                {
-                    Tree.SearchForOldLinks(item);
-                }
-            }
+        
 
         }
 

@@ -32,7 +32,6 @@
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.btnGetInfo = new System.Windows.Forms.Button();
             this.btnRebuild = new System.Windows.Forms.Button();
-            this.chboxIncludeDraw = new System.Windows.Forms.CheckBox();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
@@ -70,18 +69,6 @@
             this.btnRebuild.UseVisualStyleBackColor = true;
             this.btnRebuild.Click += new System.EventHandler(this.btnRebuild_Click);
             // 
-            // chboxIncludeDraw
-            // 
-            this.chboxIncludeDraw.AutoSize = true;
-            this.chboxIncludeDraw.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.chboxIncludeDraw.Location = new System.Drawing.Point(761, 17);
-            this.chboxIncludeDraw.Name = "chboxIncludeDraw";
-            this.chboxIncludeDraw.Size = new System.Drawing.Size(103, 20);
-            this.chboxIncludeDraw.TabIndex = 3;
-            this.chboxIncludeDraw.Text = "&IncludeBox";
-            this.chboxIncludeDraw.UseVisualStyleBackColor = true;
-            this.chboxIncludeDraw.CheckedChanged += new System.EventHandler(this.chboxIncludeDraw_CheckedChanged);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -98,13 +85,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(916, 429);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.chboxIncludeDraw);
             this.Controls.Add(this.btnRebuild);
             this.Controls.Add(this.btnGetInfo);
             this.Controls.Add(this.dataGridView);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Name = "InfoForm";
             this.Text = "InfoForm";
+            this.Load += new System.EventHandler(this.InfoForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -117,7 +104,6 @@
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.Button btnGetInfo;
         private System.Windows.Forms.Button btnRebuild;
-        private System.Windows.Forms.CheckBox chboxIncludeDraw;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Label label1;
     }
