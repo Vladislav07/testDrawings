@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.btnGetInfo = new System.Windows.Forms.Button();
             this.btnRebuild = new System.Windows.Forms.Button();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.label1 = new System.Windows.Forms.Label();
@@ -47,21 +46,10 @@
             this.dataGridView.Size = new System.Drawing.Size(916, 383);
             this.dataGridView.TabIndex = 0;
             // 
-            // btnGetInfo
-            // 
-            this.btnGetInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnGetInfo.Location = new System.Drawing.Point(22, 17);
-            this.btnGetInfo.Name = "btnGetInfo";
-            this.btnGetInfo.Size = new System.Drawing.Size(100, 23);
-            this.btnGetInfo.TabIndex = 1;
-            this.btnGetInfo.Text = "&GetInfo";
-            this.btnGetInfo.UseVisualStyleBackColor = true;
-            this.btnGetInfo.Click += new System.EventHandler(this.btnGetInfo_Click);
-            // 
             // btnRebuild
             // 
             this.btnRebuild.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnRebuild.Location = new System.Drawing.Point(128, 17);
+            this.btnRebuild.Location = new System.Drawing.Point(21, 17);
             this.btnRebuild.Name = "btnRebuild";
             this.btnRebuild.Size = new System.Drawing.Size(126, 23);
             this.btnRebuild.TabIndex = 2;
@@ -73,7 +61,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(271, 20);
+            this.label1.Location = new System.Drawing.Point(268, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 16);
             this.label1.TabIndex = 4;
@@ -86,7 +74,6 @@
             this.ClientSize = new System.Drawing.Size(916, 429);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnRebuild);
-            this.Controls.Add(this.btnGetInfo);
             this.Controls.Add(this.dataGridView);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Name = "InfoForm";
@@ -102,7 +89,6 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView;
-        private System.Windows.Forms.Button btnGetInfo;
         private System.Windows.Forms.Button btnRebuild;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Label label1;

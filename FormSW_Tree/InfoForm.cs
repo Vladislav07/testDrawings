@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FormSW_Tree
@@ -13,8 +8,7 @@ namespace FormSW_Tree
     public partial class InfoForm : Form
     {
 
-      
-        //public event EventHandler<string> OperationCompleted;
+     
 
         public InfoForm()
         {
@@ -27,7 +21,7 @@ namespace FormSW_Tree
             label1.Text = MsgState;
         }
 
-        private void Controler_ActionRebuild(string msg, List<Component> list)
+        private void Controler_ActionRebuild(string msg, List<Model> list)
         {
             FillDataGridView1(list);
             label1.Text = msg;
@@ -38,15 +32,11 @@ namespace FormSW_Tree
             this.Text = obj;
         }
 
-        private void btnGetInfo_Click(object sender, EventArgs e)
-        {
-            Controler.GetInfoFromPDM();
-            FillDataGridView1(Tree.listComp);
-        }
+    
 
       
-
-        public void FillDataGridView1(List<Component> listComp)
+   
+        public void FillDataGridView1(List<Model> listComp)
         {
             dataGridView.Rows.Clear();
             dataGridView.Cursor = Cursors.WaitCursor;
@@ -62,7 +52,7 @@ namespace FormSW_Tree
             dataGridView.Columns[8].Name = "StateDraw";
             dataGridView.Columns[9].Name = "Section";
 
-            foreach (Component comp in listComp)
+            foreach (Model comp in listComp)
             {
              
                // if (comp.Section == "Стандартные изделия" || comp.Section == "") continue;
@@ -70,13 +60,13 @@ namespace FormSW_Tree
                 if (comp.isDraw)
                 {
                     Drawing draw = Tree.listDraw.FirstOrDefault(d => d.CubyNumber == comp.CubyNumber);
-                    dataGridView.Rows.Add(comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString(),
+                    dataGridView.Rows.Add(comp.CubyNumber, comp.NeedsRegeneration.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString(),
                     draw.VersCompareToModel, draw.NeedsRegeneration.ToString(), draw.State.Name, comp.Section);
                 }
                 else
                 {
                     if (!comp.IsRebuild) continue;
-                    dataGridView.Rows.Add(comp.CubyNumber, comp.CurVersion.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString(), "", "", "", comp.Section);
+                    dataGridView.Rows.Add(comp.CubyNumber, comp.NeedsRegeneration.ToString(), comp.IsRebuild.ToString(), "", "", comp.State.Name.ToString(), "", "", "", comp.Section);
                 }
 
                 if (comp.listRefChildError != null)
@@ -104,6 +94,8 @@ namespace FormSW_Tree
             Controler.ActionRebuild += Controler_ActionRebuild;
             Controler.MsgState += Controler_MsgState;
             Controler.Init();
+            Controler.GetInfoFromPDM();
+            FillDataGridView1(Tree.listComp);
         }
     }
 }

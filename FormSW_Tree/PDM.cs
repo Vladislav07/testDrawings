@@ -1,19 +1,14 @@
-﻿using System.IO;
-using System.Xml.Serialization;
+﻿using EPDM.Interop.epdm;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.ComponentModel;
-using EPDM.Interop.epdm;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace FormSW_Tree
 {
-   
-   public static class PDM
+
+    public static class PDM
     {
         static IEdmVault5 vault1 = null;
         static IEdmVault7 vault = null;
@@ -29,18 +24,19 @@ namespace FormSW_Tree
             ConnectingPDM();
         }
 
-        public static void GetEdmFile(this Component item)
+        public static void GetEdmFile(this Model item)
         {
            
             IEdmFile5 File = null;
             IEdmFolder5 ParentFolder = null;
+
             try
             {
-                File = vault1.GetFileFromPath(item.FullPath, out ParentFolder);
-
+                File = vault1.GetFileFromPath(item.FullPath, out ParentFolder); 
                 item.File = File;
                 item.bFolder = ParentFolder.ID;
                 item.bFile = File.ID;
+    
                 enumVar = File.GetEnumeratorVariable();
                 object val = null;
                 EdmStrLst5 listConf = File.GetConfigurations(0);
@@ -58,7 +54,7 @@ namespace FormSW_Tree
             
         }
 
-        public static void GetReferenceFromAssemble(this Component ass)
+        public static void GetReferenceFromAssemble(this Model ass)
         {
             string e = Path.GetExtension(ass.FullPath);
             if (e == ".SLDPRT" || e == ".sldprt") return;
@@ -71,22 +67,18 @@ namespace FormSW_Tree
             {
                 while (!pos.IsNull)
                 {
-
                     IEdmReference10 @ref = (IEdmReference10)ref5.GetNextChild(pos);
-                    //
                     string extension = Path.GetExtension(@ref.Name);
                     if (extension == ".sldasm" || extension == ".sldprt" || extension == ".SLDASM" || extension == ".SLDPRT")
                     {
                         cubyNumber = Path.GetFileNameWithoutExtension(@ref.Name);
-                      //  string regCuby = @"^CUBY-\d{8}$";
-                     //   bool IsCUBY = Regex.IsMatch(cubyNumber.Trim(), regCuby);
-                      //  if (!IsCUBY) continue;
+                        string regCuby = @"^CUBY-\d{8}$";
+                        bool IsCUBY = Regex.IsMatch(cubyNumber.Trim(), regCuby);
+                        if (!IsCUBY) continue;
                         verChildRef = @ref.VersionRef;
+                        if (ass.listRefChild.ContainsKey(cubyNumber.Trim()))continue;
                         ass.listRefChild.Add(cubyNumber.Trim(), verChildRef);
-
                     }
-       
-                    //ref5.GetNextChild(pos);
                 }
             }
 
@@ -209,68 +201,43 @@ namespace FormSW_Tree
 
         }
 
-        public static bool IsDrawings(this Component comp)
+        public static bool IsDrawings(this Model comp)
         {
-            int refDrToModel = -1;
-            bool NeedsRegeneration = false;
+
             IEdmFile7 bFile = null;
             string p = Path.Combine(Path.GetDirectoryName(comp.FullPath), comp.CubyNumber + ".SLDDRW");
             bFile = (IEdmFile7)vault.GetFileFromPath(p, out IEdmFolder5 bFolder);
 
             if (bFile != null)                                         
-            {            
-                try
-                {                 
-                    NeedsRegeneration = bFile.NeedsRegeneration(bFile.CurrentVersion, bFolder.ID);
-
-                    // Достаем из чертежа версию ссылки на родителя (VersionRef)
-                    IEdmReference5 ref5 = bFile.GetReferenceTree(bFolder.ID);
-                    IEdmReference10 ref10 = (IEdmReference10)ref5;
-                    IEdmPos5 pos = ref10.GetFirstChildPosition3("A", true, true, (int)EdmRefFlags.EdmRef_File, "", 0);
-                    while (!pos.IsNull)
-                    {
-                        IEdmReference10 @ref = (IEdmReference10)ref5.GetNextChild(pos);
-                        string extension = Path.GetExtension(@ref.Name);
-                        if (extension == ".sldasm" || extension == ".sldprt" || extension == ".SLDASM" || extension == ".SLDPRT")
-                        {
-                            refDrToModel = @ref.VersionRef;
-                            break;
-                        }
-                        else
-                        {
-                            ref5.GetNextChild(pos);
-                        }
-                    }
-
-                    if (!(refDrToModel == comp.CurVersion) || NeedsRegeneration || comp.IsRebuild)
-                   {
-                        GetDraw();
-                        return true;
-                   }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("error:" + bFile.Name + ex.Message);
-                }
-            }
-            return false;
-
-            void GetDraw()
-            {
-                Drawing draw = new Drawing(p, comp.CurVersion);
-                draw.FileID = bFile.ID;
-                draw.FolderID = bFolder.ID;
-   
-                draw.CubyNumber = comp.CubyNumber;
-                draw.NeedsRegeneration = NeedsRegeneration;
-                draw.currentVers = bFile.CurrentVersion;
-                draw.State = bFile.CurrentState;
-                draw.CompareVersRef = true;
-                draw.VersCompareToModel = comp.CurVersion.ToString() + "/" + refDrToModel.ToString();
-                Tree.listDraw.Add(draw);
-   
+            {                
+                Drawing draw = new Drawing(p, comp, bFile, bFolder.ID);              
                 comp.draw = draw;
+                return true;
             }
+            return false;  
+        }
+
+        public static int GetRefVersion(this Drawing draw)
+        {
+            int refDrToModel = -1;
+            IEdmReference5 ref5 = draw.bFile.GetReferenceTree(draw.FolderID);
+            IEdmReference10 ref10 = (IEdmReference10)ref5;
+            IEdmPos5 pos = ref10.GetFirstChildPosition3("A", true, true, (int)EdmRefFlags.EdmRef_File, "", 0);
+            while (!pos.IsNull)
+            {
+                IEdmReference10 @ref = (IEdmReference10)ref5.GetNextChild(pos);
+                string extension = Path.GetExtension(@ref.Name);
+                if (extension == ".sldasm" || extension == ".sldprt" || extension == ".SLDASM" || extension == ".SLDPRT")
+                {
+                    refDrToModel = @ref.VersionRef;
+                    break;
+                }
+                else
+                {
+                    ref5.GetNextChild(pos);
+                }
+            }
+            return refDrToModel;
         }
     }
 }

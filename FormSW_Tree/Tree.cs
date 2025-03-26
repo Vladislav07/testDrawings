@@ -12,69 +12,57 @@ namespace FormSW_Tree
     public static class Tree
     {
 
-        static Dictionary<string, Component> ModelTree;
-        public static List<Component> listComp;
-        public static List<Drawing> listDraw;
+        static Dictionary<string, Model> ModelTree;
+        public static List<Model> listComp;
         static Dictionary<string, string> structuralNumbers;
         static Tree()
         {
            
-            ModelTree = new Dictionary<string, Component>();
-            listComp = new List<Component>();
-            listDraw = new List<Drawing>();
+            ModelTree = new Dictionary<string, Model>();
+            listComp = new List<Model>();
             structuralNumbers = new Dictionary<string, string>();
         }
         public static void AddNode(string NodeNumber, string cubyNumber, string pathNode)
         {
 
-            ModelTree.Add(NodeNumber, GetComponentFromNumber(cubyNumber, pathNode));
+            ModelTree.Add(NodeNumber, GetModelFromNumber(cubyNumber, pathNode));
 
             structuralNumbers.Add(NodeNumber, cubyNumber);
         }
 
-        public static Component GetComponentFromNumber(string numberCuby, string path)
+        public static Model GetModelFromNumber(string numberCuby, string path)
         {
-            Component comp = null;
-            foreach (KeyValuePair<string, Component> item in ModelTree)
+            Model comp = null;
+            foreach (KeyValuePair<string, Model> item in ModelTree)
             {
                 comp = item.Value;
                 if (numberCuby == comp.CubyNumber) return comp; 
             }
-            comp = new Component(numberCuby, path);
+            comp = new Model(numberCuby, path);
     
             return comp;
         }
 
+
+
         public static void CompareVersions()
         {
             listComp.Reverse();
-            foreach (Component item in listComp)
+            foreach (Model item in listComp)
             {
-                item.isNeedsRebuld();
+                item.IsState();
             }
             listComp.Reverse();
         }
 
-        public static bool IsDrawings()
-        {
-            foreach (Component item in listComp)
-            {
-                item.IsDrawing();
-            }
-            if (listDraw.Count>0)
-            {
-                return true;
-            }
-            return false;
-           
-        }
+   
   
         public  static int Part_IsChild(string cubyNumber, int VersChild)
           {
      
-            Component comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
+            Model comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
               if (comp == null) return -1;
-              if (comp.CurVersion != VersChild) return comp.CurVersion;
+              if (comp.File.CurrentVersion != VersChild) return comp.File.CurrentVersion;
               return -1;
           }
       
@@ -85,7 +73,7 @@ namespace FormSW_Tree
             string ParentStructurenumber;
             int index = 0;
             char separate = new char[] { '.' }[0];
-            Component child = null;
+            Model child = null;
             string parentNumber=null;
             foreach (KeyValuePair<string, string> item in structuralNumbers)
             {
@@ -108,34 +96,37 @@ namespace FormSW_Tree
             listComp.Clear();
             char s = new char[] { '.' }[0];
             int level_ = 0;
-            var uniqueComponentByGroup = ModelTree
+            var uniqueModelByGroup = ModelTree
             .GroupBy(pair => pair.Key.Count(o => o == s))
             .Select(group => group.Select(g => g.Value).Distinct().ToList())
             .ToList();
-            foreach (var item in uniqueComponentByGroup)
+            foreach (var item in uniqueModelByGroup)
             {
-                foreach (Component comp in item)
+                foreach (Model comp in item)
                 {
                    
-                    comp.Level = level_;
-                    comp.GetEdmFile();
-                    comp.GetReferenceFromAssemble();
+                    comp.Level = level_;                  
                     listComp.Add(comp);
                 }
                 level_++;
             }
         }
 
-        public static void SearchForOldLinks(string cubyNumber)
+        public static void GetInfoPDM()
         {
-            Component comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
-            if (comp == null) return;
-            comp.IsRebuild = true;
+            foreach (Model comp in listComp)
+                {
+                    comp.GetEdmFile();
+                    comp.GetReferenceFromAssemble();
+                }
+            
         }
 
-        public static void ClearCompTree()
+        public static void SearchForOldLinks(string cubyNumber)
         {
-            listComp.ForEach(c => c.ClearComp());
+            Model comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
+            if (comp == null) return;
+            comp.st = StateModel.ModelAndDraw;
         }
 
     }

@@ -22,31 +22,20 @@ namespace FormSW_Tree
         public int FolderId { get; set; }
         public string PathFile { get; set; }
     }
-    enum StateApp
-    {
-        readForUpdate=0,
-        updateIsNotPossible=2,
-        detailsUpdate=3,
-        partsDrawings=4,
-        assemble=5,
-        asembleDrawings=6,
-        errorUpdate=7
-    }
+
    public static class Controler
     {
         public static event Action<string> NumberModel;
         public static event Action<string> MsgState;
-        public static event Action<string, List<Component>> ActionRebuild;
+        public static event Action<string, List<Model>> ActionRebuild;
         static SW sw;
-        private static List<Component> models { get; set; }
-        private static List<Drawing> drawings { get; set; }
-        private static StateApp stateApp;
+        private static List<Model> models { get; set; }
+
+ 
 
          static Controler()
         {
-            models = new List<Component>();
-            drawings = new List<Drawing>();
-            stateApp = StateApp.readForUpdate;
+            models = new List<Model>();
         }
 
         public static bool Init()
@@ -57,6 +46,7 @@ namespace FormSW_Tree
             sw.btnConnectSW();
             sw.BuildTree();
             Tree.SearchParentFromChild();
+            Tree.FillCollection();
             return true;
         }
 
@@ -76,9 +66,9 @@ namespace FormSW_Tree
 
         public static bool GetInfoFromPDM()
         {
-            Tree.FillCollection();
+            Tree.GetInfoPDM();
             Tree.CompareVersions();
-            Tree.IsDrawings();
+           
             return true;
         }
 
@@ -86,8 +76,8 @@ namespace FormSW_Tree
 
         public static bool RebuildTree()
         {
-            List<Component> list = Tree.listComp.Where(comp => IsCuby(comp)).ToList();
-            List<Component> listNot = list.Where(comp => IsNotRebuidCuby(comp)).ToList();
+            List<Model> list = Tree.listComp.Where(comp => IsCuby(comp)).ToList();
+            List<Model> listNot = list.Where(comp => IsNotRebuidCuby(comp)).ToList();
 
             if (listNot.Count > 0)
             {
@@ -95,10 +85,10 @@ namespace FormSW_Tree
                 return false;
             }
 
-            List<Component> listParts = list.Where(comp => IsRebuidCuby(comp)).Where(comp => IsParts(comp)).ToList();
-            List<Component> listAsm = list.Where(comp => IsRebuidCuby(comp)).Where(comp => IsAsm(comp)).ToList();
-            List<Component> listPartsDraw = list.Where(comp => IsParts(comp)).Where(c => IsDraw(c)).Where(comp => IsRebuidCubyDraw(comp)).ToList();
-            List<Component> listAsmDraw = list.Where(comp => IsAsm(comp)).Where(c => IsDraw(c)).Where(comp => IsRebuidCubyDraw(comp)).ToList();
+            List<Model> listParts = list.Where(comp => IsRebuidCuby(comp)).Where(comp => IsParts(comp)).ToList();
+            List<Model> listAsm = list.Where(comp => IsRebuidCuby(comp)).Where(comp => IsAsm(comp)).ToList();
+            List<Model> listPartsDraw = list.Where(comp => IsParts(comp)).Where(c => IsDraw(c)).Where(comp => IsRebuidCubyDraw(comp)).ToList();
+            List<Model> listAsmDraw = list.Where(comp => IsAsm(comp)).Where(c => IsDraw(c)).Where(comp => IsRebuidCubyDraw(comp)).ToList();
 
 
             List<PdmID> listPdmParts = new List<PdmID>();
@@ -130,7 +120,7 @@ namespace FormSW_Tree
 
             if (listPdmAsm.Count>0)Update(listPdmAsm, listPdmAsm);
             
-            if(listPdmDrawAsm.Count>0) UpdateDraw(listPdmDrawAsm.Concat(listPdmModelAsmToDraw).ToList(), listPdmDrawAsm);
+            if(listPdmDrawAsm.Count>0) UpdateDraw(listPdmDrawAsm, listPdmDrawAsm);
 
            // GetInfoFromPDM();
 
@@ -176,23 +166,23 @@ namespace FormSW_Tree
 
         }
 
-        static Predicate<Component> IsCuby = (Component comp) =>
+        static Predicate<Model> IsCuby = (Model comp) =>
         {
             string regCuby = @"^CUBY-\d{8}$";
             return Regex.IsMatch(comp.CubyNumber, regCuby);
         };
 
-        static Predicate<Component> IsRebuidCuby = (comp) => (comp.State.Name == "In work" && comp.IsRebuild == true);
+        static Predicate<Model> IsRebuidCuby = (comp) => (comp.State.Name == "In work" && comp.IsRebuild == true);
 
-        static Predicate<Component> IsRebuidCubyDraw = (comp) =>
+        static Predicate<Model> IsRebuidCubyDraw = (comp) =>
           ((comp.draw.State.Name == "In work" && (comp.draw.CompareVersRef == true || comp.draw.NeedsRegeneration == true))); 
      
         
     
-        static Predicate<Component> IsNotRebuidCuby = (comp) => (comp.IsRebuild == true && comp.State.Name != "In work"  );
-        static Predicate<Component> IsParts = (Component comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
-        static Predicate<Component> IsAsm = (Component comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
-        static Predicate<Component> IsDraw = (Component comp) => comp.isDraw;
+        static Predicate<Model> IsNotRebuidCuby = (comp) => (comp.IsRebuild == true && comp.State.Name != "In work"  );
+        static Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
+        static Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
+        static Predicate<Model> IsDraw = (Model comp) => comp.isDraw;
     }
 }
 

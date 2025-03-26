@@ -13,13 +13,16 @@ namespace FormSW_Tree
         public string FullPath { get; private set; }
         public string Ext { get; private set; }
         public string Section { get; set; }
-        IEdmFile5 _File = null;
-        public int CurVersion { get; set; }
-        public IEdmState5 State { get; set; }
         public int bFolder { get; set; }
         public int bFile{ get; set; }
         public int Level { get; set; }
         public Dictionary<string, int> listRefChild;
+
+        IEdmFile5 _File = null;
+        public int CurVersion { get; set; }
+        public IEdmState5 State { get; set; }
+
+        public bool NeedsRegeneration { get; set; }
         public Dictionary<string, string> listRefChildError;
         public List<string> listParent;
         public bool IsRebuild { get; set; }
@@ -79,7 +82,7 @@ namespace FormSW_Tree
                     }
 
                 }
-                if (IsRebuild || isDraw)
+                if (IsRebuild || NeedsRegeneration || isDraw)
                 {
                     foreach (string item in listParent)
                     {
@@ -98,7 +101,7 @@ namespace FormSW_Tree
 
         public void IsDrawing()
         {
-            isDraw = PDM.IsDrawings(this);
+          //  isDraw = PDM.IsDrawings(this);
         }
     }
 }

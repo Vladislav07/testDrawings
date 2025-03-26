@@ -347,8 +347,8 @@ namespace FormSW_Tree
                         sheetName = (string)vSheetName[i];
 
                         bRet = swDraw.ActivateSheet(sheetName);
-
-                         extMod.Rebuild((int)swRebuildOptions_e.swCurrentSheetDisp);
+                       
+                        extMod.Rebuild((int)swRebuildOptions_e.swCurrentSheetDisp);
                         swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
                         Sheet swSheet = default(Sheet);
                         swSheet = (Sheet)swDraw.GetCurrentSheet();
