@@ -58,9 +58,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component.cs" />
     <Compile Include="Controler.cs" />
     <Compile Include="Drawing.cs" />
+    <Compile Include="IDisplay.cs" />
     <Compile Include="InfoForm.cs">
       <SubType>Form</SubType>
     </Compile>

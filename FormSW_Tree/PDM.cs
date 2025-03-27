@@ -210,8 +210,8 @@ namespace FormSW_Tree
 
             if (bFile != null)                                         
             {                
-                Drawing draw = new Drawing(p, comp, bFile, bFolder.ID);              
-                comp.draw = draw;
+                Drawing draw = new Drawing(p, comp, bFile, bFolder.ID);
+                Tree.listDraw.Add(draw);
                 return true;
             }
             return false;  

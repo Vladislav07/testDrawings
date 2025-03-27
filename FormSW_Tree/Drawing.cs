@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace FormSW_Tree
 {
-    public class Drawing
+    public class Drawing:IDisplay, IRebuild
     {
+
         public string path { get; set; }
         public int FileID { get; set; }
         public int FolderID { get; set; }
@@ -20,14 +21,16 @@ namespace FormSW_Tree
         public Drawing(string _path, Model _m, IEdmFile7 _bFile, int _bFolder)
         {
             path = _path;
-            Model model = _m;
+            model = _m;
             bFile = _bFile;
             FileID = _bFile.ID;
             FolderID = _bFolder;
-            st = StateModel.Init;
+            st = StateModel.Clean;
+            CubyNumber = model.CubyNumber;
+          
         }
 
-      
+  
 
         public void SetState()
         {
@@ -44,6 +47,16 @@ namespace FormSW_Tree
             else 
             {
                 st = StateModel.DrawFromModel;
+
+                if (model.st == StateModel.Clean)
+                {
+                    model.st = StateModel.DrawFromModel;
+                }
+            }
+
+            if (model.st == StateModel.ModelAndDraw)
+            {
+                st = StateModel.OnlyDraw;
             }
          
         }
@@ -63,8 +76,38 @@ namespace FormSW_Tree
         {
             int refDrToModel = this.GetRefVersion();
             msgRefVers = model.File.CurrentVersion.ToString() + "/" + refDrToModel.ToString();
-            return (refDrToModel == model.File.CurrentVersion) ? true : false;
+            return (refDrToModel == model.File.CurrentVersion) ? false:true;
         }
-       
+
+
+        public string[] Print()
+        {
+            string[] listDisplay = new string[4];
+            listDisplay[0] = CubyNumber;
+           
+            listDisplay[1] = "Draw";
+         
+            listDisplay[2] = st.ToString();
+            listDisplay[3] = "__";
+            return listDisplay;
+        }
+
+        public List<PdmID> GetIDFromPDM()
+        {
+            List<PdmID> list = new List<PdmID>();
+            
+            list.Add(new PdmID(FileID, FolderID));
+            if (st == StateModel.DrawFromModel)
+            {
+                list.Add(new PdmID(model.bFile, model.bFolder));
+            }
+            return list;
+        }
+
+        public string GetPath()
+        {
+            return path;
+        }
+
     }
 }

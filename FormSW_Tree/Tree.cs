@@ -14,12 +14,14 @@ namespace FormSW_Tree
 
         static Dictionary<string, Model> ModelTree;
         public static List<Model> listComp;
+        public static List<Drawing> listDraw;
         static Dictionary<string, string> structuralNumbers;
         static Tree()
         {
            
             ModelTree = new Dictionary<string, Model>();
             listComp = new List<Model>();
+            listDraw = new List<Drawing>();
             structuralNumbers = new Dictionary<string, string>();
         }
         public static void AddNode(string NodeNumber, string cubyNumber, string pathNode)
@@ -39,24 +41,34 @@ namespace FormSW_Tree
                 if (numberCuby == comp.CubyNumber) return comp; 
             }
             comp = new Model(numberCuby, path);
-    
+            comp.NotificationParent += Comp_NotificationParent;
             return comp;
         }
 
-
+        private static void Comp_NotificationParent(string cubyNumber)
+        {
+            Model comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
+            if (comp == null) return;
+            comp.st = StateModel.ModelAndDraw;
+        }
 
         public static void CompareVersions()
         {
             listComp.Reverse();
             foreach (Model item in listComp)
             {
-                item.IsState();
+                item.SetState();
             }
-            listComp.Reverse();
+
+            listDraw.Reverse();
+
+            foreach (Drawing item in listDraw)
+            {
+                item.SetState();
+            }
+
         }
 
-   
-  
         public  static int Part_IsChild(string cubyNumber, int VersChild)
           {
      
@@ -118,15 +130,9 @@ namespace FormSW_Tree
                 {
                     comp.GetEdmFile();
                     comp.GetReferenceFromAssemble();
+                    comp.IsDrawings();
                 }
             
-        }
-
-        public static void SearchForOldLinks(string cubyNumber)
-        {
-            Model comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
-            if (comp == null) return;
-            comp.st = StateModel.ModelAndDraw;
         }
 
     }

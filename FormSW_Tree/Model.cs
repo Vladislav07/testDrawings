@@ -10,16 +10,17 @@ namespace FormSW_Tree
 {
     public enum StateModel
     {
-        Init=0,
-        Clean=1,
-        Blocked=2,
-        NotRebuild=3,
-        OnlyDraw=4,
-        DrawFromModel=5,
-        ModelAndDraw=6
+        OnlyDraw=0,
+        ModelAndDraw=1,
+        DrawFromModel=2,
+        Clean=3,
+        Blocked=4,
+        NotRebuild=5,
     }
-  public  class Model
+  public  class Model: IDisplay, IRebuild
     {
+        public event Action<string> NotificationParent;
+    
         public string CubyNumber { get; private set; }
         public string FullPath { get; private set; }
         public string Ext { get; private set; }
@@ -32,7 +33,6 @@ namespace FormSW_Tree
         public Dictionary<string, int> listRefChild;
         public Dictionary<string, string> listRefChildError;
         public List<string> listParent;
-        public Drawing draw { get; set; }
 
         public IEdmFile5 File { get; set; }
 
@@ -40,7 +40,7 @@ namespace FormSW_Tree
         {
             CubyNumber = cn;
             FullPath = fn;
-            st = StateModel.Init;
+            st = StateModel.Clean;
             File = null;
             Ext = Path.GetExtension(FullPath);
             if(Ext == ".sldasm" ||Ext == ".SLDASM")
@@ -52,23 +52,25 @@ namespace FormSW_Tree
             listParent = new List<string>();
                  
         }
-        public void IsState()
+        public void SetState()
         {
+            if (Ext == ".sldprt" || Ext == ".SLDPRT") return;
+           
             bool isRebuildAsm = false;
-
-            if (Ext == ".sldasm" || Ext == ".SLDASM")
+            isRebuildAsm = isNeedsRebuld();
+        
+            if (isRebuildAsm )
             {
-                isRebuildAsm = isNeedsRebuld();
+                st = StateModel.ModelAndDraw;
             }
 
-            bool isDraw = PDM.IsDrawings(this);
-
-            if(isRebuildAsm || (isDraw && draw.st == StateModel.DrawFromModel))
+            if (st == StateModel.ModelAndDraw || st == StateModel.DrawFromModel)
             {
-                foreach (string item in listParent)
+                    foreach (string item in listParent)
                 {
-                    Tree.SearchForOldLinks(item);
+                    NotificationParent.Invoke(item);
                 }
+             
             }
             
         }
@@ -91,8 +93,39 @@ namespace FormSW_Tree
            return (listRefChildError.Count>0) ? true: false;
            
         }
-       
 
-   }
+        public string[] Print()
+        {
+            string[] listDisplay = new string[4];
+            listDisplay[0] = CubyNumber;
+            if(Ext == ".sldprt" || Ext == ".SLDPRT")
+            {
+                listDisplay[1] = "Part";
+            }
+            else if (Ext == ".sldasm" || Ext == ".SLDASM")
+            {
+                listDisplay[1] = "Assemble";
+            }
+            else
+            {
+                listDisplay[1] = "Other";
+            }
+            listDisplay[2] = st.ToString();
+            listDisplay[3] = Level.ToString();
+            return listDisplay;
+        }
+
+        public List<PdmID> GetIDFromPDM()
+        {
+            List<PdmID> list = new List<PdmID>();
+            list.Add(new PdmID(bFile, bFolder));
+            return list;
+        }
+
+        public string GetPath()
+        {
+            return FullPath;
+        }
+    }
 }
 

@@ -12,22 +12,21 @@ namespace FormSW_Tree
 {
     public struct PdmID
     {
-        public PdmID(int file, int folder, string pathFile)
+        public PdmID(int file, int folder)
         {
             FileId = file;
             FolderId = folder;
-            PathFile = pathFile;
         }
         public int FileId { get; set; }
         public int FolderId { get; set; }
-        public string PathFile { get; set; }
+ 
     }
 
    public static class Controler
     {
         public static event Action<string> NumberModel;
         public static event Action<string> MsgState;
-        public static event Action<string, List<Model>> ActionRebuild;
+        public static event Action<string, List<IDisplay>> ActionRebuild;
         static SW sw;
         private static List<Model> models { get; set; }
 
@@ -68,28 +67,23 @@ namespace FormSW_Tree
         {
             Tree.GetInfoPDM();
             Tree.CompareVersions();
-           
+            FilteringList();
             return true;
         }
 
+        private static void FilteringList()
+        {
+            List<IDisplay> list = Tree.listComp.Where(comp => IsRebuidModel(comp)).Select(comp => (IDisplay)comp).ToList();
+            List<IDisplay> listDraw = Tree.listDraw.Where(comp => IsRebuidDraw(comp)).Select(comp => (IDisplay)comp).ToList();
+
+            ActionRebuild.Invoke("list", list.Concat(listDraw).ToList());
+        }
    
+
 
         public static bool RebuildTree()
         {
-            List<Model> list = Tree.listComp.Where(comp => IsCuby(comp)).ToList();
-            List<Model> listNot = list.Where(comp => IsNotRebuidCuby(comp)).ToList();
-
-            if (listNot.Count > 0)
-            {
-                ActionRebuild.Invoke("Перестроение невозможно", listNot);
-                return false;
-            }
-
-            List<Model> listParts = list.Where(comp => IsRebuidCuby(comp)).Where(comp => IsParts(comp)).ToList();
-            List<Model> listAsm = list.Where(comp => IsRebuidCuby(comp)).Where(comp => IsAsm(comp)).ToList();
-            List<Model> listPartsDraw = list.Where(comp => IsParts(comp)).Where(c => IsDraw(c)).Where(comp => IsRebuidCubyDraw(comp)).ToList();
-            List<Model> listAsmDraw = list.Where(comp => IsAsm(comp)).Where(c => IsDraw(c)).Where(comp => IsRebuidCubyDraw(comp)).ToList();
-
+           //List<IRebuild> listPartDraw = Tree.listDraw.Where(comp => IsRebuidDraw(comp)).Where(d=>d.mode)
 
             List<PdmID> listPdmParts = new List<PdmID>();
             List<PdmID> listPdmDrawParts = new List<PdmID>();
@@ -98,21 +92,7 @@ namespace FormSW_Tree
             List<PdmID> listPdmAsm = new List<PdmID>();
             List<PdmID> listPdmDrawAsm = new List<PdmID>();
 
-            listParts.ForEach(item => listPdmParts.Add(new PdmID(item.bFile, item.bFolder, item.FullPath)));
-            listAsm.ForEach(item =>
-                listPdmAsm.Add(new PdmID(item.bFile, item.bFolder, item.FullPath)));
-
-            listPartsDraw.ForEach(item =>
-                {
-                    listPdmDrawParts.Add(new PdmID(item.draw.FileID, item.draw.FolderID, item.draw.path));
-                    listPdmModelPartsToDraw.Add(new PdmID(item.bFile, item.bFolder, item.FullPath));
-                });
-
-            listAsmDraw.ForEach(item =>
-             {
-                listPdmDrawAsm.Add(new PdmID(item.draw.FileID, item.draw.FolderID, item.draw.path));
-                listPdmModelAsmToDraw.Add(new PdmID(item.bFile, item.bFolder, item.FullPath));
-             });
+           
 
             if (listPdmParts.Count > 0)Update(listPdmParts, listPdmParts);
 
@@ -172,17 +152,11 @@ namespace FormSW_Tree
             return Regex.IsMatch(comp.CubyNumber, regCuby);
         };
 
-        static Predicate<Model> IsRebuidCuby = (comp) => (comp.State.Name == "In work" && comp.IsRebuild == true);
-
-        static Predicate<Model> IsRebuidCubyDraw = (comp) =>
-          ((comp.draw.State.Name == "In work" && (comp.draw.CompareVersRef == true || comp.draw.NeedsRegeneration == true))); 
-     
-        
-    
-        static Predicate<Model> IsNotRebuidCuby = (comp) => (comp.IsRebuild == true && comp.State.Name != "In work"  );
+        static Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw|| comp.st == StateModel.DrawFromModel;
+        static Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw || comp.st == StateModel.DrawFromModel;
         static Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
         static Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
-        static Predicate<Model> IsDraw = (Model comp) => comp.isDraw;
+      
     }
 }
 

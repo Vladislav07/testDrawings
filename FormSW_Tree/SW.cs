@@ -94,7 +94,7 @@ namespace FormSW_Tree
 
 
             ModelDoc2 swDoc;
-            DrawingDoc swDrawDoc;
+           // DrawingDoc swDrawDoc;
             swDocumentTypes_e swDocType;
 
             string strModelFile;
