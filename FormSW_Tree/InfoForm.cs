@@ -36,6 +36,7 @@ namespace FormSW_Tree
         public void FillDataGridView1(List<IDisplay> listComp)
         {
             dataGridView.Rows.Clear();
+            this.Refresh();
             dataGridView.Cursor = Cursors.WaitCursor;
             dataGridView.ColumnCount = 4;
             dataGridView.Columns[0].Name = "Cuby Number";

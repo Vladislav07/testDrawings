@@ -79,41 +79,71 @@ namespace FormSW_Tree
             ActionRebuild.Invoke("list", list.Concat(listDraw).ToList());
         }
    
-
-
         public static bool RebuildTree()
         {
-           //List<IRebuild> listPartDraw = Tree.listDraw.Where(comp => IsRebuidDraw(comp)).Where(d=>d.mode)
-
-            List<PdmID> listPdmParts = new List<PdmID>();
+            List<IRebuild> listPartDraw = Tree.listDraw.Where(d => IsRebuidDraw(d))
+                .Where(d=>d.model.Ext == ".sldprt"|| d.model.Ext == ".SLDPRT")
+                .Select(d => (IRebuild)d).ToList();
             List<PdmID> listPdmDrawParts = new List<PdmID>();
-            List<PdmID> listPdmModelPartsToDraw = new List<PdmID>();
-            List<PdmID> listPdmModelAsmToDraw = new List<PdmID>();
-            List<PdmID> listPdmAsm = new List<PdmID>();
-            List<PdmID> listPdmDrawAsm = new List<PdmID>();
+            List<string> listPathDrawParts = new List<string>();
+            listPartDraw.ForEach(d =>
+            {
+                listPdmDrawParts.AddRange(d.GetIDFromPDM());
+                listPathDrawParts.Add(d.GetPath());
+            });
 
-           
 
-            if (listPdmParts.Count > 0)Update(listPdmParts, listPdmParts);
+            List<IRebuild> listAss = Tree.listComp.Where(c => IsRebuidModel(c))
+                .Where(c => IsAsm(c))
+                .Select(d => (IRebuild)d).ToList();
+            List<PdmID> listPdmAss= new List<PdmID>();
+            List<string> listPathAss = new List<string>();
+            listAss.ForEach(a =>
+            {
+                listPdmAss.AddRange(a.GetIDFromPDM());
+                listPathAss.Add(a.GetPath());
+            });
 
-            if (listPdmDrawParts.Count>0) UpdateDraw(listPdmDrawParts.Concat(listPdmModelPartsToDraw).ToList(), listPdmDrawParts);
 
-            if (listPdmAsm.Count>0)Update(listPdmAsm, listPdmAsm);
-            
-            if(listPdmDrawAsm.Count>0) UpdateDraw(listPdmDrawAsm, listPdmDrawAsm);
+            List<IRebuild> listAssDraw = Tree.listDraw.Where(d => IsRebuidDraw(d))
+                .Where(d => d.model.Ext == ".sldasm" || d.model.Ext == ".SLDASM")
+                .Select(d => (IRebuild)d).ToList();
+            List<PdmID> listPdmDrawAss = new List<PdmID>();
+            List<string> listPathDrawAss = new List<string>();
+            listAssDraw.ForEach(d =>
+            {
+                listPdmDrawAss.AddRange(d.GetIDFromPDM());
+                listPathDrawAss.Add(d.GetPath());
+            });
 
-           // GetInfoFromPDM();
 
+
+            if (listPartDraw.Count > 0) UpdateDraw(listPdmDrawParts, listPathDrawParts);
+
+            if (listAss.Count > 0)
+            {
+                listPathAss.Reverse();
+                Update(listPdmAss, listPathAss);
+            }
+
+            if (listAssDraw.Count>0) UpdateDraw(listPdmDrawAss, listPathDrawAss);
+
+            Refresh();
+            string p = Tree.listComp.First(c => c.Level == 0).FullPath;
+            sw.OpenFile(p);
             return true;
         } 
 
-        public static bool Cancel()
+        private static bool Refresh()
         {
+            Tree.Refresh();
+            Tree.CompareVersions();
+            FilteringList();
             return true;
         }
 
 
-        private static void Update(List<PdmID> listToPdm, List<PdmID> listToSw)
+        private static void Update(List<PdmID> listToPdm, List<string> listToSw)
         {
             try
             {
@@ -129,7 +159,7 @@ namespace FormSW_Tree
             }
           
         }
-        private static void UpdateDraw(List<PdmID> listToPdm, List<PdmID> listToSw)
+        private static void UpdateDraw(List<PdmID> listToPdm, List<string> listToSw)
         {
             try
             {
@@ -160,34 +190,3 @@ namespace FormSW_Tree
     }
 }
 
-/*
- 1. выявить
-       все компоненты, которые не дадут обновить дерево
-       а. в состоянии не inwork (для CUBY-00...)
-       б. библиотечные компоненты, состояние которых init...
-  if > 0
- 1.1 Состояние - обновление не возможно
- 1.2 Вывести список 
- 1.3 Вывести сообщение
-
- 2. Состояние - возможно обновление
- 2.1 вывести список файлов к обновлению
-     а. модели не перестроенные
-     б. модели - в иерархии выше
-     в. чертежи не перестроенные
-     г. чертежи обновляемых моделей
- 2.2 вывести сообщение
-
- 3 Состояние - обновление
- 3.1 модели деталей
- 3.2 Чертежи деталей (модель детали в checkout)
- 3.3 Модели сборок снизу вверх
- 3.4 Чертежи сборок
- 3.5 вывод номера обновляемой детали 
- 3.6 обновление списка
-
- 4. состояние - сканирование дерева
-       
-    
- 
- * */

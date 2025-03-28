@@ -272,7 +272,18 @@ namespace FormSW_Tree
 
         }
 
-        public void OpenAndRefresh(List<PdmID> list)
+        public void OpenFile(string path)
+        {
+            ModelDoc2 swModelDoc = default(ModelDoc2);
+            int errors = 0;
+            int warnings = 0;
+            int lErrors = 0;
+            int lWarnings = 0;
+            swModelDoc = (ModelDoc2)swApp.OpenDoc6(path, (int)swDocumentTypes_e.swDocASSEMBLY,
+                (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+        }
+
+        public void OpenAndRefresh(List<string> list)
         {
             ModelDoc2 swModelDoc = default(ModelDoc2);
             int errors = 0;
@@ -285,9 +296,9 @@ namespace FormSW_Tree
 
             try
             {
-                foreach (PdmID item in list)
+                foreach (string item in list)
                 {
-                    fileName = item.PathFile;
+                    fileName = item;
                     string ext = Path.GetExtension(fileName);
 
                     if(ext == ".sldpart" || ext == ".SLDPART")
@@ -313,7 +324,7 @@ namespace FormSW_Tree
             }
         }
 
-        public void OpenAndRefreshDrawings(List<PdmID> list)
+        public void OpenAndRefreshDrawings(List<string> list)
         {
             ModelDoc2 swModelDoc = default(ModelDoc2);
             int errors = 0;
@@ -330,9 +341,9 @@ namespace FormSW_Tree
 
             try
             {
-                foreach (PdmID item in list)
+                foreach (string item in list)
                 {
-                    fileName = item.PathFile;
+                    fileName = item;
                     swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocDRAWING, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
 
                     extMod = swModelDoc.Extension;

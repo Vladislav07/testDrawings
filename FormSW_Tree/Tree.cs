@@ -54,19 +54,26 @@ namespace FormSW_Tree
 
         public static void CompareVersions()
         {
+            foreach (Drawing item in listDraw)
+            {
+                if (!item.isPart) continue;
+                item.SetState();
+            }
+
             listComp.Reverse();
             foreach (Model item in listComp)
             {
                 item.SetState();
             }
-
-            listDraw.Reverse();
+            listComp.Reverse();
+       
 
             foreach (Drawing item in listDraw)
             {
+                if (item.isPart) continue;
                 item.SetState();
             }
-
+          
         }
 
         public  static int Part_IsChild(string cubyNumber, int VersChild)
@@ -129,10 +136,16 @@ namespace FormSW_Tree
             foreach (Model comp in listComp)
                 {
                     comp.GetEdmFile();
-                    comp.GetReferenceFromAssemble();
+                   // comp.GetReferenceFromAssemble();
                     comp.IsDrawings();
                 }
             
+        }
+
+        public static void Refresh()
+        {
+            listComp.ForEach(c => c.RefreshPdmFile());
+            listDraw.ForEach(c => c.RefreshPdmFile());
         }
 
     }

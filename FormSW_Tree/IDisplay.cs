@@ -8,6 +8,7 @@ namespace FormSW_Tree
 {
   public  interface IDisplay
     {
+        void RefreshPdmFile();
         string[] Print();
     }
 

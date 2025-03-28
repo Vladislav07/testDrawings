@@ -17,7 +17,9 @@ namespace FormSW_Tree
         public string CubyNumber{get;set;}
         string msgRefVers;
         public StateModel st { get; set; }
-        Model model;
+        public Model model { get; set; }
+        public bool isPart { get; set; }
+
         public Drawing(string _path, Model _m, IEdmFile7 _bFile, int _bFolder)
         {
             path = _path;
@@ -27,7 +29,14 @@ namespace FormSW_Tree
             FolderID = _bFolder;
             st = StateModel.Clean;
             CubyNumber = model.CubyNumber;
-          
+            if(model.Ext == ".SLDPRT" || model.Ext == ".sldprt")
+            {
+                isPart = true;
+            }
+            else
+            {
+                isPart = false;
+            }
         }
 
   
@@ -52,6 +61,7 @@ namespace FormSW_Tree
                 {
                     model.st = StateModel.DrawFromModel;
                 }
+               
             }
 
             if (model.st == StateModel.ModelAndDraw)
@@ -107,6 +117,11 @@ namespace FormSW_Tree
         public string GetPath()
         {
             return path;
+        }
+
+        public void RefreshPdmFile()
+        {
+            bFile.Refresh();
         }
 
     }

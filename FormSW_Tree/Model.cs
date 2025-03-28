@@ -55,7 +55,8 @@ namespace FormSW_Tree
         public void SetState()
         {
             if (Ext == ".sldprt" || Ext == ".SLDPRT") return;
-           
+            this.GetReferenceFromAssemble();
+
             bool isRebuildAsm = false;
             isRebuildAsm = isNeedsRebuld();
         
@@ -125,6 +126,11 @@ namespace FormSW_Tree
         public string GetPath()
         {
             return FullPath;
+        }
+
+       public void RefreshPdmFile()
+        {
+            File.Refresh();
         }
     }
 }
