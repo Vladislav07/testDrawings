@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Data;
 using System.Windows.Forms;
+using System.IO;
 
 namespace FormSW_Tree
 {
@@ -40,7 +41,18 @@ namespace FormSW_Tree
                 comp = item.Value;
                 if (numberCuby == comp.CubyNumber) return comp; 
             }
-            comp = new Model(numberCuby, path);
+            string e = Path.GetExtension(path);
+            if (e == ".SLDPRT" || e == ".sldprt")
+            {
+                comp = new Part(numberCuby, path);
+            }
+            else if (e == ".SLDASM" || e == ".sldasm")
+            {
+                comp = new Assemble(numberCuby, path);
+            }
+            else { 
+                return null;
+            }
             comp.NotificationParent += Comp_NotificationParent;
             return comp;
         }

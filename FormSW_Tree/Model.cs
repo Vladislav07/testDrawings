@@ -17,7 +17,7 @@ namespace FormSW_Tree
         Blocked=4,
         NotRebuild=5,
     }
-  public  class Model: IDisplay, IRebuild
+  public abstract class Model: IDisplay, IRebuild
     {
         public event Action<string> NotificationParent;
     
@@ -30,8 +30,7 @@ namespace FormSW_Tree
         public int Level { get; set; }
 
         public StateModel st { get; set; }
-        public Dictionary<string, int> listRefChild;
-        public Dictionary<string, string> listRefChildError;
+      
         public List<string> listParent;
 
         public IEdmFile5 File { get; set; }
@@ -42,79 +41,23 @@ namespace FormSW_Tree
             FullPath = fn;
             st = StateModel.Clean;
             File = null;
-            Ext = Path.GetExtension(FullPath);
-            if(Ext == ".sldasm" ||Ext == ".SLDASM")
-                {
-                    listRefChild = new Dictionary<string, int>();
-                    listRefChildError = new Dictionary<string, string>();
-                }
-          
             listParent = new List<string>();
                  
         }
-        public void SetState()
+        public virtual  void SetState()
         {
-            if (Ext == ".sldprt" || Ext == ".SLDPRT") return;
-            this.GetReferenceFromAssemble();
-
-            bool isRebuildAsm = false;
-            isRebuildAsm = isNeedsRebuld();
-        
-            if (isRebuildAsm )
-            {
-                st = StateModel.ModelAndDraw;
-            }
-
             if (st == StateModel.ModelAndDraw || st == StateModel.DrawFromModel)
             {
-                    foreach (string item in listParent)
+                foreach (string item in listParent)
                 {
                     NotificationParent.Invoke(item);
                 }
-             
+
             }
-            
         }
-
-        bool isNeedsRebuld()
-        {
-            if (listRefChild.Count == 0) return false;
-            listRefChildError.Clear(); 
-            foreach (KeyValuePair<string, int> item in listRefChild)
-            {
-
-                int isVers = Tree.Part_IsChild(item.Key, item.Value);
-
-                if (isVers != -1)
-                {
-                    listRefChildError.Add(item.Key, item.Value.ToString() + "/" + isVers.ToString());
-                }
-
-            }
-           return (listRefChildError.Count>0) ? true: false;
-           
-        }
-
-        public string[] Print()
-        {
-            string[] listDisplay = new string[4];
-            listDisplay[0] = CubyNumber;
-            if(Ext == ".sldprt" || Ext == ".SLDPRT")
-            {
-                listDisplay[1] = "Part";
-            }
-            else if (Ext == ".sldasm" || Ext == ".SLDASM")
-            {
-                listDisplay[1] = "Assemble";
-            }
-            else
-            {
-                listDisplay[1] = "Other";
-            }
-            listDisplay[2] = st.ToString();
-            listDisplay[3] = Level.ToString();
-            return listDisplay;
-        }
+        public abstract string[] Print();
+   
+      
 
         public List<PdmID> GetIDFromPDM()
         {

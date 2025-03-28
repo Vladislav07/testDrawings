@@ -54,10 +54,9 @@ namespace FormSW_Tree
             
         }
 
-        public static void GetReferenceFromAssemble(this Model ass)
+        internal static void GetReferenceFromAssemble(this Assemble ass)
         {
-            string e = Path.GetExtension(ass.FullPath);
-            if (e == ".SLDPRT" || e == ".sldprt") return;
+
             IEdmReference5 ref5 = ass.File.GetReferenceTree(ass.bFolder);
             IEdmReference10 ref10 = (IEdmReference10)ref5;
             IEdmPos5 pos = ref10.GetFirstChildPosition3("A", true, true, (int)EdmRefFlags.EdmRef_File, "", 0);
@@ -146,20 +145,12 @@ namespace FormSW_Tree
         {
             try
             {
-
                 batchUnlocker = (IEdmBatchUnlock2)vault.CreateUtility(EdmUtility.EdmUtil_BatchUnlock);
                 batchUnlocker.AddSelection((EdmVault5)vault1, ref ppoSelection);
                 batchUnlocker.CreateTree(0, (int)EdmUnlockBuildTreeFlags.Eubtf_MayUnlock);
-
                 batchUnlocker.Comment = "Refresh";
-              //  bool retVal = batchUnlocker.ShowDlg(0);
-              //  if ((retVal))
-              //  {
-                    batchUnlocker.UnlockFiles(0, null);
-                    EventProcess("Processing completed");
-              //  }
-
-
+                batchUnlocker.UnlockFiles(0, null);
+                EventProcess("Processing completed");
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {

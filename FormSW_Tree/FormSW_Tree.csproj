@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assemble.cs" />
     <Compile Include="Controler.cs" />
     <Compile Include="Drawing.cs" />
     <Compile Include="IDisplay.cs" />
@@ -68,6 +69,7 @@
       <DependentUpon>InfoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model.cs" />
+    <Compile Include="Part.cs" />
     <Compile Include="PDM.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

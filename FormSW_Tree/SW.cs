@@ -163,12 +163,6 @@ namespace FormSW_Tree
             GetBomTable();
         }
 
-        public void Cancel()
-        {
-
-
-        }
-  
 
          void GetRootComponent()
         {
@@ -191,11 +185,8 @@ namespace FormSW_Tree
            // string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
             int nbrType = (int)swNumberingType_e.swNumberingType_Detailed;
             int BomType = (int)swBomType_e.swBomType_Indented;
-            // Stopwatch stopwatch = new Stopwatch();
-            // stopwatch.Start();
+
             swBOMAnnotation = Ext.InsertBomTable3(TemplateName, 0, 0, BomType, Configuration, false, nbrType, false);
-            //stopwatch.Stop();
-            // MessageBox.Show(stopwatch.Elapsed.ToString());
             swBOMFeature = swBOMAnnotation.BomFeature;
 
             TableAnnotation swTableAnn = (TableAnnotation)swBOMAnnotation;
@@ -210,7 +201,6 @@ namespace FormSW_Tree
             bool boolstatus = false;
 
             BomName = swBOMFeature.Name;
-            // MessageBox.Show(BomName);
             nNumRow = swTableAnn.RowCount;
             for (J = 0; J <= nNumRow - 1; J++)
             {
