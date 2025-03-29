@@ -19,8 +19,15 @@ namespace FormSW_Tree
         }
         public int FileId { get; set; }
         public int FolderId { get; set; }
- 
     }
+
+    enum StateApp {
+        NoConnect=0,
+        Connected=1,
+        NotAssemble=2,
+        LoadedModel=3
+
+        }
 
    public static class Controler
     {
@@ -29,30 +36,43 @@ namespace FormSW_Tree
         public static event Action<string, List<IDisplay>> ActionRebuild;
         static SW sw;
         private static List<Model> models { get; set; }
+        static StateApp  stApp;
 
- 
 
          static Controler()
         {
             models = new List<Model>();
+            stApp=StateApp.NoConnect;
         }
 
         public static bool Init()
         {
-            sw = new SW();
-            sw.numberModel += Sw_numberModel;
-            sw.action += Sw_action;
-            sw.btnConnectSW();
-            sw.BuildTree();
-            Tree.SearchParentFromChild();
-            Tree.FillCollection();
+            sw = new SW();       
+            sw.connectSw += Sw_connectSw;
+            sw.btnConnectSW();         
             return true;
         }
 
-        private static void Sw_action(string msg)
+        private static void Sw_connectSw(string[] msg, bool arg)
         {
-            MsgState.Invoke(msg);
+             if (!arg)
+             {
+                stApp = StateApp.NotAssemble;
+                MsgState.Invoke(msg[0]);
+             }
+             else
+            {
+                stApp = StateApp.LoadedModel;
+                sw.BuildTree();
+                Tree.SearchParentFromChild();
+                Tree.FillCollection();
+                Sw_numberModel(msg[1]);
+                GetInfoFromPDM();
+            }
+            
         }
+
+     
 
         private static void Sw_numberModel(string obj)
         {
@@ -190,3 +210,9 @@ namespace FormSW_Tree
     }
 }
 
+/*
+   to rebuild
+   blocked
+
+
+  */

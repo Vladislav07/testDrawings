@@ -55,7 +55,7 @@ namespace FormSW_Tree
         private void btnRebuild_Click(object sender, EventArgs e)
         {
             Controler.RebuildTree();
-            Controler.GetInfoFromPDM();
+      
           
         }
 
@@ -65,7 +65,7 @@ namespace FormSW_Tree
             Controler.ActionRebuild += Controler_ActionRebuild;
             Controler.MsgState += Controler_MsgState;
             Controler.Init();
-            Controler.GetInfoFromPDM();
+         
  
         }
     }

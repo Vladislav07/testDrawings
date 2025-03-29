@@ -71,9 +71,11 @@ namespace FormSW_Tree
                     if (extension == ".sldasm" || extension == ".sldprt" || extension == ".SLDASM" || extension == ".SLDPRT")
                     {
                         cubyNumber = Path.GetFileNameWithoutExtension(@ref.Name);
+
                         string regCuby = @"^CUBY-\d{8}$";
                         bool IsCUBY = Regex.IsMatch(cubyNumber.Trim(), regCuby);
-                        if (!IsCUBY) continue;
+                      //  if (!IsCUBY) continue;
+
                         verChildRef = @ref.VersionRef;
                         if (ass.listRefChild.ContainsKey(cubyNumber.Trim()))continue;
                         ass.listRefChild.Add(cubyNumber.Trim(), verChildRef);
@@ -177,7 +179,7 @@ namespace FormSW_Tree
             {
                 if (!vault1.IsLoggedIn)
                 {
-                    vault1.LoginAuto("CUBY_PDM", 0);
+                    vault1.LoginAuto("My", 0);
                 }
                 vault = (IEdmVault7)vault1;
             }

@@ -148,7 +148,6 @@ namespace FormSW_Tree
             foreach (Model comp in listComp)
                 {
                     comp.GetEdmFile();
-                   // comp.GetReferenceFromAssemble();
                     comp.IsDrawings();
                 }
             

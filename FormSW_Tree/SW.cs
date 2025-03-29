@@ -20,10 +20,8 @@ namespace FormSW_Tree
         private AssemblyDoc swMainAssy;
         private Configuration swMainConfig;
   
-        private String statLabel;
-        
-        public event Action<string> action;
-        public event Action<string> numberModel;
+        public event Action<string[], bool> connectSw;
+       
 
         public void btnConnectSW()
         {
@@ -41,18 +39,16 @@ namespace FormSW_Tree
 
             // Get active model
             string[] strResult = LoadActiveModel();
-            statLabel = strResult[0];
-            SendNumberModel(strResult[1]);
-            SendMessage(statLabel);
-        }
-        void SendNumberModel(string strNumber)
-        {
-            numberModel?.Invoke(strNumber);
+          
+            IsConnect(strResult);
         }
 
-        void SendMessage(string msg)
-        {
-            action?.Invoke(msg);
+        private void IsConnect(string[] statLabel)
+        {   bool isInit = false;
+            if (statLabel[0] == "") {
+               isInit = true;
+            }
+            connectSw?.Invoke(statLabel, isInit);
         }
 
         string swAttach()
@@ -103,7 +99,7 @@ namespace FormSW_Tree
             string strConfigName = null;
 
             string[] strReturn = new string[4];
-
+            strReturn[0] = "";
             int intErrors = 0;
             int intWarnings = 0;
 
@@ -181,8 +177,8 @@ namespace FormSW_Tree
             BomFeature swBOMFeature = default(BomFeature);
             BomTableAnnotation swBOMAnnotation = default(BomTableAnnotation);
             string Configuration = swMainConfig.Name;
-            string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
-           // string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
+           // string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
+            string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
             int nbrType = (int)swNumberingType_e.swNumberingType_Detailed;
             int BomType = (int)swBomType_e.swBomType_Indented;
 

@@ -39,6 +39,7 @@ namespace FormSW_Tree
         {
             CubyNumber = cn;
             FullPath = fn;
+            Ext = Path.GetExtension(fn);
             st = StateModel.Clean;
             File = null;
             listParent = new List<string>();
