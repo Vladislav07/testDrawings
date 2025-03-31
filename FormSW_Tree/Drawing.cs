@@ -104,7 +104,7 @@ namespace FormSW_Tree
 
         public string[] Print()
         {
-            string[] listDisplay = new string[4];
+            string[] listDisplay = new string[5];
             listDisplay[0] = CubyNumber;
            
             listDisplay[1] = "Draw";

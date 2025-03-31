@@ -48,6 +48,11 @@ namespace FormSW_Tree
         }
         public virtual void SetState()
         {
+            if (st == StateModel.Clean && File.NeedsRegeneration(File.CurrentVersion, bFolder))
+            {
+                st = StateModel.ModelAndDraw;
+            }
+
             if (st == StateModel.ModelAndDraw || st == StateModel.DrawFromModel)
             {
                 foreach (string item in listParent)
@@ -71,7 +76,16 @@ namespace FormSW_Tree
 
 
         }
-        public abstract string[] Print();
+        public string[] Print()
+        {
+            string[] listDisplay = new string[5];
+            listDisplay[0] = CubyNumber;
+            listDisplay[1] = Section;
+            listDisplay[2] = st.ToString();
+            listDisplay[3] = Level.ToString();
+            listDisplay[4] = File.CurrentState.Name.ToString();
+            return listDisplay;
+        }
 
         bool IsWork
         {

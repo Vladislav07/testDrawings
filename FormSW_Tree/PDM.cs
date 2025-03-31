@@ -46,6 +46,11 @@ namespace FormSW_Tree
                 {
                     item.Section = (string)val;
                 }
+                else
+                {
+                     error = enumVar.GetVar("Раздел", "@", out val);
+                     item.Section = val != null? (string)val: "none";
+                }
             }
             catch (Exception)
             {

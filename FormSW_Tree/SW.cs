@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -208,9 +209,12 @@ namespace FormSW_Tree
                 string[] str = (string[])swBOMAnnotation.GetModelPathNames(J, out ItemNumber, out PartNumber);
                 PathName = str[0];
                 designation = Path.GetFileNameWithoutExtension(PathName);
-                // string regCuby = @"^CUBY-\d{8}$";
-                //  bool IsCUBY = Regex.IsMatch(PartNumberTrim, regCuby);
-                //  if (!IsCUBY) continue;
+                string regCuby = @"^CUBY-\d{8}$";
+                bool IsCUBY = Regex.IsMatch(PartNumberTrim, regCuby);
+                if (!IsCUBY)
+                {
+                    PartNumberTrim = designation;
+                }
                 e = Path.GetExtension(PathName);
                 string AddextendedNumber = "0." + ItemNumber;
                 if (e == ".SLDPRT" || e == ".sldprt" || e == ".SLDASM" || e == ".sldasm")
@@ -228,35 +232,6 @@ namespace FormSW_Tree
         }
 
 
-        swDocumentTypes_e GetTypeFromString(string strModelPathName)
-        {
-
-            string strModelName;
-            string strFileExt;
-            swDocumentTypes_e swDocType;
-
-            strModelName = strModelPathName.Substring(strModelPathName.LastIndexOf("\\") + 1, strModelPathName.Length - strModelPathName.LastIndexOf("\\") - 1);
-            strFileExt = strModelPathName.Substring(strModelPathName.LastIndexOf(".") + 1, strModelPathName.Length - strModelPathName.LastIndexOf(".") - 1);
-
-            switch (strFileExt)
-            {
-                case "SLDASM":
-                    swDocType = swDocumentTypes_e.swDocASSEMBLY;
-                    break;
-                case "SLDPRT":
-                    swDocType = swDocumentTypes_e.swDocPART;
-                    break;
-                case "SLDDRW":
-                    swDocType = swDocumentTypes_e.swDocDRAWING;
-                    break;
-                default:
-                    swDocType = swDocumentTypes_e.swDocNONE;
-                    break;
-            }
-
-            return (swDocType);
-
-        }
 
         public void OpenFile(string path)
         {

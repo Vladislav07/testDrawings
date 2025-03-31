@@ -53,16 +53,7 @@ namespace FormSW_Tree
 
         }
 
-        public override string[] Print()
-        {
-            string[] listDisplay = new string[4];
-            listDisplay[0] = CubyNumber;
-            listDisplay[1] = "Assemble";
-            listDisplay[2] = st.ToString();
-            listDisplay[3] = Level.ToString();
-            listDisplay[4] = File.CurrentState.Name.ToString();
-            return listDisplay;
-        }
+      
 
      
     }

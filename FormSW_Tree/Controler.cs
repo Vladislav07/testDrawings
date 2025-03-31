@@ -74,7 +74,6 @@ namespace FormSW_Tree
         }
 
      
-
         private static void Sw_numberModel(string obj)
         {
             if (NumberModel!=null)
@@ -94,8 +93,11 @@ namespace FormSW_Tree
 
         private static void FilteringList()
         {
-            List<IDisplay> list = Tree.listComp.Where(comp => IsRebuidModel(comp)).Select(comp => (IDisplay)comp).ToList();
-            List<IDisplay> listDraw = Tree.listDraw.Where(comp => IsRebuidDraw(comp)).Select(comp => (IDisplay)comp).ToList();
+            List<IDisplay> list = Tree.listComp
+                .Where(comp => IsCuby(comp))
+                .Where(comp => IsRebuidModel(comp)).Select(comp => (IDisplay)comp).ToList();
+            List<IDisplay> listDraw = Tree.listDraw
+                .Where(comp => IsRebuidDraw(comp)).Select(comp => (IDisplay)comp).ToList();
 
             ActionRebuild.Invoke("list", list.Concat(listDraw).ToList());
         }
@@ -215,17 +217,11 @@ namespace FormSW_Tree
             return Regex.IsMatch(comp.CubyNumber, regCuby);
         };
 
-        static Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw|| comp.st == StateModel.DrawFromModel;
-        static Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw || comp.st == StateModel.DrawFromModel;
+        static Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw || comp.st == StateModel.DrawFromModel;
+        static Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw|| comp.st == StateModel.DrawFromModel;
         static Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
         static Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
       
     }
 }
 
-/*
-   to rebuild
-   blocked
-
-
-  */
