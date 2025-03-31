@@ -68,7 +68,7 @@ namespace FormSW_Tree
         {
             foreach (Drawing item in listDraw)
             {
-                if (!item.isPart) continue;
+                if (item.isPart) continue;
                 item.SetState();
             }
 
@@ -82,7 +82,7 @@ namespace FormSW_Tree
 
             foreach (Drawing item in listDraw)
             {
-                if (item.isPart) continue;
+                if (!item.isPart) continue;
                 item.SetState();
             }
           

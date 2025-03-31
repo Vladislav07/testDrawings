@@ -18,8 +18,19 @@ namespace FormSW_Tree
             listDisplay[1] = "Part";
             listDisplay[2] = st.ToString();
             listDisplay[3] = Level.ToString();
+            listDisplay[4] = File.CurrentState.Name.ToString();
             return listDisplay;
         }
-   
+
+        public override void SetState()
+        {
+            if(File.NeedsRegeneration(File.CurrentVersion, bFolder))
+            {
+                st = StateModel.DrawFromModel;
+            }
+            
+            base.SetState();
+
+        }
     }
 }

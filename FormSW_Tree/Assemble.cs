@@ -26,6 +26,10 @@ namespace FormSW_Tree
             {
                 st = StateModel.ModelAndDraw;
             }
+            else
+            {
+                st = StateModel.Clean;
+            }
 
             base.SetState();
 
@@ -56,7 +60,10 @@ namespace FormSW_Tree
             listDisplay[1] = "Assemble";
             listDisplay[2] = st.ToString();
             listDisplay[3] = Level.ToString();
+            listDisplay[4] = File.CurrentState.Name.ToString();
             return listDisplay;
         }
+
+     
     }
 }

@@ -27,12 +27,12 @@ namespace FormSW_Tree
         public static void GetEdmFile(this Model item)
         {
            
-            IEdmFile5 File = null;
+            IEdmFile7 File = null;
             IEdmFolder5 ParentFolder = null;
 
             try
             {
-                File = vault1.GetFileFromPath(item.FullPath, out ParentFolder); 
+                File = (IEdmFile7)vault1.GetFileFromPath(item.FullPath, out ParentFolder); 
                 item.File = File;
                 item.bFolder = ParentFolder.ID;
                 item.bFile = File.ID;
@@ -56,7 +56,7 @@ namespace FormSW_Tree
 
         internal static void GetReferenceFromAssemble(this Assemble ass)
         {
-
+            ass.listRefChild.Clear();
             IEdmReference5 ref5 = ass.File.GetReferenceTree(ass.bFolder);
             IEdmReference10 ref10 = (IEdmReference10)ref5;
             IEdmPos5 pos = ref10.GetFirstChildPosition3("A", true, true, (int)EdmRefFlags.EdmRef_File, "", 0);
@@ -71,10 +71,10 @@ namespace FormSW_Tree
                     if (extension == ".sldasm" || extension == ".sldprt" || extension == ".SLDASM" || extension == ".SLDPRT")
                     {
                         cubyNumber = Path.GetFileNameWithoutExtension(@ref.Name);
-
+                       
                         string regCuby = @"^CUBY-\d{8}$";
                         bool IsCUBY = Regex.IsMatch(cubyNumber.Trim(), regCuby);
-                      //  if (!IsCUBY) continue;
+                        // if (!IsCUBY) continue;
 
                         verChildRef = @ref.VersionRef;
                         if (ass.listRefChild.ContainsKey(cubyNumber.Trim()))continue;
@@ -92,17 +92,21 @@ namespace FormSW_Tree
             
         }
 
+    
+
         public static void AddSelItemToList(List<PdmID>updateList)
         {
             int i = 0;
             try
             {
                 ppoSelection = new EdmSelItem[updateList.Count];
+
                 foreach (PdmID item in updateList)
                 {
                     ppoSelection[i] = new EdmSelItem();
                     ppoSelection[i].mlDocID = item.FileId;
                     ppoSelection[i].mlProjID = item.FolderId;
+           
                     i++;
                 }
 
@@ -179,7 +183,7 @@ namespace FormSW_Tree
             {
                 if (!vault1.IsLoggedIn)
                 {
-                    vault1.LoginAuto("My", 0);
+                    vault1.LoginAuto("CUBY_PDM", 0);
                 }
                 vault = (IEdmVault7)vault1;
             }
@@ -198,16 +202,25 @@ namespace FormSW_Tree
         {
 
             IEdmFile7 bFile = null;
-            string p = Path.Combine(Path.GetDirectoryName(comp.FullPath), comp.CubyNumber + ".SLDDRW");
-            bFile = (IEdmFile7)vault.GetFileFromPath(p, out IEdmFolder5 bFolder);
+            try
+            {
+                string p = Path.Combine(Path.GetDirectoryName(comp.FullPath), comp.CubyNumber + ".SLDDRW");
+                bFile = (IEdmFile7)vault.GetFileFromPath(p, out IEdmFolder5 bFolder);
 
-            if (bFile != null)                                         
-            {                
-                Drawing draw = new Drawing(p, comp, bFile, bFolder.ID);
-                Tree.listDraw.Add(draw);
-                return true;
+                if (bFile != null)                                         
+                {                
+                    Drawing draw = new Drawing(p, comp, bFile, bFolder.ID);
+                    Tree.listDraw.Add(draw);
+                    return true;
+                }
+                
             }
-            return false;  
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message + "connecting to CUBY_PDM");
+            }
+           return false; 
         }
 
         public static int GetRefVersion(this Drawing draw)

@@ -177,8 +177,8 @@ namespace FormSW_Tree
             BomFeature swBOMFeature = default(BomFeature);
             BomTableAnnotation swBOMAnnotation = default(BomTableAnnotation);
             string Configuration = swMainConfig.Name;
-           // string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
-            string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
+            string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
+           // string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
             int nbrType = (int)swNumberingType_e.swNumberingType_Detailed;
             int BomType = (int)swBomType_e.swBomType_Indented;
 
@@ -269,6 +269,11 @@ namespace FormSW_Tree
                 (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
         }
 
+        public void CloseDoc()
+        {
+            swApp.CloseAllDocuments(true);
+        }
+
         public void OpenAndRefresh(List<string> list)
         {
             ModelDoc2 swModelDoc = default(ModelDoc2);
@@ -278,7 +283,7 @@ namespace FormSW_Tree
             int lWarnings = 0;
             ModelDocExtension extMod;
             string fileName = null;
-            swApp.CloseAllDocuments(true);
+           
 
             try
             {

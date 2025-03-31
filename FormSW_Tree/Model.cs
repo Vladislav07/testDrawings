@@ -15,7 +15,8 @@ namespace FormSW_Tree
         DrawFromModel=2,
         Clean=3,
         Blocked=4,
-        NotRebuild=5,
+        ImpossibleRebuild = 5,
+        Model=6
     }
   public abstract class Model: IDisplay, IRebuild
     {
@@ -33,7 +34,7 @@ namespace FormSW_Tree
       
         public List<string> listParent;
 
-        public IEdmFile5 File { get; set; }
+        public IEdmFile7 File { get; set; }
 
         public Model(string cn, string fn)
         {
@@ -45,7 +46,7 @@ namespace FormSW_Tree
             listParent = new List<string>();
                  
         }
-        public virtual  void SetState()
+        public virtual void SetState()
         {
             if (st == StateModel.ModelAndDraw || st == StateModel.DrawFromModel)
             {
@@ -55,17 +56,35 @@ namespace FormSW_Tree
                 }
 
             }
+
+            if (!IsWork)
+            {
+                if (st == StateModel.Clean)
+                {
+                    st = StateModel.Blocked;
+                }
+                else
+                {
+                    st = StateModel.ImpossibleRebuild;
+                }
+            }
+
+
         }
         public abstract string[] Print();
-   
-      
 
-        public List<PdmID> GetIDFromPDM()
+        bool IsWork
+        {
+            get { return (File.CurrentState.Name == "In work") ? true : false; }
+        }
+
+        public  List<PdmID> GetIDFromPDM()
         {
             List<PdmID> list = new List<PdmID>();
             list.Add(new PdmID(bFile, bFolder));
             return list;
         }
+
 
         public string GetPath()
         {

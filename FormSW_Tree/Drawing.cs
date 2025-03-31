@@ -68,6 +68,18 @@ namespace FormSW_Tree
             {
                 st = StateModel.OnlyDraw;
             }
+
+            if (!IsWork)
+            {
+                if (st == StateModel.Clean)
+                {
+                    st = StateModel.Blocked;
+                }
+                else
+                {
+                    st = StateModel.ImpossibleRebuild;
+                }
+            }
          
         }
 
@@ -99,6 +111,7 @@ namespace FormSW_Tree
          
             listDisplay[2] = st.ToString();
             listDisplay[3] = "__";
+            listDisplay[4] = bFile.CurrentState.Name.ToString();
             return listDisplay;
         }
 

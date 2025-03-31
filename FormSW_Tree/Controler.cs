@@ -7,6 +7,7 @@ using System.IO;
 using System.Data;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using EPDM.Interop.epdm;
 
 namespace FormSW_Tree
 {
@@ -101,6 +102,18 @@ namespace FormSW_Tree
    
         public static bool RebuildTree()
         {
+            sw.CloseDoc();
+            List<IRebuild> listPart = Tree.listComp.Where(d => IsRebuidModel(d))
+               .Where(d => d.Ext == ".sldprt" || d.Ext == ".SLDPRT")
+               .Select(d => (IRebuild)d).ToList();
+            List<PdmID> listPdmParts = new List<PdmID>();
+            List<string> listPathParts = new List<string>();
+            listPart.ForEach(d =>
+            {
+                listPdmParts.AddRange(d.GetIDFromPDM());
+                listPathParts.Add(d.GetPath());
+            });
+
             List<IRebuild> listPartDraw = Tree.listDraw.Where(d => IsRebuidDraw(d))
                 .Where(d=>d.model.Ext == ".sldprt"|| d.model.Ext == ".SLDPRT")
                 .Select(d => (IRebuild)d).ToList();
@@ -136,7 +149,7 @@ namespace FormSW_Tree
                 listPathDrawAss.Add(d.GetPath());
             });
 
-
+            if (listPart.Count > 0) Update(listPdmParts, listPathParts);
 
             if (listPartDraw.Count > 0) UpdateDraw(listPdmDrawParts, listPathDrawParts);
 
@@ -155,7 +168,7 @@ namespace FormSW_Tree
         } 
 
         private static bool Refresh()
-        {
+        {        
             Tree.Refresh();
             Tree.CompareVersions();
             FilteringList();
