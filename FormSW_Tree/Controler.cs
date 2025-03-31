@@ -8,6 +8,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using EPDM.Interop.epdm;
+using System.Reflection.Emit;
 
 namespace FormSW_Tree
 {
@@ -87,7 +88,7 @@ namespace FormSW_Tree
         {
             Tree.GetInfoPDM();
             Tree.CompareVersions();
-            FilteringList();
+           // FilteringList();
             return true;
         }
 
@@ -209,6 +210,34 @@ namespace FormSW_Tree
 
             }
 
+        }
+
+        internal static void FillToListIsRebuild(ref DataTable dt)
+        {
+
+            dt.Columns.Add("Level", typeof(string));
+            dt.Columns.Add("Cuby Number", typeof(string));
+            dt.Columns.Add("Current Version", typeof(string));
+            dt.Columns.Add("List of Ref Child Errors", typeof(string));
+            dt.Columns.Add("Child", typeof(string));
+            dt.Columns.Add("Child info", typeof(string));
+            dt.Columns.Add("State", typeof(string));
+            
+            foreach (Model comp in Tree.listComp)
+            {
+                DataRow dr = dt.NewRow();
+                dr[0] = comp.Level.ToString();
+                dr[1] = comp.CubyNumber;
+                dr[2] = comp.Section;
+                dr[3] = comp.st.ToString();
+                dr[4] = "";
+                dr[5] = "";
+                dr[6] = "";
+
+               
+                dt.Rows.Add(dr);
+            }
+            
         }
 
         static Predicate<Model> IsCuby = (Model comp) =>

@@ -178,8 +178,8 @@ namespace FormSW_Tree
             BomFeature swBOMFeature = default(BomFeature);
             BomTableAnnotation swBOMAnnotation = default(BomTableAnnotation);
             string Configuration = swMainConfig.Name;
-            string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
-           // string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
+           // string TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
+            string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
             int nbrType = (int)swNumberingType_e.swNumberingType_Detailed;
             int BomType = (int)swBomType_e.swBomType_Indented;
 
@@ -211,10 +211,11 @@ namespace FormSW_Tree
                 designation = Path.GetFileNameWithoutExtension(PathName);
                 string regCuby = @"^CUBY-\d{8}$";
                 bool IsCUBY = Regex.IsMatch(PartNumberTrim, regCuby);
-                if (!IsCUBY)
+             /*   if (!IsCUBY)
                 {
                     PartNumberTrim = designation;
-                }
+               }
+            */
                 e = Path.GetExtension(PathName);
                 string AddextendedNumber = "0." + ItemNumber;
                 if (e == ".SLDPRT" || e == ".sldprt" || e == ".SLDASM" || e == ".sldasm")

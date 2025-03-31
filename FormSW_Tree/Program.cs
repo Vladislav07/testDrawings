@@ -16,7 +16,7 @@ namespace FormSW_Tree
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new InfoForm());
+            Application.Run(new InfoF());
         }
     }
 }

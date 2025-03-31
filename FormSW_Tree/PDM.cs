@@ -188,7 +188,7 @@ namespace FormSW_Tree
             {
                 if (!vault1.IsLoggedIn)
                 {
-                    vault1.LoginAuto("CUBY_PDM", 0);
+                    vault1.LoginAuto("My", 0);    
                 }
                 vault = (IEdmVault7)vault1;
             }
