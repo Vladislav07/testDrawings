@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using EPDM.Interop.epdm;
 using System.Reflection.Emit;
+using System.ComponentModel;
 
 namespace FormSW_Tree
 {
@@ -31,23 +32,31 @@ namespace FormSW_Tree
 
         }
 
-   public static class Controler
+   public  class Controler : BackgroundWorker
     {
-        public static event Action<string> NumberModel;
-        public static event Action<string> MsgState;
-        public static event Action<string, List<IDisplay>> ActionRebuild;
-        static SW sw;
-        private static List<Model> models { get; set; }
-        static StateApp  stApp;
+        public  event Action<string> NumberModel;
+        public  event Action<string> MsgState;
+        public  event Action<string, List<IDisplay>> ActionRebuild;
+        SW sw;
+        private List<Model> models { get; set; }
+         StateApp  stApp;
+         InfoF f;
 
-
-         static Controler()
+         public Controler(InfoF _f)
         {
+            WorkerReportsProgress = true;
+            f= _f;
+            f.action += F_action;
             models = new List<Model>();
             stApp=StateApp.NoConnect;
         }
 
-        public static bool Init()
+        protected override void OnDoWork(DoWorkEventArgs e)
+        {
+            Init();
+        }
+
+        public  bool Init()
         {
             sw = new SW();       
             sw.connectSw += Sw_connectSw;
@@ -55,12 +64,18 @@ namespace FormSW_Tree
             return true;
         }
 
-        private static void Sw_connectSw(string[] msg, bool arg)
+        private  void F_action()
+        {
+            RebuildTree();
+        }
+
+        private  void Sw_connectSw(string[] msg, bool arg)
         {
              if (!arg)
              {
                 stApp = StateApp.NotAssemble;
-                MsgState.Invoke(msg[0]);
+                ReportProgress(0, msg[0]);
+                
              }
              else
             {
@@ -75,7 +90,7 @@ namespace FormSW_Tree
         }
 
      
-        private static void Sw_numberModel(string obj)
+        private  void Sw_numberModel(string obj)
         {
             if (NumberModel!=null)
             {
@@ -84,7 +99,7 @@ namespace FormSW_Tree
             }
         }
 
-        public static bool GetInfoFromPDM()
+        public  bool GetInfoFromPDM()
         {
             Tree.GetInfoPDM();
             Tree.CompareVersions();
@@ -92,7 +107,7 @@ namespace FormSW_Tree
             return true;
         }
 
-        private static void FilteringList()
+        private  void FilteringList()
         {
             List<IDisplay> list = Tree.listComp
                 .Where(comp => IsCuby(comp))
@@ -103,7 +118,7 @@ namespace FormSW_Tree
             ActionRebuild.Invoke("list", list.Concat(listDraw).ToList());
         }
    
-        public static bool RebuildTree()
+        public  bool RebuildTree()
         {
             sw.CloseDoc();
             List<IRebuild> listPart = Tree.listComp.Where(d => IsRebuidModel(d))
@@ -170,7 +185,7 @@ namespace FormSW_Tree
             return true;
         } 
 
-        private static bool Refresh()
+        private  bool Refresh()
         {        
             Tree.Refresh();
             Tree.CompareVersions();
@@ -179,7 +194,7 @@ namespace FormSW_Tree
         }
 
 
-        private static void Update(List<PdmID> listToPdm, List<string> listToSw)
+        private  void Update(List<PdmID> listToPdm, List<string> listToSw)
         {
             try
             {
@@ -195,7 +210,7 @@ namespace FormSW_Tree
             }
           
         }
-        private static void UpdateDraw(List<PdmID> listToPdm, List<string> listToSw)
+        private  void UpdateDraw(List<PdmID> listToPdm, List<string> listToSw)
         {
             try
             {
@@ -212,7 +227,7 @@ namespace FormSW_Tree
 
         }
 
-        internal static void FillToListIsRebuild(ref DataTable dt)
+        internal  void FillToListIsRebuild(ref DataTable dt)
         {
 
             dt.Columns.Add("Level", typeof(string));
@@ -240,16 +255,16 @@ namespace FormSW_Tree
             
         }
 
-        static Predicate<Model> IsCuby = (Model comp) =>
+         Predicate<Model> IsCuby = (Model comp) =>
         {
             string regCuby = @"^CUBY-\d{8}$";
             return Regex.IsMatch(comp.CubyNumber, regCuby);
         };
 
-        static Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw || comp.st == StateModel.DrawFromModel;
-        static Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw|| comp.st == StateModel.DrawFromModel;
-        static Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
-        static Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
+         Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw || comp.st == StateModel.DrawFromModel;
+         Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw|| comp.st == StateModel.DrawFromModel;
+         Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
+         Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
       
     }
 }

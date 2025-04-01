@@ -12,38 +12,33 @@ namespace FormSW_Tree
 {
     public partial class InfoF : Form
     {
-       
+        public event Action action;
+        Controler c;
         public InfoF()
         {
             InitializeComponent();
             this.dataGridView.AutoGenerateColumns = true;
-
         }
 
         private void InfoF_Load(object sender, EventArgs e)
         {
-            BackgroundWorker backgroundWorker = new BackgroundWorker();
-            backgroundWorker.DoWork += (senderF, eF) =>
-            {
-               
-                Controler.Init();
-            };
-
-            backgroundWorker.RunWorkerCompleted += (senderF, eF) =>
-            {
-        
-                DataTable dt = new DataTable();
-
-                Controler.FillToListIsRebuild(ref dt);
-                FillDataGridView(dt);
-                this.Refresh();
-               // OperationCompleted.Invoke(this, "Operation complete");
-            };
-
-            backgroundWorker.RunWorkerAsync();
+            c = new Controler(this);
+            c.RunWorkerCompleted += C_RunWorkerCompleted;
+            c.ProgressChanged += C_ProgressChanged;
+            c.RunWorkerAsync();
         }
 
-    
+        private void C_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            this.lbMsg.Text = e.UserState.ToString();
+        }
+
+        private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            DataTable dt = new DataTable();
+            c.FillToListIsRebuild(ref dt);
+            FillDataGridView(dt);
+        }
 
         public void FillDataGridView(DataTable dt)
         {
@@ -51,6 +46,11 @@ namespace FormSW_Tree
             dataGridView.Cursor = Cursors.WaitCursor;
             this.bindingSource1.DataSource = dt;         
             dataGridView.Cursor = Cursors.Default;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            action?.Invoke();
         }
     }
 }

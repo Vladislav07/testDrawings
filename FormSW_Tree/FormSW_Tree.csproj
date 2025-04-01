@@ -59,7 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assemble.cs" />
-    <Compile Include="Controler.cs" />
+    <Compile Include="Controler.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Drawing.cs" />
     <Compile Include="IDisplay.cs" />
     <Compile Include="InfoF.cs">

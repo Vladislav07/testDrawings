@@ -61,17 +61,17 @@ namespace FormSW_Tree
         private void btnRebuild_Click(object sender, EventArgs e)
         {
        
-            Controler.RebuildTree();
+            //Controler.RebuildTree();
       
           
         }
 
         private void InfoForm_Load(object sender, EventArgs e)
         {
-            Controler.NumberModel += Controler_NumberModel;
-            Controler.ActionRebuild += Controler_ActionRebuild;
-            Controler.MsgState += Controler_MsgState;
-            Controler.Init();
+           // Controler.NumberModel += Controler_NumberModel;
+           // Controler.ActionRebuild += Controler_ActionRebuild;
+           // Controler.MsgState += Controler_MsgState;
+           // Controler.Init();
          
  
         }
