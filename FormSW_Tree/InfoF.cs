@@ -30,7 +30,9 @@ namespace FormSW_Tree
 
         private void C_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            this.lbMsg.Text = e.UserState.ToString();
+            string[] msg = (string[])e.UserState;
+            this.lbMsg.Text = msg[0];
+            this.Text = msg[2];
         }
 
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

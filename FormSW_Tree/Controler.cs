@@ -24,31 +24,31 @@ namespace FormSW_Tree
         public int FolderId { get; set; }
     }
 
-    enum StateApp {
-        NoConnect=0,
-        Connected=1,
-        NotAssemble=2,
-        LoadedModel=3
-
-        }
-
-   public  class Controler : BackgroundWorker
+    internal struct ViewUser
     {
-        public  event Action<string> NumberModel;
-        public  event Action<string> MsgState;
-        public  event Action<string, List<IDisplay>> ActionRebuild;
-        SW sw;
-        private List<Model> models { get; set; }
-         StateApp  stApp;
-         InfoF f;
+        internal string NameComp { get; set; }
+        internal string TypeComp { get; set; }
+        internal string Level { get; set; }
+        internal string State { get; set; }
+        internal string Version { get; set; }
+        internal string IsLocked { get; set; }
+        internal string DrawState { get; set; }
+        internal string DrawVersRev { get; set; }
+        internal string DrawNeedRebuild { get; set; }
+        internal string DrawIsLocked { get; set; }
+    }
 
-         public Controler(InfoF _f)
+    public class Controler : BackgroundWorker
+    {
+
+        SW sw;
+        InfoF f;
+
+        public Controler(InfoF _f)
         {
             WorkerReportsProgress = true;
-            f= _f;
+            f = _f;
             f.action += F_action;
-            models = new List<Model>();
-            stApp=StateApp.NoConnect;
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
@@ -56,69 +56,44 @@ namespace FormSW_Tree
             Init();
         }
 
-        public  bool Init()
+        public bool Init()
         {
-            sw = new SW();       
+            sw = new SW();
             sw.connectSw += Sw_connectSw;
-            sw.btnConnectSW();         
+            sw.btnConnectSW();
             return true;
         }
 
-        private  void F_action()
+        private void F_action()
         {
             RebuildTree();
         }
 
-        private  void Sw_connectSw(string[] msg, bool arg)
+        private void Sw_connectSw(string[] msg, bool arg)
         {
-             if (!arg)
-             {
-                stApp = StateApp.NotAssemble;
-                ReportProgress(0, msg[0]);
-                
-             }
-             else
+            if (!arg)
             {
-                stApp = StateApp.LoadedModel;
+                ReportProgress(0, msg);
+            }
+            else
+            {
+                ReportProgress(1, msg);
                 sw.BuildTree();
                 Tree.SearchParentFromChild();
                 Tree.FillCollection();
-                Sw_numberModel(msg[1]);
                 GetInfoFromPDM();
             }
-            
         }
 
-     
-        private  void Sw_numberModel(string obj)
-        {
-            if (NumberModel!=null)
-            {
-                string number = Path.GetFileName(obj);
-                NumberModel.Invoke(number);
-            }
-        }
-
-        public  bool GetInfoFromPDM()
+        public bool GetInfoFromPDM()
         {
             Tree.GetInfoPDM();
             Tree.CompareVersions();
-           // FilteringList();
             return true;
         }
 
-        private  void FilteringList()
-        {
-            List<IDisplay> list = Tree.listComp
-                .Where(comp => IsCuby(comp))
-                .Where(comp => IsRebuidModel(comp)).Select(comp => (IDisplay)comp).ToList();
-            List<IDisplay> listDraw = Tree.listDraw
-                .Where(comp => IsRebuidDraw(comp)).Select(comp => (IDisplay)comp).ToList();
 
-            ActionRebuild.Invoke("list", list.Concat(listDraw).ToList());
-        }
-   
-        public  bool RebuildTree()
+        public bool RebuildTree()
         {
             sw.CloseDoc();
             List<IRebuild> listPart = Tree.listComp.Where(d => IsRebuidModel(d))
@@ -133,7 +108,7 @@ namespace FormSW_Tree
             });
 
             List<IRebuild> listPartDraw = Tree.listDraw.Where(d => IsRebuidDraw(d))
-                .Where(d=>d.model.Ext == ".sldprt"|| d.model.Ext == ".SLDPRT")
+                .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
                 .Select(d => (IRebuild)d).ToList();
             List<PdmID> listPdmDrawParts = new List<PdmID>();
             List<string> listPathDrawParts = new List<string>();
@@ -147,7 +122,7 @@ namespace FormSW_Tree
             List<IRebuild> listAss = Tree.listComp.Where(c => IsRebuidModel(c))
                 .Where(c => IsAsm(c))
                 .Select(d => (IRebuild)d).ToList();
-            List<PdmID> listPdmAss= new List<PdmID>();
+            List<PdmID> listPdmAss = new List<PdmID>();
             List<string> listPathAss = new List<string>();
             listAss.ForEach(a =>
             {
@@ -177,24 +152,23 @@ namespace FormSW_Tree
                 Update(listPdmAss, listPathAss);
             }
 
-            if (listAssDraw.Count>0) UpdateDraw(listPdmDrawAss, listPathDrawAss);
+            if (listAssDraw.Count > 0) UpdateDraw(listPdmDrawAss, listPathDrawAss);
 
             Refresh();
             string p = Tree.listComp.First(c => c.Level == 0).FullPath;
             sw.OpenFile(p);
             return true;
-        } 
+        }
 
-        private  bool Refresh()
-        {        
+        private bool Refresh()
+        {
             Tree.Refresh();
             Tree.CompareVersions();
-            FilteringList();
             return true;
         }
 
 
-        private  void Update(List<PdmID> listToPdm, List<string> listToSw)
+        private void Update(List<PdmID> listToPdm, List<string> listToSw)
         {
             try
             {
@@ -206,11 +180,11 @@ namespace FormSW_Tree
             catch (Exception)
             {
                 MessageBox.Show("Error updating model");
-               
+
             }
-          
+
         }
-        private  void UpdateDraw(List<PdmID> listToPdm, List<string> listToSw)
+        private void UpdateDraw(List<PdmID> listToPdm, List<string> listToSw)
         {
             try
             {
@@ -227,8 +201,9 @@ namespace FormSW_Tree
 
         }
 
-        internal  void FillToListIsRebuild(ref DataTable dt)
+        internal void FillToListIsRebuild(ref DataTable dt)
         {
+           // List<ViewUser> userView=Tree.listComp.Join
 
             dt.Columns.Add("Level", typeof(string));
             dt.Columns.Add("Cuby Number", typeof(string));
@@ -237,7 +212,7 @@ namespace FormSW_Tree
             dt.Columns.Add("Child", typeof(string));
             dt.Columns.Add("Child info", typeof(string));
             dt.Columns.Add("State", typeof(string));
-            
+
             foreach (Model comp in Tree.listComp)
             {
                 DataRow dr = dt.NewRow();
@@ -249,23 +224,25 @@ namespace FormSW_Tree
                 dr[5] = "";
                 dr[6] = "";
 
-               
+
                 dt.Rows.Add(dr);
             }
-            
+
         }
 
-         Predicate<Model> IsCuby = (Model comp) =>
-        {
-            string regCuby = @"^CUBY-\d{8}$";
-            return Regex.IsMatch(comp.CubyNumber, regCuby);
-        };
+        Predicate<Model> IsCuby = (Model comp) =>
+       {
+           string regCuby = @"^CUBY-\d{8}$";
+           return Regex.IsMatch(comp.CubyNumber, regCuby);
+       };
 
-         Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw || comp.st == StateModel.DrawFromModel;
-         Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw|| comp.st == StateModel.DrawFromModel;
-         Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
-         Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
-      
+        Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw || comp.st == StateModel.DrawFromModel;
+        Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw || comp.st == StateModel.DrawFromModel;
+        Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
+        Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
+
     }
+
+    
 }
 

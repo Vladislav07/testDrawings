@@ -10,6 +10,7 @@ namespace FormSW_Tree
 
     public static class PDM
     {
+        static string NAME_PDM = "CUBY_PDM";
         static IEdmVault5 vault1 = null;
         static IEdmVault7 vault = null;
         static IEdmBatchGet batchGetter;
@@ -188,7 +189,7 @@ namespace FormSW_Tree
             {
                 if (!vault1.IsLoggedIn)
                 {
-                    vault1.LoginAuto("My", 0);    
+                    vault1.LoginAuto(NAME_PDM, 0);    
                 }
                 vault = (IEdmVault7)vault1;
             }
