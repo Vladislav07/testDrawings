@@ -30,7 +30,7 @@ namespace FormSW_Tree
         internal string TypeComp { get; set; }
         internal string Level { get; set; }
         internal string State { get; set; }
-        internal string Version { get; set; }
+        internal string VersionModel { get; set; }
         internal string IsLocked { get; set; }
         internal string DrawState { get; set; }
         internal string DrawVersRev { get; set; }
@@ -203,28 +203,49 @@ namespace FormSW_Tree
 
         internal void FillToListIsRebuild(ref DataTable dt)
         {
-           // List<ViewUser> userView=Tree.listComp.Join
+            List<ViewUser> userView=Tree.listComp.Join(Tree.listDraw, 
+                comp=>comp.CubyNumber, 
+                draw=>draw.CubyNumber,
+                (comp, draw)=> new ViewUser
+                {
+                    NameComp = comp.CubyNumber, 
+                    TypeComp = comp.Section,
+                    Level = comp.Level.ToString(),
+                    State =comp.st.ToString(),
+                    VersionModel = comp.File.CurrentVersion.ToString(),
+                    IsLocked = comp.File.IsLocked.ToString(),
+                    DrawState =draw.st.ToString(),
+                    DrawVersRev ="",
+                    DrawNeedRebuild ="",
+                    DrawIsLocked = draw.bFile.IsLocked.ToString()
 
-            dt.Columns.Add("Level", typeof(string));
-            dt.Columns.Add("Cuby Number", typeof(string));
-            dt.Columns.Add("Current Version", typeof(string));
-            dt.Columns.Add("List of Ref Child Errors", typeof(string));
-            dt.Columns.Add("Child", typeof(string));
-            dt.Columns.Add("Child info", typeof(string));
-            dt.Columns.Add("State", typeof(string));
+                 }).ToList();
+               
+                dt.Columns.Add("Cuby Number", typeof(string));
+                dt.Columns.Add("Type", typeof(string));
+                dt.Columns.Add("Level", typeof(string));
+                dt.Columns.Add("State", typeof(string));
+                dt.Columns.Add("Current Version", typeof(string));
+                dt.Columns.Add("IsLocked", typeof(string));
+                dt.Columns.Add("DrawState", typeof(string));
+                dt.Columns.Add("DrawVersRev", typeof(string));
+                dt.Columns.Add("DrawNeedRebuild", typeof(string));
+                dt.Columns.Add("DrawIsLocked", typeof(string));
 
-            foreach (Model comp in Tree.listComp)
+            foreach (ViewUser v in userView)
             {
                 DataRow dr = dt.NewRow();
-                dr[0] = comp.Level.ToString();
-                dr[1] = comp.CubyNumber;
-                dr[2] = comp.Section;
-                dr[3] = comp.st.ToString();
-                dr[4] = "";
-                dr[5] = "";
-                dr[6] = "";
-
-
+                dr[0] = v.NameComp;
+                dr[1] = v.TypeComp;
+                dr[2] = v.Level;
+                dr[3] = v.State;
+                dr[4] = v.VersionModel;
+                dr[5] = v.IsLocked;
+                dr[6] = v.DrawState;
+                dr[7] = v.DrawVersRev;
+                dr[8] = v.DrawNeedRebuild;
+                dr[9] = v.DrawIsLocked;
+              
                 dt.Rows.Add(dr);
             }
 

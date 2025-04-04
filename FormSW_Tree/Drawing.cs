@@ -14,7 +14,7 @@ namespace FormSW_Tree
         public int FileID { get; set; }
         public int FolderID { get; set; }
         public IEdmFile7 bFile { get; set; }
-        public string CubyNumber{get;set;}
+        public string CubyNumber { get; set; }
         string msgRefVers;
         public StateModel st { get; set; }
         public Model model { get; set; }
@@ -43,7 +43,7 @@ namespace FormSW_Tree
 
         public void SetState()
         {
-            bool rf = RevVersion(out msgRefVers);
+            bool rf = RevVersion(ref msgRefVers);
              
             if (!NeedsRebuild && rf)
             {
@@ -94,7 +94,7 @@ namespace FormSW_Tree
             get { return (bFile.NeedsRegeneration(bFile.CurrentVersion, FolderID)) ? true : false; }
         }
 
-         bool RevVersion(out string msgRefVers)
+         bool RevVersion(ref string msgRefVers)
         {
             int refDrToModel = this.GetRefVersion();
             msgRefVers = model.File.CurrentVersion.ToString() + "/" + refDrToModel.ToString();
