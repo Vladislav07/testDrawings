@@ -144,7 +144,7 @@ namespace FormSW_Tree
 
             if (listPart.Count > 0) Update(listPdmParts, listPathParts);
 
-            if (listPartDraw.Count > 0) UpdateDraw(listPdmDrawParts, listPathDrawParts);
+            if (listPartDraw.Count > 0) Update(listPdmDrawParts, listPathDrawParts);
 
             if (listAss.Count > 0)
             {
@@ -152,7 +152,7 @@ namespace FormSW_Tree
                 Update(listPdmAss, listPathAss);
             }
 
-            if (listAssDraw.Count > 0) UpdateDraw(listPdmDrawAss, listPathDrawAss);
+            if (listAssDraw.Count > 0) Update(listPdmDrawAss, listPathDrawAss);
 
             Refresh();
             string p = Tree.listComp.First(c => c.Level == 0).FullPath;
@@ -179,27 +179,12 @@ namespace FormSW_Tree
             }
             catch (Exception)
             {
-                MessageBox.Show("Error updating model");
+                MessageBox.Show("Error updating");
 
             }
 
         }
-        private void UpdateDraw(List<PdmID> listToPdm, List<string> listToSw)
-        {
-            try
-            {
-                PDM.AddSelItemToList(listToPdm);
-                PDM.BatchGet(listToPdm);
-                sw.OpenAndRefreshDrawings(listToSw);
-                PDM.DocBatchUnLock();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Error updating Draw");
-
-            }
-
-        }
+  
 
         internal void FillToListIsRebuild(ref DataTable dt)
         {
@@ -243,8 +228,8 @@ namespace FormSW_Tree
            return Regex.IsMatch(comp.CubyNumber, regCuby);
        };
 
-        Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw || comp.st == StateModel.DrawFromModel;
-        Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw || comp.st == StateModel.DrawFromModel;
+        Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw || comp.st == StateModel.DrawFromPart;
+        Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw || comp.st == StateModel.DrawFromPart;
         Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
         Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
 
@@ -268,7 +253,7 @@ namespace FormSW_Tree
                   DrawState = result.Draw != null ? result.Draw.st.ToString() : "none",
                  // DrawVersRev = result.Draw != null ? result.Draw.Version.ToString() : "none",
                  // DrawNeedRebuild = result.Draw != null ? result.Draw.NeedRebuild.ToString() : "none",
-                  DrawIsLocked = result.Draw != null ? result.Draw.bFile?.IsLocked.ToString() : "none"
+                  DrawIsLocked = result.Draw != null ? result.Draw.File?.IsLocked.ToString() : "none"
               })
             .ToList();
 

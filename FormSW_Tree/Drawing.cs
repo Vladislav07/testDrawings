@@ -7,28 +7,23 @@ using System.Threading.Tasks;
 
 namespace FormSW_Tree
 {
-    public class Drawing: IRebuild
+    public class Drawing: Model, IRebuild
     {
 
-        public string path { get; set; }
-        public int FileID { get; set; }
-        public int FolderID { get; set; }
-        public IEdmFile7 bFile { get; set; }
-        public string CubyNumber { get; set; }
         string msgRefVers;
-        public StateModel st { get; set; }
         public Model model { get; set; }
         public bool isPart { get; set; }
 
-        public Drawing(string _path, Model _m, IEdmFile7 _bFile, int _bFolder)
+        public Drawing(string cn, string fn, Model _m,
+            IEdmFile7 _bFile, int _bFolder):base(cn,fn)
         {
-            path = _path;
+       
             model = _m;
-            bFile = _bFile;
-            FileID = _bFile.ID;
-            FolderID = _bFolder;
-            st = StateModel.Clean;
-            CubyNumber = model.CubyNumber;
+            bFile = _bFile.ID;
+            File = _bFile;
+            bFolder = _bFolder;
+            st = StateModel.Init;
+         
             if(model.Ext == ".SLDPRT" || model.Ext == ".sldprt")
             {
                 isPart = true;
@@ -39,9 +34,8 @@ namespace FormSW_Tree
             }
         }
 
-  
 
-        public void SetState()
+        public override void SetState()
         {
             bool rf = RevVersion(ref msgRefVers);
              
@@ -55,43 +49,18 @@ namespace FormSW_Tree
             }
             else 
             {
-                st = StateModel.DrawFromModel;
-
-                if (model.st == StateModel.Clean)
-                {
-                    model.st = StateModel.DrawFromModel;
-                }
-               
+                st = StateModel.DrawFromPart;
+                model.st = StateModel.ExtractPart;
+ 
             }
 
-            if (model.st == StateModel.ModelAndDraw)
-            {
-                st = StateModel.OnlyDraw;
-            }
-
-            if (!IsWork)
-            {
-                if (st == StateModel.Clean)
-                {
-                    st = StateModel.Blocked;
-                }
-                else
-                {
-                    st = StateModel.ImpossibleRebuild;
-                }
-            }
-         
+            base.SetState();       
         }
 
-
-         bool IsWork
-        {
-            get { return (bFile.CurrentState.Name == "In work") ? true : false; }
-        }
 
          bool NeedsRebuild
         {
-            get { return (bFile.NeedsRegeneration(bFile.CurrentVersion, FolderID)) ? true : false; }
+            get { return (File.NeedsRegeneration(File.CurrentVersion, bFolder)) ? true : false; }
         }
 
          bool RevVersion(ref string msgRefVers)
@@ -102,27 +71,19 @@ namespace FormSW_Tree
         }
 
 
-        public List<PdmID> GetIDFromPDM()
+        public override List<PdmID> GetIDFromPDM()
         {
             List<PdmID> list = new List<PdmID>();
             
-            list.Add(new PdmID(FileID, FolderID));
-            if (st == StateModel.DrawFromModel)
+            list.Add(new PdmID(bFile, bFolder));
+            if (st == StateModel.DrawFromPart)
             {
                 list.Add(new PdmID(model.bFile, model.bFolder));
             }
             return list;
         }
 
-        public string GetPath()
-        {
-            return path;
-        }
 
-        public void RefreshPdmFile()
-        {
-            bFile.Refresh();
-        }
 
     }
 }

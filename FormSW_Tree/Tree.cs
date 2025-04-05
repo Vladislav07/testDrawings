@@ -33,7 +33,7 @@ namespace FormSW_Tree
             structuralNumbers.Add(NodeNumber, cubyNumber);
         }
 
-        public static Model GetModelFromNumber(string numberCuby, string path)
+        private static Model GetModelFromNumber(string numberCuby, string path)
         {
             Model comp = null;
             foreach (KeyValuePair<string, Model> item in ModelTree)
@@ -45,15 +45,17 @@ namespace FormSW_Tree
             if (e == ".SLDPRT" || e == ".sldprt")
             {
                 comp = new Part(numberCuby, path);
+
             }
             else if (e == ".SLDASM" || e == ".sldasm")
             {
                 comp = new Assemble(numberCuby, path);
+                (Assemble)comp.NotificationParent += Comp_NotificationParent;
             }
             else { 
                 return null;
             }
-            comp.NotificationParent += Comp_NotificationParent;
+            
             return comp;
         }
 

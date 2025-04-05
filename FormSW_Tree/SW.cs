@@ -262,7 +262,12 @@ namespace FormSW_Tree
             int lWarnings = 0;
             ModelDocExtension extMod;
             string fileName = null;
-           
+            DrawingDoc swDraw = default(DrawingDoc);
+            object[] vSheetName = null;
+            string sheetName;
+            int i = 0;
+            bool bRet = false;
+            int type = -1;
 
             try
             {
@@ -273,14 +278,35 @@ namespace FormSW_Tree
 
                     if(ext == ".sldpart" || ext == ".SLDPART")
                     {
-                        swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                       type= (int)swDocumentTypes_e.swDocPART;
                     }
                     else if(ext == ".sldasm" || ext == ".SLDASM")
                     {
-                       swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocASSEMBLY, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                        type = (int)swDocumentTypes_e.swDocASSEMBLY;
                     }
-                  
+                    else if (ext == ".slddrw" || ext == ".SLDDRW")
+                    {
+                       type= (int)swDocumentTypes_e.swDocDRAWING;
+                    }
+
+                    swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, type, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
                     extMod = swModelDoc.Extension;
+
+                    if (ext == ".slddrw" || ext == ".SLDDRW")
+                    {
+                        swDraw = (DrawingDoc)swModelDoc;
+                        vSheetName = (object[])swDraw.GetSheetNames();
+                        for (i = 0; i < vSheetName.Length; i++)
+
+                        {
+                            sheetName = (string)vSheetName[i];
+                            bRet = swDraw.ActivateSheet(sheetName);
+                            extMod.Rebuild((int)swRebuildOptions_e.swCurrentSheetDisp);
+                            swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
+                            Sheet swSheet = default(Sheet);
+                            swSheet = (Sheet)swDraw.GetCurrentSheet();
+                        }
+                    }
                     extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
                     swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
                     swApp.CloseDoc(fileName);
@@ -293,61 +319,7 @@ namespace FormSW_Tree
 
             }
         }
-
-        public void OpenAndRefreshDrawings(List<string> list)
-        {
-            ModelDoc2 swModelDoc = default(ModelDoc2);
-            int errors = 0;
-            int warnings = 0;
-            int lErrors = 0;
-            int lWarnings = 0;
-            ModelDocExtension extMod;
-            string fileName = null;
-            DrawingDoc swDraw = default(DrawingDoc);
-            object[] vSheetName = null;
-            string sheetName;
-            int i = 0;
-            bool bRet = false;
-
-            try
-            {
-                foreach (string item in list)
-                {
-                    fileName = item;
-                    swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocDRAWING, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
-
-                    extMod = swModelDoc.Extension;
-                    extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
-                    swDraw = (DrawingDoc)swModelDoc;
-                    extMod = swModelDoc.Extension;
-                    vSheetName = (object[])swDraw.GetSheetNames();
-                    for (i = 0; i < vSheetName.Length; i++)
-
-                    {
-
-                        sheetName = (string)vSheetName[i];
-
-                        bRet = swDraw.ActivateSheet(sheetName);
-                       
-                        extMod.Rebuild((int)swRebuildOptions_e.swCurrentSheetDisp);
-                        swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
-                        Sheet swSheet = default(Sheet);
-                        swSheet = (Sheet)swDraw.GetCurrentSheet();
-                    }
-
-                    swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
-                   // MessageBox.Show(lWarnings.ToString());
-                    swApp.CloseDoc(fileName);
-                    swModelDoc = null;
-
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(errors.ToString());
-
-            }
-        }
+      
     }
 }
 

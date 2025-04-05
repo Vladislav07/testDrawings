@@ -217,7 +217,7 @@ namespace FormSW_Tree
 
                 if (bFile != null)                                         
                 {                
-                    Drawing draw = new Drawing(p, comp, bFile, bFolder.ID);
+                    Drawing draw = new Drawing(p, comp.CubyNumber, comp, bFile, bFolder.ID);
                     Tree.listDraw.Add(draw);
                     return true;
                 }
@@ -234,7 +234,7 @@ namespace FormSW_Tree
         public static int GetRefVersion(this Drawing draw)
         {
             int refDrToModel = -1;
-            IEdmReference5 ref5 = draw.bFile.GetReferenceTree(draw.FolderID);
+            IEdmReference5 ref5 = draw.File.GetReferenceTree(draw.bFolder);
             IEdmReference10 ref10 = (IEdmReference10)ref5;
             IEdmPos5 pos = ref10.GetFirstChildPosition3("A", true, true, (int)EdmRefFlags.EdmRef_File, "", 0);
             while (!pos.IsNull)

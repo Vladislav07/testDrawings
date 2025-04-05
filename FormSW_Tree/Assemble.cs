@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FormSW_Tree
 {
-    internal class Assemble : Model
+    internal class Assemble : Part
     {
         public Dictionary<string, int> listRefChild;
         public Dictionary<string, string> listRefChildError;
@@ -19,14 +19,14 @@ namespace FormSW_Tree
         public override void SetState()
         {
             this.GetReferenceFromAssemble();
-            bool isRebuildAsm = false;
-            isRebuildAsm = isNeedsRebuld();
+      
+            bool isRebuildAsm = isNeedsRebuld();
 
-            if (isRebuildAsm)
+            if (isRebuildAsm )
             {
-                st = StateModel.ModelAndDraw;
+                st = StateModel.OnlyAss;
             }
-            else
+            else if(st == StateModel.Init)
             {
                 st = StateModel.Clean;
             }

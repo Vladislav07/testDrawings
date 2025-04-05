@@ -1,21 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FormSW_Tree
 {
     internal class Part : Model
     {
+        public List<string> listParent;
+        
         internal Part(string cn, string fn) : base(cn, fn)
         {
+            listParent = new List<string>();
         }
       
 
         public override void SetState()
         {
-      
+        
+            if (st == StateModel.ExtractPart)
+            {
+                foreach (string item in listParent)
+                {
+                    Notification(item);
+                }
+            }
             base.SetState();
 
         }
