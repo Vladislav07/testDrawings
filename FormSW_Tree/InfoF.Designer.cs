@@ -43,15 +43,15 @@
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.DataSource = this.bindingSource1;
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.dataGridView.Location = new System.Drawing.Point(0, 67);
+            this.dataGridView.Location = new System.Drawing.Point(0, 93);
             this.dataGridView.Name = "dataGridView";
-            this.dataGridView.Size = new System.Drawing.Size(800, 383);
+            this.dataGridView.Size = new System.Drawing.Size(800, 357);
             this.dataGridView.TabIndex = 0;
             // 
             // lbMsg
             // 
             this.lbMsg.AutoSize = true;
-            this.lbMsg.Location = new System.Drawing.Point(381, 33);
+            this.lbMsg.Location = new System.Drawing.Point(205, 33);
             this.lbMsg.Name = "lbMsg";
             this.lbMsg.Size = new System.Drawing.Size(35, 13);
             this.lbMsg.TabIndex = 1;

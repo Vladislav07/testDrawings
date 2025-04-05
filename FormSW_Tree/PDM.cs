@@ -10,7 +10,9 @@ namespace FormSW_Tree
 
     public static class PDM
     {
-        static string NAME_PDM = "CUBY_PDM";
+       // static string NAME_PDM = "CUBY_PDM";
+        static string NAME_PDM = "My";
+
         static IEdmVault5 vault1 = null;
         static IEdmVault7 vault = null;
         static IEdmBatchGet batchGetter;

@@ -203,34 +203,18 @@ namespace FormSW_Tree
 
         internal void FillToListIsRebuild(ref DataTable dt)
         {
-            List<ViewUser> userView=Tree.listComp.Join(Tree.listDraw, 
-                comp=>comp.CubyNumber, 
-                draw=>draw.CubyNumber,
-                (comp, draw)=> new ViewUser
-                {
-                    NameComp = comp.CubyNumber, 
-                    TypeComp = comp.Section,
-                    Level = comp.Level.ToString(),
-                    State =comp.st.ToString(),
-                    VersionModel = comp.File.CurrentVersion.ToString(),
-                    IsLocked = comp.File.IsLocked.ToString(),
-                    DrawState =draw.st.ToString(),
-                    DrawVersRev ="",
-                    DrawNeedRebuild ="",
-                    DrawIsLocked = draw.bFile.IsLocked.ToString()
+            List<ViewUser> userView = JoinCompAndDraw(Tree.listComp,Tree.listDraw);
 
-                 }).ToList();
-               
-                dt.Columns.Add("Cuby Number", typeof(string));
-                dt.Columns.Add("Type", typeof(string));
-                dt.Columns.Add("Level", typeof(string));
-                dt.Columns.Add("State", typeof(string));
-                dt.Columns.Add("Current Version", typeof(string));
-                dt.Columns.Add("IsLocked", typeof(string));
-                dt.Columns.Add("DrawState", typeof(string));
-                dt.Columns.Add("DrawVersRev", typeof(string));
-                dt.Columns.Add("DrawNeedRebuild", typeof(string));
-                dt.Columns.Add("DrawIsLocked", typeof(string));
+            dt.Columns.Add("Cuby Number", typeof(string));
+            dt.Columns.Add("Type", typeof(string));
+            dt.Columns.Add("Level", typeof(string));
+            dt.Columns.Add("State", typeof(string));
+            dt.Columns.Add("Current Version", typeof(string));
+            dt.Columns.Add("IsLocked", typeof(string));
+            dt.Columns.Add("DrawState", typeof(string));
+            dt.Columns.Add("DrawVersRev", typeof(string));
+            dt.Columns.Add("DrawNeedRebuild", typeof(string));
+            dt.Columns.Add("DrawIsLocked", typeof(string));
 
             foreach (ViewUser v in userView)
             {
@@ -245,11 +229,13 @@ namespace FormSW_Tree
                 dr[7] = v.DrawVersRev;
                 dr[8] = v.DrawNeedRebuild;
                 dr[9] = v.DrawIsLocked;
-              
+
                 dt.Rows.Add(dr);
             }
 
         }
+
+ 
 
         Predicate<Model> IsCuby = (Model comp) =>
        {
@@ -262,6 +248,32 @@ namespace FormSW_Tree
         Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
         Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
 
+        internal static List<ViewUser> JoinCompAndDraw(List<Model> compList, List<Drawing> drawList)
+        {
+            var userView = compList.GroupJoin(
+                drawList,
+                comp => comp.CubyNumber,
+                draw => draw.CubyNumber,
+                (comp, draws) => new { Comp = comp, Draw = draws.FirstOrDefault() }
+            )
+              .Select(result => new ViewUser
+              {
+                  NameComp = result.Comp.CubyNumber,
+                  TypeComp = result.Comp.Section,
+                  Level = result.Comp.Level.ToString(),
+                  State = result.Comp.st.ToString(),
+                  VersionModel = result.Comp.File?.CurrentVersion.ToString() ?? "none",
+                  IsLocked = result.Comp.File?.IsLocked.ToString() ?? "none",
+
+                  DrawState = result.Draw != null ? result.Draw.st.ToString() : "none",
+                 // DrawVersRev = result.Draw != null ? result.Draw.Version.ToString() : "none",
+                 // DrawNeedRebuild = result.Draw != null ? result.Draw.NeedRebuild.ToString() : "none",
+                  DrawIsLocked = result.Draw != null ? result.Draw.bFile?.IsLocked.ToString() : "none"
+              })
+            .ToList();
+
+            return userView;
+        }
     }
 
     

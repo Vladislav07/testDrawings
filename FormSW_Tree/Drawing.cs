@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FormSW_Tree
 {
-    public class Drawing:IDisplay, IRebuild
+    public class Drawing: IRebuild
     {
 
         public string path { get; set; }
@@ -101,19 +101,6 @@ namespace FormSW_Tree
             return (refDrToModel == model.File.CurrentVersion) ? false:true;
         }
 
-
-        public string[] Print()
-        {
-            string[] listDisplay = new string[5];
-            listDisplay[0] = CubyNumber;
-           
-            listDisplay[1] = "Draw";
-         
-            listDisplay[2] = st.ToString();
-            listDisplay[3] = "__";
-            listDisplay[4] = bFile.CurrentState.Name.ToString();
-            return listDisplay;
-        }
 
         public List<PdmID> GetIDFromPDM()
         {

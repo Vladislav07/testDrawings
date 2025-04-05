@@ -8,30 +8,11 @@ namespace FormSW_Tree
     public partial class InfoForm : Form
     {
 
-     
-
         public InfoForm()
         {
             InitializeComponent();
 
-        }
-
-        private void Controler_MsgState(string MsgState)
-        {
-            label1.Text = MsgState;
-        }
-
-        private void Controler_ActionRebuild(string msg, List<IDisplay> list)
-        {
-            FillDataGridView1(list);
-            label1.Text = msg;
-        }
-
-        private void Controler_NumberModel(string obj)
-        {
-            this.Text = obj;
-        }
-
+        } 
 
         public void FillDataGridView1(List<IDisplay> listComp)
         {

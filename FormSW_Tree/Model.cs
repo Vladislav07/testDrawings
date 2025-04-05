@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FormSW_Tree
 {
@@ -18,7 +16,7 @@ namespace FormSW_Tree
         ImpossibleRebuild = 5,
         Model=6
     }
-  public abstract class Model: IDisplay, IRebuild
+  public abstract class Model: IRebuild
     {
         public event Action<string> NotificationParent;
     
@@ -75,16 +73,6 @@ namespace FormSW_Tree
             }
 
 
-        }
-        public string[] Print()
-        {
-            string[] listDisplay = new string[5];
-            listDisplay[0] = CubyNumber;
-            listDisplay[1] = Section;
-            listDisplay[2] = st.ToString();
-            listDisplay[3] = Level.ToString();
-            listDisplay[4] = File.CurrentState.Name.ToString();
-            return listDisplay;
         }
 
         bool IsWork
