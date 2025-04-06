@@ -20,7 +20,7 @@ namespace FormSW_Tree
             {
                 foreach (string item in listParent)
                 {
-                    Notification(item);
+                    Notification(item, st);
                 }
             }
             base.SetState();

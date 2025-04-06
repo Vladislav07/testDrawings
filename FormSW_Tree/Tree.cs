@@ -50,20 +50,20 @@ namespace FormSW_Tree
             else if (e == ".SLDASM" || e == ".sldasm")
             {
                 comp = new Assemble(numberCuby, path);
-                (Assemble)comp.NotificationParent += Comp_NotificationParent;
+               comp.NotificationParent += Comp_NotificationParent;
             }
             else { 
                 return null;
             }
-            
+             
             return comp;
         }
 
-        private static void Comp_NotificationParent(string cubyNumber)
+        private static void Comp_NotificationParent(string cubyNumber, StateModel st)
         {
             Model comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
             if (comp == null) return;
-            comp.st = StateModel.ModelAndDraw;
+             comp.st = StateModel.ModelAndDraw;
         }
 
         public static void CompareVersions()

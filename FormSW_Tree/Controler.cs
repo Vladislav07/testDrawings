@@ -228,7 +228,7 @@ namespace FormSW_Tree
            return Regex.IsMatch(comp.CubyNumber, regCuby);
        };
 
-        Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.ModelAndDraw || comp.st == StateModel.DrawFromPart;
+        Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.OnlyAss || comp.st == StateModel.ExtractPart;
         Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw || comp.st == StateModel.DrawFromPart;
         Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
         Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
