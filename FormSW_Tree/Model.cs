@@ -19,7 +19,7 @@ namespace FormSW_Tree
     }
   public abstract class Model: IRebuild
     {
-        public virtual event Action<string, StateModel> NotificationParent;
+        //public virtual event Action<string, StateModel> NotificationParent;
         public string CubyNumber { get; private set; }
         public string FullPath { get; private set; }
         public string Ext { get; private set; }
@@ -44,20 +44,18 @@ namespace FormSW_Tree
         }
         public virtual void SetState()
         {
-
-            if (!IsWork)
+            if (st == StateModel.Init) st = StateModel.Clean;
+            if (IsWork) return;
+         
+            if (st == StateModel.Clean)
             {
-                if (st == StateModel.Clean)
-                {
-                    st = StateModel.Blocked;
-                }
-                else
-                {
-                    st = StateModel.ImpossibleRebuild;
-                }
+                st = StateModel.Blocked;
             }
-
-
+            else
+            {
+                st = StateModel.ImpossibleRebuild;
+            }
+           
         }
 
         bool IsWork
@@ -82,11 +80,12 @@ namespace FormSW_Tree
         {
             File.Refresh();
         }
-
+        /*
         protected void Notification(string item, StateModel st)
         {
             NotificationParent.Invoke(item, st);
         }
+        */
     }
 }
 

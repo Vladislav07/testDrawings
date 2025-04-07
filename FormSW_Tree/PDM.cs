@@ -10,8 +10,8 @@ namespace FormSW_Tree
 
     public static class PDM
     {
-       // static string NAME_PDM = "CUBY_PDM";
-        static string NAME_PDM = "My";
+        static string NAME_PDM = "CUBY_PDM";
+       // static string NAME_PDM = "My";
 
         static IEdmVault5 vault1 = null;
         static IEdmVault7 vault = null;
@@ -217,7 +217,7 @@ namespace FormSW_Tree
 
                 if (bFile != null)                                         
                 {                
-                    Drawing draw = new Drawing(p, comp.CubyNumber, comp, bFile, bFolder.ID);
+                    Drawing draw = new Drawing(comp.CubyNumber, p, comp, bFile, bFolder.ID);
                     Tree.listDraw.Add(draw);
                     return true;
                 }

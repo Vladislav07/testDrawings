@@ -235,29 +235,29 @@ namespace FormSW_Tree
 
         internal static List<ViewUser> JoinCompAndDraw(List<Model> compList, List<Drawing> drawList)
         {
-            var userView = compList.GroupJoin(
-                drawList,
-                comp => comp.CubyNumber,
-                draw => draw.CubyNumber,
-                (comp, draws) => new { Comp = comp, Draw = draws.FirstOrDefault() }
-            )
-              .Select(result => new ViewUser
-              {
-                  NameComp = result.Comp.CubyNumber,
-                  TypeComp = result.Comp.Section,
-                  Level = result.Comp.Level.ToString(),
-                  State = result.Comp.st.ToString(),
-                  VersionModel = result.Comp.File?.CurrentVersion.ToString() ?? "none",
-                  IsLocked = result.Comp.File?.IsLocked.ToString() ?? "none",
+            List<ViewUser> lv = new List<ViewUser>();
+            foreach (Part item in compList)
+            {
+                Drawing dr = drawList.FirstOrDefault(d => d.CubyNumber == item.CubyNumber);
 
-                  DrawState = result.Draw != null ? result.Draw.st.ToString() : "none",
-                 // DrawVersRev = result.Draw != null ? result.Draw.Version.ToString() : "none",
-                 // DrawNeedRebuild = result.Draw != null ? result.Draw.NeedRebuild.ToString() : "none",
-                  DrawIsLocked = result.Draw != null ? result.Draw.File?.IsLocked.ToString() : "none"
-              })
-            .ToList();
+              lv.Add(  new ViewUser
+                {
+                    NameComp = item.CubyNumber,
+                    TypeComp = item.Section,
+                    Level = item.Level.ToString(),
+                    State = item.st.ToString(),
+                    VersionModel = item.File?.CurrentVersion.ToString() ?? "",
+                    IsLocked = item.File?.IsLocked.ToString() ?? "",
 
-            return userView;
+                    DrawState = dr != null ? dr.st.ToString() : "",
+                    // DrawVersRev = result.Draw != null ? result.Draw.Version.ToString() : "none",
+                    // DrawNeedRebuild = result.Draw != null ? result.Draw.NeedRebuild.ToString() : "none",
+                    DrawIsLocked = dr != null ? dr.File?.IsLocked.ToString() : ""
+                });
+            }
+         
+
+            return lv;
         }
     }
 

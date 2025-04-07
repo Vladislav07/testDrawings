@@ -22,7 +22,7 @@ namespace FormSW_Tree
       
             bool isRebuildAsm = isNeedsRebuld();
 
-            if (isRebuildAsm )
+            if (isRebuildAsm)
             {
                 st = StateModel.OnlyAss;
             }

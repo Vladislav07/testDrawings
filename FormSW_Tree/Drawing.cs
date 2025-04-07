@@ -38,21 +38,41 @@ namespace FormSW_Tree
         public override void SetState()
         {
             bool rf = RevVersion(ref msgRefVers);
-             
-            if (!NeedsRebuild && rf)
+            if (isPart)
             {
-                st = StateModel.OnlyDraw;
-            }          
-            else if (!NeedsRebuild && !rf)
-            {
-                st = StateModel.Clean;
+                if (!NeedsRebuild && rf)
+                {
+                    st = StateModel.OnlyDraw;
+                    model.st = StateModel.Clean;
+                }          
+                else if (!NeedsRebuild && !rf)
+                {
+                    st = StateModel.Clean;
+                    model.st = StateModel.Clean;
+                }
+                else 
+                {
+                    st = StateModel.DrawFromPart;
+                    model.st = StateModel.ExtractPart;
+                }
             }
-            else 
+            else
             {
-                st = StateModel.DrawFromPart;
-                model.st = StateModel.ExtractPart;
- 
+                if (model.st == StateModel.ImpossibleRebuild)
+                {
+                    st = StateModel.ImpossibleRebuild;
+                    return;
+                }
+                else if(model.st==StateModel.OnlyAss|| NeedsRebuild || rf)
+                {
+                    st = StateModel.OnlyDraw;
+                }
+                else
+                {
+                    st = StateModel.Clean;
+                }
             }
+          
 
             base.SetState();       
         }

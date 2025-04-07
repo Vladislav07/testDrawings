@@ -13,14 +13,14 @@ namespace FormSW_Tree
     public static class Tree
     {
 
-        static Dictionary<string, Model> ModelTree;
+        static Dictionary<string, Part> ModelTree;
         public static List<Model> listComp;
         public static List<Drawing> listDraw;
         static Dictionary<string, string> structuralNumbers;
         static Tree()
         {
            
-            ModelTree = new Dictionary<string, Model>();
+            ModelTree = new Dictionary<string, Part>();
             listComp = new List<Model>();
             listDraw = new List<Drawing>();
             structuralNumbers = new Dictionary<string, string>();
@@ -33,10 +33,10 @@ namespace FormSW_Tree
             structuralNumbers.Add(NodeNumber, cubyNumber);
         }
 
-        private static Model GetModelFromNumber(string numberCuby, string path)
+        private static Part GetModelFromNumber(string numberCuby, string path)
         {
-            Model comp = null;
-            foreach (KeyValuePair<string, Model> item in ModelTree)
+            Part comp = null;
+            foreach (KeyValuePair<string, Part> item in ModelTree)
             {
                 comp = item.Value;
                 if (numberCuby == comp.CubyNumber) return comp; 
@@ -50,11 +50,12 @@ namespace FormSW_Tree
             else if (e == ".SLDASM" || e == ".sldasm")
             {
                 comp = new Assemble(numberCuby, path);
-               comp.NotificationParent += Comp_NotificationParent;
+                comp.NotificationParent += Comp_NotificationParent;
             }
             else { 
                 return null;
             }
+              
              
             return comp;
         }
@@ -63,14 +64,22 @@ namespace FormSW_Tree
         {
             Model comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
             if (comp == null) return;
-             comp.st = StateModel.ModelAndDraw;
+            if (st == StateModel.ImpossibleRebuild)
+            {
+                comp.st = StateModel.ImpossibleRebuild;
+            }
+            else
+            {
+               comp.st = StateModel.OnlyAss;
+            }
+             
         }
 
         public static void CompareVersions()
         {
             foreach (Drawing item in listDraw)
             {
-                if (item.isPart) continue;
+                if (!item.isPart) continue;
                 item.SetState();
             }
 
@@ -84,7 +93,7 @@ namespace FormSW_Tree
 
             foreach (Drawing item in listDraw)
             {
-                if (!item.isPart) continue;
+                if (item.isPart) continue;
                 item.SetState();
             }
           
@@ -106,7 +115,7 @@ namespace FormSW_Tree
             string ParentStructurenumber;
             int index = 0;
             char separate = new char[] { '.' }[0];
-            Model child = null;
+            Part child = null;
             string parentNumber=null;
             foreach (KeyValuePair<string, string> item in structuralNumbers)
             {
@@ -118,6 +127,7 @@ namespace FormSW_Tree
                 ParentStructurenumber = StructureNumberChild.Substring(0,index);
                 if (!structuralNumbers.ContainsKey(ParentStructurenumber)) continue;
                 parentNumber = structuralNumbers[ParentStructurenumber];
+                if (child.listParent.Contains(parentNumber))continue;
                 child.listParent.Add(parentNumber);
 
             }

@@ -5,6 +5,7 @@ namespace FormSW_Tree
 {
     internal class Part : Model
     {
+        public virtual event Action<string, StateModel> NotificationParent;
         public List<string> listParent;
         
         internal Part(string cn, string fn) : base(cn, fn)
@@ -15,16 +16,19 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
-        
-            if (st == StateModel.ExtractPart)
-            {
-                foreach (string item in listParent)
-                {
-                    Notification(item, st);
-                }
-            }
             base.SetState();
 
+            if (st == StateModel.Clean || st == StateModel.Blocked) return;
+
+            foreach (string item in listParent)
+            {
+                Notification(item, st);
+            }         
+
+        }
+        protected void Notification(string item, StateModel st)
+        {
+            NotificationParent.Invoke(item, st);
         }
     }
 }
