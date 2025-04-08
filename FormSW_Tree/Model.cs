@@ -12,10 +12,10 @@ namespace FormSW_Tree
         DrawFromPart=1,
         OnlyAss=2,
         ExtractPart = 3,
-        Clean=3,
-        Blocked=4,
-        ImpossibleRebuild = 5,
-        Init=6
+        Clean=4,
+        Blocked=5,
+        ImpossibleRebuild = 6,
+        Init=7
     }
   public abstract class Model: IRebuild
     {
@@ -80,12 +80,12 @@ namespace FormSW_Tree
         {
             File.Refresh();
         }
-        /*
-        protected void Notification(string item, StateModel st)
+
+        public virtual void ResetState()
         {
-            NotificationParent.Invoke(item, st);
+            st = StateModel.Init;
         }
-        */
+
     }
 }
 

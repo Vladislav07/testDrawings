@@ -142,19 +142,32 @@ namespace FormSW_Tree
                 listPathDrawAss.Add(d.GetPath());
             });
 
-            if (listPart.Count > 0) Update(listPdmParts, listPathParts);
+            if (listPart.Count > 0)
+            {
+                Update(listPdmParts, listPathParts);
+                listPart.ForEach(c => c.ResetState());
+            }
 
-            if (listPartDraw.Count > 0) Update(listPdmDrawParts, listPathDrawParts);
+            if (listPartDraw.Count > 0)
+            {
+                Update(listPdmDrawParts, listPathDrawParts);
+                listPart.ForEach(c => c.ResetState());
+            }
 
-            if (listAss.Count > 0)
+                if (listAss.Count > 0)
             {
                 listPathAss.Reverse();
                 Update(listPdmAss, listPathAss);
+                listPart.ForEach(c => c.ResetState());
             }
 
-            if (listAssDraw.Count > 0) Update(listPdmDrawAss, listPathDrawAss);
+            if (listAssDraw.Count > 0)
+            {
+                Update(listPdmDrawAss, listPathDrawAss);
+                listPart.ForEach(c => c.ResetState());
+            }
 
-            Refresh();
+                Refresh();
             string p = Tree.listComp.First(c => c.Level == 0).FullPath;
             sw.OpenFile(p);
             return true;

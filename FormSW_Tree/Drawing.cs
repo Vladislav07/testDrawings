@@ -103,7 +103,11 @@ namespace FormSW_Tree
             return list;
         }
 
-
+        public override void ResetState()
+        {
+            model.st = StateModel.Init;
+            base.ResetState();
+        }
 
     }
 }

@@ -50,12 +50,12 @@ namespace FormSW_Tree
             else if (e == ".SLDASM" || e == ".sldasm")
             {
                 comp = new Assemble(numberCuby, path);
-                comp.NotificationParent += Comp_NotificationParent;
+                
             }
             else { 
                 return null;
             }
-              
+              comp.NotificationParent += Comp_NotificationParent;
              
             return comp;
         }

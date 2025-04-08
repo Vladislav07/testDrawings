@@ -16,5 +16,6 @@ namespace FormSW_Tree
     {
         List<PdmID> GetIDFromPDM();
         string GetPath();
+        void ResetState();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace FormSW_Tree
 {
@@ -28,7 +29,16 @@ namespace FormSW_Tree
         }
         protected void Notification(string item, StateModel st)
         {
-            NotificationParent.Invoke(item, st);
+            try
+            {
+                NotificationParent.Invoke(item, st);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Parent - " + item.ToString());
+                
+            }
+           
         }
     }
 }
