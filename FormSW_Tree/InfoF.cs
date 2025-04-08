@@ -12,7 +12,7 @@ namespace FormSW_Tree
 {
     public partial class InfoF : Form
     {
-        public event Action action;
+        public event Func<DataTable> action;
         Controler c;
         public InfoF()
         {
@@ -52,7 +52,9 @@ namespace FormSW_Tree
 
         private void button1_Click(object sender, EventArgs e)
         {
-            action?.Invoke();
+           DataTable dt= action?.Invoke();
+            FillDataGridView(dt);
+            this.Refresh();
         }
     }
 }

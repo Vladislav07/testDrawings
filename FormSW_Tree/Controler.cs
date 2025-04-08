@@ -64,9 +64,16 @@ namespace FormSW_Tree
             return true;
         }
 
-        private void F_action()
+        private DataTable F_action()
         {
+            sw.CloseDoc();
             RebuildTree();
+            Refresh();
+            string p = Tree.listComp.First(c => c.Level == 0).FullPath;
+            sw.OpenFile(p);
+            DataTable dataTable = new DataTable();
+            FillToListIsRebuild(ref dataTable);
+            return dataTable;
         }
 
         private void Sw_connectSw(string[] msg, bool arg)
@@ -95,7 +102,7 @@ namespace FormSW_Tree
 
         public bool RebuildTree()
         {
-            sw.CloseDoc();
+            
             List<IRebuild> listPart = Tree.listComp.Where(d => IsRebuidModel(d))
                .Where(d => d.Ext == ".sldprt" || d.Ext == ".SLDPRT")
                .Select(d => (IRebuild)d).ToList();
@@ -151,26 +158,24 @@ namespace FormSW_Tree
             if (listPartDraw.Count > 0)
             {
                 Update(listPdmDrawParts, listPathDrawParts);
-                listPart.ForEach(c => c.ResetState());
+                listPartDraw.ForEach(c => c.ResetState());
             }
 
                 if (listAss.Count > 0)
             {
                 listPathAss.Reverse();
                 Update(listPdmAss, listPathAss);
-                listPart.ForEach(c => c.ResetState());
+                listAss.ForEach(c => c.ResetState());
             }
 
             if (listAssDraw.Count > 0)
             {
                 Update(listPdmDrawAss, listPathDrawAss);
-                listPart.ForEach(c => c.ResetState());
+                listAssDraw.ForEach(c => c.ResetState());
             }
 
-                Refresh();
-            string p = Tree.listComp.First(c => c.Level == 0).FullPath;
-            sw.OpenFile(p);
-            return true;
+              
+                return true;
         }
 
         private bool Refresh()

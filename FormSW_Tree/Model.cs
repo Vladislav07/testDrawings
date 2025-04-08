@@ -19,7 +19,7 @@ namespace FormSW_Tree
     }
   public abstract class Model: IRebuild
     {
-        //public virtual event Action<string, StateModel> NotificationParent;
+       
         public string CubyNumber { get; private set; }
         public string FullPath { get; private set; }
         public string Ext { get; private set; }
