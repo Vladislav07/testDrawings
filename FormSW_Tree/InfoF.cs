@@ -14,6 +14,7 @@ namespace FormSW_Tree
     {
         public event Func<DataTable> action;
         Controler c;
+        DataTable dt;
         public InfoF()
         {
             InitializeComponent();
@@ -52,9 +53,22 @@ namespace FormSW_Tree
 
         private void button1_Click(object sender, EventArgs e)
         {
-           DataTable dt= action?.Invoke();
+            dt= action?.Invoke();
             FillDataGridView(dt);
             this.Refresh();
+        }
+
+        private void chB_ToRebuild_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender; 
+            if (checkBox.Checked == true)
+            {
+                
+            }
+            else
+            {
+                MessageBox.Show("Флажок " + checkBox.Text + "  теперь не отмечен");
+            }
         }
     }
 }
