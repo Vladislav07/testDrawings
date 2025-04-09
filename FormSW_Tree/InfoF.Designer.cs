@@ -34,10 +34,10 @@
             this.lbMsg = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chB_ToRebuild = new System.Windows.Forms.CheckBox();
-            this.chB_Impossible = new System.Windows.Forms.CheckBox();
-            this.chB_Clean = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.chB_Clean = new System.Windows.Forms.CheckBox();
+            this.chB_Impossible = new System.Windows.Forms.CheckBox();
+            this.chB_ToRebuild = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -87,16 +87,26 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display components in state";
             // 
-            // chB_ToRebuild
+            // checkBox1
             // 
-            this.chB_ToRebuild.AutoSize = true;
-            this.chB_ToRebuild.Location = new System.Drawing.Point(0, 19);
-            this.chB_ToRebuild.Name = "chB_ToRebuild";
-            this.chB_ToRebuild.Size = new System.Drawing.Size(84, 17);
-            this.chB_ToRebuild.TabIndex = 0;
-            this.chB_ToRebuild.Text = "&ToRebuild";
-            this.chB_ToRebuild.UseVisualStyleBackColor = true;
-            this.chB_ToRebuild.CheckedChanged += new System.EventHandler(this.chB_ToRebuild_CheckedChanged);
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(136, 19);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(72, 17);
+            this.checkBox1.TabIndex = 3;
+            this.checkBox1.Text = "&Blocked";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // chB_Clean
+            // 
+            this.chB_Clean.AutoSize = true;
+            this.chB_Clean.Location = new System.Drawing.Point(0, 42);
+            this.chB_Clean.Name = "chB_Clean";
+            this.chB_Clean.Size = new System.Drawing.Size(58, 17);
+            this.chB_Clean.TabIndex = 2;
+            this.chB_Clean.Text = "&Clean";
+            this.chB_Clean.UseVisualStyleBackColor = true;
+            this.chB_Clean.CheckedChanged += new System.EventHandler(this.chB_Clean_CheckedChanged);
             // 
             // chB_Impossible
             // 
@@ -108,25 +118,16 @@
             this.chB_Impossible.Text = "&ImpossibleToRebuild";
             this.chB_Impossible.UseVisualStyleBackColor = true;
             // 
-            // chB_Clean
+            // chB_ToRebuild
             // 
-            this.chB_Clean.AutoSize = true;
-            this.chB_Clean.Location = new System.Drawing.Point(0, 42);
-            this.chB_Clean.Name = "chB_Clean";
-            this.chB_Clean.Size = new System.Drawing.Size(58, 17);
-            this.chB_Clean.TabIndex = 2;
-            this.chB_Clean.Text = "&Clean";
-            this.chB_Clean.UseVisualStyleBackColor = true;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(136, 19);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(72, 17);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "&Blocked";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.chB_ToRebuild.AutoSize = true;
+            this.chB_ToRebuild.Location = new System.Drawing.Point(0, 19);
+            this.chB_ToRebuild.Name = "chB_ToRebuild";
+            this.chB_ToRebuild.Size = new System.Drawing.Size(84, 17);
+            this.chB_ToRebuild.TabIndex = 0;
+            this.chB_ToRebuild.Text = "&ToRebuild";
+            this.chB_ToRebuild.UseVisualStyleBackColor = true;
+            this.chB_ToRebuild.CheckedChanged += new System.EventHandler(this.chB_ToRebuild_CheckedChanged);
             // 
             // InfoF
             // 

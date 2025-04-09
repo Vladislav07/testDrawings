@@ -12,12 +12,17 @@ namespace FormSW_Tree
 {
     public partial class InfoF : Form
     {
-        public event Func<DataTable> action;
+        internal event Func<List<ViewUser>> Action;
         Controler c;
         DataTable dt;
+        List<ViewUser> userView;
+        bool isClean=false;
+        bool isDispleyRebuild = false;
         public InfoF()
         {
             InitializeComponent();
+            dt= new DataTable();
+            InitDT();
             this.dataGridView.AutoGenerateColumns = true;
         }
 
@@ -38,12 +43,14 @@ namespace FormSW_Tree
 
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            DataTable dt = new DataTable();
-            c.FillToListIsRebuild(ref dt);
-            FillDataGridView(dt);
+          
+            userView = c.JoinCompAndDraw();
+            FillToListIsRebuild();
+            FillDataGridView();
+            this.Refresh();
         }
 
-        public void FillDataGridView(DataTable dt)
+        public void FillDataGridView()
         {
 
             dataGridView.Cursor = Cursors.WaitCursor;
@@ -51,10 +58,10 @@ namespace FormSW_Tree
             dataGridView.Cursor = Cursors.Default;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        public void button1_Click(object sender, EventArgs e)
         {
-            dt= action?.Invoke();
-            FillDataGridView(dt);
+            userView= Action?.Invoke();
+            FillToListIsRebuild();
             this.Refresh();
         }
 
@@ -63,12 +70,86 @@ namespace FormSW_Tree
             CheckBox checkBox = (CheckBox)sender; 
             if (checkBox.Checked == true)
             {
-                
+                isDispleyRebuild = true;
+                FillToListIsRebuild();
+                FillDataGridView();
+                this.Refresh();
             }
             else
             {
-                MessageBox.Show("Флажок " + checkBox.Text + "  теперь не отмечен");
+                isDispleyRebuild = false;
+                FillToListIsRebuild();
+                FillDataGridView();
+                this.Refresh();
             }
+        }
+        internal void FillToListIsRebuild()
+        {
+            dt.Clear();
+           
+
+            foreach (ViewUser v in userView)
+            {
+               // if (!IsRebuldViewUser(v) && !isDispleyRebuild) continue;
+                if (v.State=="Clean" && !isClean) continue;
+                DataRow dr = dt.NewRow();
+                dr[0] = v.NameComp;
+                dr[1] = v.TypeComp;
+                dr[2] = v.Level;
+                dr[3] = v.State;
+                dr[4] = v.VersionModel;
+                dr[5] = v.IsLocked;
+                dr[6] = v.DrawState;
+                dr[7] = v.DrawVersRev;
+                dr[8] = v.DrawNeedRebuild;
+                dr[9] = v.DrawIsLocked;
+
+                dt.Rows.Add(dr);
+            }
+
+        }
+
+        private void InitDT()
+        {
+            dt.Columns.Add("Cuby Number", typeof(string));
+            dt.Columns.Add("Type", typeof(string));
+            dt.Columns.Add("Level", typeof(string));
+            dt.Columns.Add("State", typeof(string));
+            dt.Columns.Add("Current Version", typeof(string));
+            dt.Columns.Add("IsLocked", typeof(string));
+            dt.Columns.Add("DrawState", typeof(string));
+            dt.Columns.Add("DrawVersRev", typeof(string));
+            dt.Columns.Add("DrawNeedRebuild", typeof(string));
+            dt.Columns.Add("DrawIsLocked", typeof(string));
+        }
+
+        bool IsRebuldViewUser(ViewUser v)
+        {
+             if(v.State=="OnlyAss"||
+                v.State== "DrawFromPart"||
+                v.State== "ExtractPart"||
+                v.DrawState == "OnlyDraw")
+            {  return true; }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void chB_Clean_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                isClean= true;
+            }
+            else
+            {
+                isClean = false;         
+            }
+                FillToListIsRebuild();
+                FillDataGridView();
+                this.Refresh();
         }
     }
 }

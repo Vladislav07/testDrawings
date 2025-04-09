@@ -15,8 +15,8 @@ namespace FormSW_Tree
 {
     internal class SW
     {
-        string  TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
-       // string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
+        //string  TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
+        string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
 
         private SldWorks swApp;
         private ModelDoc2 swMainModel;

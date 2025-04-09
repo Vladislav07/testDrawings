@@ -48,7 +48,7 @@ namespace FormSW_Tree
         {
             WorkerReportsProgress = true;
             f = _f;
-            f.action += F_action;
+            f.Action += F_action;
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
@@ -64,16 +64,15 @@ namespace FormSW_Tree
             return true;
         }
 
-        private DataTable F_action()
+        private List<ViewUser> F_action()
         {
             sw.CloseDoc();
             RebuildTree();
             Refresh();
             string p = Tree.listComp.First(c => c.Level == 0).FullPath;
             sw.OpenFile(p);
-            DataTable dataTable = new DataTable();
-            FillToListIsRebuild(ref dataTable);
-            return dataTable;
+            List<ViewUser> LV = JoinCompAndDraw();
+            return LV;
         }
 
         private void Sw_connectSw(string[] msg, bool arg)
@@ -204,39 +203,7 @@ namespace FormSW_Tree
         }
   
 
-        internal void FillToListIsRebuild(ref DataTable dt)
-        {
-            List<ViewUser> userView = JoinCompAndDraw(Tree.listComp,Tree.listDraw);
-
-            dt.Columns.Add("Cuby Number", typeof(string));
-            dt.Columns.Add("Type", typeof(string));
-            dt.Columns.Add("Level", typeof(string));
-            dt.Columns.Add("State", typeof(string));
-            dt.Columns.Add("Current Version", typeof(string));
-            dt.Columns.Add("IsLocked", typeof(string));
-            dt.Columns.Add("DrawState", typeof(string));
-            dt.Columns.Add("DrawVersRev", typeof(string));
-            dt.Columns.Add("DrawNeedRebuild", typeof(string));
-            dt.Columns.Add("DrawIsLocked", typeof(string));
-
-            foreach (ViewUser v in userView)
-            {
-                DataRow dr = dt.NewRow();
-                dr[0] = v.NameComp;
-                dr[1] = v.TypeComp;
-                dr[2] = v.Level;
-                dr[3] = v.State;
-                dr[4] = v.VersionModel;
-                dr[5] = v.IsLocked;
-                dr[6] = v.DrawState;
-                dr[7] = v.DrawVersRev;
-                dr[8] = v.DrawNeedRebuild;
-                dr[9] = v.DrawIsLocked;
-
-                dt.Rows.Add(dr);
-            }
-
-        }
+      
 
  
 
@@ -251,8 +218,10 @@ namespace FormSW_Tree
         Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
         Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
 
-        internal static List<ViewUser> JoinCompAndDraw(List<Model> compList, List<Drawing> drawList)
+        internal  List<ViewUser> JoinCompAndDraw( )
         {
+            List<Model> compList = Tree.listComp;
+            List<Drawing> drawList = Tree.listDraw;
             List<ViewUser> lv = new List<ViewUser>();
             foreach (Part item in compList)
             {
