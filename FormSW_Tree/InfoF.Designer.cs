@@ -34,7 +34,6 @@
             this.lbMsg = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chB_Clean = new System.Windows.Forms.CheckBox();
             this.chB_Impossible = new System.Windows.Forms.CheckBox();
             this.chB_ToRebuild = new System.Windows.Forms.CheckBox();
@@ -76,7 +75,6 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.chB_Clean);
             this.groupBox1.Controls.Add(this.chB_Impossible);
             this.groupBox1.Controls.Add(this.chB_ToRebuild);
@@ -87,24 +85,14 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display components in state";
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(136, 19);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(72, 17);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "&Blocked";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
             // chB_Clean
             // 
             this.chB_Clean.AutoSize = true;
             this.chB_Clean.Location = new System.Drawing.Point(0, 42);
             this.chB_Clean.Name = "chB_Clean";
-            this.chB_Clean.Size = new System.Drawing.Size(58, 17);
+            this.chB_Clean.Size = new System.Drawing.Size(117, 17);
             this.chB_Clean.TabIndex = 2;
-            this.chB_Clean.Text = "&Clean";
+            this.chB_Clean.Text = "&CleanOrBlocked";
             this.chB_Clean.UseVisualStyleBackColor = true;
             this.chB_Clean.CheckedChanged += new System.EventHandler(this.chB_Clean_CheckedChanged);
             // 
@@ -117,6 +105,7 @@
             this.chB_Impossible.TabIndex = 1;
             this.chB_Impossible.Text = "&ImpossibleToRebuild";
             this.chB_Impossible.UseVisualStyleBackColor = true;
+            this.chB_Impossible.CheckedChanged += new System.EventHandler(this.chB_Impossible_CheckedChanged);
             // 
             // chB_ToRebuild
             // 
@@ -158,7 +147,6 @@
         private System.Windows.Forms.Button button1;
         public System.Windows.Forms.Label lbMsg;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckBox chB_Clean;
         private System.Windows.Forms.CheckBox chB_Impossible;
         private System.Windows.Forms.CheckBox chB_ToRebuild;

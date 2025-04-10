@@ -16,8 +16,9 @@ namespace FormSW_Tree
         Controler c;
         DataTable dt;
         List<ViewUser> userView;
-        bool isClean=false;
-        bool isDispleyRebuild = false;
+        bool isClean=true;
+        bool isDispleyRebuild = true;
+        bool isImpossible = true;
         public InfoF()
         {
             InitializeComponent();
@@ -28,6 +29,9 @@ namespace FormSW_Tree
 
         private void InfoF_Load(object sender, EventArgs e)
         {
+            chB_Clean.Checked = true;
+            chB_ToRebuild.Checked = true;
+            chB_Impossible.Checked = true;
             c = new Controler(this);
             c.RunWorkerCompleted += C_RunWorkerCompleted;
             c.ProgressChanged += C_ProgressChanged;
@@ -43,11 +47,9 @@ namespace FormSW_Tree
 
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-          
+           
             userView = c.JoinCompAndDraw();
-            FillToListIsRebuild();
-            FillDataGridView();
-            this.Refresh();
+            RefreshForm();
         }
 
         public void FillDataGridView()
@@ -61,37 +63,36 @@ namespace FormSW_Tree
         public void button1_Click(object sender, EventArgs e)
         {
             userView= Action?.Invoke();
+            SetStateForm();
             FillToListIsRebuild();
             this.Refresh();
         }
 
         private void chB_ToRebuild_CheckedChanged(object sender, EventArgs e)
         {
+            if (userView == null) return;
             CheckBox checkBox = (CheckBox)sender; 
             if (checkBox.Checked == true)
             {
                 isDispleyRebuild = true;
-                FillToListIsRebuild();
-                FillDataGridView();
-                this.Refresh();
             }
             else
             {
                 isDispleyRebuild = false;
-                FillToListIsRebuild();
-                FillDataGridView();
-                this.Refresh();
+              
             }
+            RefreshForm();
         }
         internal void FillToListIsRebuild()
         {
             dt.Clear();
-           
 
+            if (userView.Count == 0) return;
             foreach (ViewUser v in userView)
             {
-               // if (!IsRebuldViewUser(v) && !isDispleyRebuild) continue;
-                if (v.State=="Clean" && !isClean) continue;
+                if (IsRebuldViewUser(v) && !isDispleyRebuild) continue;
+                if ((v.State=="Clean"|| v.State == "Blocked" )&& !isClean) continue;
+                if(v.State == "ImpossibleRebuild" && !isImpossible) continue;
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
                 dr[1] = v.TypeComp;
@@ -138,6 +139,7 @@ namespace FormSW_Tree
 
         private void chB_Clean_CheckedChanged(object sender, EventArgs e)
         {
+            if (userView == null) return;
             CheckBox checkBox = (CheckBox)sender;
             if (checkBox.Checked == true)
             {
@@ -147,9 +149,59 @@ namespace FormSW_Tree
             {
                 isClean = false;         
             }
-                FillToListIsRebuild();
-                FillDataGridView();
-                this.Refresh();
+            RefreshForm();
+        }
+
+        private void chB_Impossible_CheckedChanged(object sender, EventArgs e)
+        {
+            if (userView == null) return;
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                isImpossible = true;
+            }
+            else
+            {
+                isImpossible = false;
+            }
+            RefreshForm();
+        }
+
+        private void SetStateForm()
+        {
+            if (userView == null) return;
+            if (userView.Any(v => IsRebuldViewUser(v) == true))
+            {
+                chB_ToRebuild.Enabled = true;
+            }
+            else
+            {
+                chB_ToRebuild.Enabled = false;
+            }
+            if (userView.Any(v => (v.State == "Clean" || v.State == "Blocked")))
+            {
+                chB_Clean.Enabled = true;
+            }
+            else
+            {
+                chB_Clean.Enabled = false;
+            }
+            if (userView.Any(v => (v.State == "ImpossibleRebuild" || v.DrawState == "ImpossibleRebuild")))
+            {
+                chB_Impossible.Enabled = true;
+            }
+            else
+            {
+                chB_Impossible.Enabled = false;
+            }
+
+        }
+        private void RefreshForm()
+        {
+            SetStateForm();
+            FillToListIsRebuild();
+            FillDataGridView();
+            this.Refresh();
         }
     }
 }

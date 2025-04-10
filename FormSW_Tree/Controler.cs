@@ -151,30 +151,30 @@ namespace FormSW_Tree
             if (listPart.Count > 0)
             {
                 Update(listPdmParts, listPathParts);
-                listPart.ForEach(c => c.ResetState());
+               
             }
 
             if (listPartDraw.Count > 0)
             {
                 Update(listPdmDrawParts, listPathDrawParts);
-                listPartDraw.ForEach(c => c.ResetState());
+               
             }
 
                 if (listAss.Count > 0)
             {
                 listPathAss.Reverse();
                 Update(listPdmAss, listPathAss);
-                listAss.ForEach(c => c.ResetState());
+             
             }
 
             if (listAssDraw.Count > 0)
             {
                 Update(listPdmDrawAss, listPathDrawAss);
-                listAssDraw.ForEach(c => c.ResetState());
+                
             }
-
-              
-                return true;
+             Tree.listComp.ForEach(c => c.ResetState());
+             Tree.listDraw.ForEach(c => c.ResetState());
+            return true;
         }
 
         private bool Refresh()
