@@ -28,6 +28,7 @@ namespace FormSW_Tree
     {
         internal string NameComp { get; set; }
         internal string TypeComp { get; set; }
+        internal string Ext { get; set; }
         internal string Level { get; set; }
         internal string State { get; set; }
         internal string VersionModel { get; set; }
@@ -231,6 +232,7 @@ namespace FormSW_Tree
                 {
                     NameComp = item.CubyNumber,
                     TypeComp = item.Section,
+                    Ext=item.Ext,
                     Level = item.Level.ToString(),
                     State = item.st.ToString(),
                     VersionModel = item.File?.CurrentVersion.ToString() ?? "",

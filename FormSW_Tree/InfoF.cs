@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,7 +53,16 @@ namespace FormSW_Tree
             userView = c.JoinCompAndDraw();
             RefreshForm();
         }
-
+        private byte[] GetImageData()
+        {
+    
+             Image image = Properties.Resources.part;
+            using (MemoryStream ms = new MemoryStream())
+             {
+                 image.Save(ms, ImageFormat.Jpeg);
+                 return ms.ToArray();
+             }
+        }
         public void FillDataGridView()
         {
 
@@ -95,7 +106,11 @@ namespace FormSW_Tree
                 if(v.State == "ImpossibleRebuild" && !isImpossible) continue;
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
-                dr[1] = v.TypeComp;
+               // if(v.TypeComp == ".sldprt"|| v.TypeComp == ".SLDPRT")
+              //  {
+                    dr[1] = GetImageData();
+              //  }
+               
                 dr[2] = v.Level;
                 dr[3] = v.State;
                 dr[4] = v.VersionModel;
@@ -113,7 +128,7 @@ namespace FormSW_Tree
         private void InitDT()
         {
             dt.Columns.Add("Cuby Number", typeof(string));
-            dt.Columns.Add("Type", typeof(string));
+            dt.Columns.Add("Type", typeof(byte[]));
             dt.Columns.Add("Level", typeof(string));
             dt.Columns.Add("State", typeof(string));
             dt.Columns.Add("Current Version", typeof(string));
