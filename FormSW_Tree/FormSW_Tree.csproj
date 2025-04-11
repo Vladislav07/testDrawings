@@ -107,6 +107,8 @@
   <ItemGroup>
     <Content Include="Properties\Resources\assembly.png" />
     <Content Include="Properties\Resources\part.png" />
+    <None Include="Resources\x.png" />
+    <None Include="Resources\SWXUiSWV1Drawings.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

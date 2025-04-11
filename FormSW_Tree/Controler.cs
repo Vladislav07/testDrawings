@@ -31,9 +31,11 @@ namespace FormSW_Tree
         internal string Ext { get; set; }
         internal string Level { get; set; }
         internal string State { get; set; }
+        internal string StPDM { get; set; }
         internal string VersionModel { get; set; }
         internal string IsLocked { get; set; }
         internal string DrawState { get; set; }
+        internal string StDrPDM { get; set; }
         internal string DrawVersRev { get; set; }
         internal string DrawNeedRebuild { get; set; }
         internal string DrawIsLocked { get; set; }
@@ -234,11 +236,13 @@ namespace FormSW_Tree
                     TypeComp = item.Section,
                     Ext=item.Ext,
                     Level = item.Level.ToString(),
-                    State = item.st.ToString(),
+                    StPDM= item.File.CurrentState.Name.ToString(),
+                    State =item.st.ToString(),
                     VersionModel = item.File?.CurrentVersion.ToString() ?? "",
                     IsLocked = item.File?.IsLocked.ToString() ?? "",
 
                     DrawState = dr != null ? dr.st.ToString() : "",
+                    StDrPDM = dr != null ? dr.File.CurrentState.Name : "",
                     // DrawVersRev = result.Draw != null ? result.Draw.Version.ToString() : "none",
                     // DrawNeedRebuild = result.Draw != null ? result.Draw.NeedRebuild.ToString() : "none",
                     DrawIsLocked = dr != null ? dr.File?.IsLocked.ToString() : ""

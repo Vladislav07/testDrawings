@@ -27,6 +27,7 @@ namespace FormSW_Tree
             dt= new DataTable();
             InitDT();
             this.dataGridView.AutoGenerateColumns = true;
+            
         }
 
         private void InfoF_Load(object sender, EventArgs e)
@@ -53,10 +54,25 @@ namespace FormSW_Tree
             userView = c.JoinCompAndDraw();
             RefreshForm();
         }
-        private byte[] GetImageData()
+        private byte[] GetImageData(int i)
         {
-    
-             Image image = Properties.Resources.part;
+
+            Image image;
+            switch (i)
+            {
+                case 0:
+                    image = Properties.Resources.part;
+                    break;
+                case 1:
+                    image = Properties.Resources.assembly;
+                    break;
+                case 2:
+                    image = Properties.Resources.SWXUiSWV1Drawings;
+                    break;
+                default:
+                    image = Properties.Resources.x;
+                    break;
+            }
             using (MemoryStream ms = new MemoryStream())
              {
                  image.Save(ms, ImageFormat.Jpeg);
@@ -67,7 +83,8 @@ namespace FormSW_Tree
         {
 
             dataGridView.Cursor = Cursors.WaitCursor;
-            this.bindingSource1.DataSource = dt;         
+            this.bindingSource1.DataSource = dt;
+            SetPropertiesGrig();
             dataGridView.Cursor = Cursors.Default;
         }
 
@@ -106,19 +123,31 @@ namespace FormSW_Tree
                 if(v.State == "ImpossibleRebuild" && !isImpossible) continue;
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
-               // if(v.TypeComp == ".sldprt"|| v.TypeComp == ".SLDPRT")
-              //  {
-                    dr[1] = GetImageData();
-              //  }
-               
+                if(v.Ext == ".sldprt"|| v.TypeComp == ".SLDPRT")
+                {
+                    dr[1] = GetImageData(0);
+                }
+                else
+                {
+                    dr[1] = GetImageData(1);
+                }
+
                 dr[2] = v.Level;
-                dr[3] = v.State;
+                dr[3] = v.StPDM;
                 dr[4] = v.VersionModel;
                 dr[5] = v.IsLocked;
-                dr[6] = v.DrawState;
-                dr[7] = v.DrawVersRev;
-                dr[8] = v.DrawNeedRebuild;
-                dr[9] = v.DrawIsLocked;
+                if (v.DrawState != "")
+                {
+                  dr[6] = GetImageData(2);
+                }
+                else
+                {
+                  dr[6] = GetImageData(3);
+                }
+                dr[7] = v.StDrPDM;
+                dr[8] = v.DrawVersRev;
+                dr[9] = v.DrawNeedRebuild;
+                dr[10] = v.DrawIsLocked;
 
                 dt.Rows.Add(dr);
             }
@@ -128,12 +157,15 @@ namespace FormSW_Tree
         private void InitDT()
         {
             dt.Columns.Add("Cuby Number", typeof(string));
+            
             dt.Columns.Add("Type", typeof(byte[]));
             dt.Columns.Add("Level", typeof(string));
             dt.Columns.Add("State", typeof(string));
             dt.Columns.Add("Current Version", typeof(string));
             dt.Columns.Add("IsLocked", typeof(string));
-            dt.Columns.Add("DrawState", typeof(string));
+
+            dt.Columns.Add("DrawType", typeof(byte[]));
+            dt.Columns.Add("DrawState", typeof(string));         
             dt.Columns.Add("DrawVersRev", typeof(string));
             dt.Columns.Add("DrawNeedRebuild", typeof(string));
             dt.Columns.Add("DrawIsLocked", typeof(string));
@@ -217,6 +249,20 @@ namespace FormSW_Tree
             FillToListIsRebuild();
             FillDataGridView();
             this.Refresh();
+        }
+        private void SetPropertiesGrig()
+        {
+            dataGridView.Columns[0].Width = 150;
+            dataGridView.Columns[1].Width = 50;
+            dataGridView.Columns[2].Width = 40;
+            dataGridView.Columns[3].Width = 100;
+            dataGridView.Columns[4].Width = 40;
+            dataGridView.Columns[5].Width = 70;
+            dataGridView.Columns[6].Width = 50;
+            dataGridView.Columns[7].Width = 100;
+            dataGridView.Columns[8].Width = 70;
+            dataGridView.Columns[9].Width = 70;
+            dataGridView.Columns[10].Width = 70;
         }
     }
 }
