@@ -21,6 +21,7 @@ namespace FormSW_Tree
         bool isClean=true;
         bool isDispleyRebuild = true;
         bool isImpossible = true;
+        bool isBlocked=true;
         public InfoF()
         {
             InitializeComponent();
@@ -35,6 +36,7 @@ namespace FormSW_Tree
             chB_Clean.Checked = true;
             chB_ToRebuild.Checked = true;
             chB_Impossible.Checked = true;
+            checkBox1.Checked  = true;
             c = new Controler(this);
             c.RunWorkerCompleted += C_RunWorkerCompleted;
             c.ProgressChanged += C_ProgressChanged;
@@ -44,8 +46,26 @@ namespace FormSW_Tree
         private void C_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             string[] msg = (string[])e.UserState;
-            this.lbMsg.Text = msg[0];
-            this.Text = msg[2];
+            int t = e.ProgressPercentage;
+            switch (t)
+            {
+                case 0:
+                    this.lbMsg.Text = msg[0];
+                   // lbMsg.;
+                    break;
+                case 1:
+                    this.Text = msg[2];
+                    this.lbMsg.Text = "Загрузка дерева модели";
+                    lbMsg.BackColor = Color.Green;  
+                    break;
+                case 2:          
+                    this.lbMsg.Text = "Загрузка дерева модели";
+                    break;
+                default:
+                    break;
+            }
+            
+            
         }
 
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -119,8 +139,9 @@ namespace FormSW_Tree
             foreach (ViewUser v in userView)
             {
                 if (IsRebuldViewUser(v) && !isDispleyRebuild) continue;
-                if ((v.State=="Clean"|| v.State == "Blocked" )&& !isClean) continue;
-                if(v.State == "ImpossibleRebuild" && !isImpossible) continue;
+                if (v.State=="Clean" && !isClean) continue;
+                if ( v.State == "Blocked" && !isBlocked) continue;
+                if (v.State == "ImpossibleRebuild" && !isImpossible) continue;
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
                 if(v.Ext == ".sldprt"|| v.TypeComp == ".SLDPRT")
@@ -136,7 +157,7 @@ namespace FormSW_Tree
                 dr[3] = v.StPDM;
                 dr[4] = v.VersionModel;
                 dr[5] = v.IsLocked;
-                if (v.DrawState != "")
+                if (v.DrawState != "NoDraw")
                 {
                   dr[6] = GetImageData(2);
                 }
@@ -225,13 +246,21 @@ namespace FormSW_Tree
             {
                 chB_ToRebuild.Enabled = false;
             }
-            if (userView.Any(v => (v.State == "Clean" || v.State == "Blocked")))
+            if (userView.Any(v => v.State == "Clean"))
             {
                 chB_Clean.Enabled = true;
             }
             else
             {
                 chB_Clean.Enabled = false;
+            }
+            if (userView.Any(v =>  v.State == "Blocked"))
+            {
+                checkBox1.Enabled = true;
+            }
+            else
+            {
+                checkBox1.Enabled = false;
             }
             if (userView.Any(v => (v.State == "ImpossibleRebuild" || v.DrawState == "ImpossibleRebuild")))
             {
@@ -263,6 +292,21 @@ namespace FormSW_Tree
             dataGridView.Columns[8].Width = 70;
             dataGridView.Columns[9].Width = 70;
             dataGridView.Columns[10].Width = 70;
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (userView == null) return;
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                isBlocked = true;
+            }
+            else
+            {
+                isBlocked = false;
+            }
+            RefreshForm();
         }
     }
 }

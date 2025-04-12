@@ -37,6 +37,7 @@
             this.chB_Clean = new System.Windows.Forms.CheckBox();
             this.chB_Impossible = new System.Windows.Forms.CheckBox();
             this.chB_ToRebuild = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -75,6 +76,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.chB_Clean);
             this.groupBox1.Controls.Add(this.chB_Impossible);
             this.groupBox1.Controls.Add(this.chB_ToRebuild);
@@ -118,6 +120,17 @@
             this.chB_ToRebuild.UseVisualStyleBackColor = true;
             this.chB_ToRebuild.CheckedChanged += new System.EventHandler(this.chB_ToRebuild_CheckedChanged);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(136, 19);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(72, 17);
+            this.checkBox1.TabIndex = 3;
+            this.checkBox1.Text = "&Blocked";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // InfoF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
@@ -150,5 +163,6 @@
         private System.Windows.Forms.CheckBox chB_Clean;
         private System.Windows.Forms.CheckBox chB_Impossible;
         private System.Windows.Forms.CheckBox chB_ToRebuild;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

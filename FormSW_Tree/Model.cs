@@ -15,7 +15,8 @@ namespace FormSW_Tree
         Clean=4,
         Blocked=5,
         ImpossibleRebuild = 6,
-        Init=7
+        Init=7,
+        NoneDraw=8
     }
   public abstract class Model: IRebuild
     {

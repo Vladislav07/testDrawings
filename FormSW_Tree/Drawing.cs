@@ -10,7 +10,7 @@ namespace FormSW_Tree
     public class Drawing: Model, IRebuild
     {
 
-        string msgRefVers;
+        public string msgRefVers;
         public Model model { get; set; }
         public bool isPart { get; set; }
 
@@ -78,7 +78,7 @@ namespace FormSW_Tree
         }
 
 
-         bool NeedsRebuild
+        public bool NeedsRebuild
         {
             get { return (File.NeedsRegeneration(File.CurrentVersion, bFolder)) ? true : false; }
         }

@@ -34,6 +34,7 @@ namespace FormSW_Tree
         internal string StPDM { get; set; }
         internal string VersionModel { get; set; }
         internal string IsLocked { get; set; }
+        internal string IsChildRefError { get; set; }
         internal string DrawState { get; set; }
         internal string StDrPDM { get; set; }
         internal string DrawVersRev { get; set; }
@@ -241,10 +242,10 @@ namespace FormSW_Tree
                     VersionModel = item.File?.CurrentVersion.ToString() ?? "",
                     IsLocked = item.File?.IsLocked.ToString() ?? "",
 
-                    DrawState = dr != null ? dr.st.ToString() : "",
+                    DrawState = dr != null ? dr.st.ToString() : "NoDraw",
                     StDrPDM = dr != null ? dr.File.CurrentState.Name : "",
-                    // DrawVersRev = result.Draw != null ? result.Draw.Version.ToString() : "none",
-                    // DrawNeedRebuild = result.Draw != null ? result.Draw.NeedRebuild.ToString() : "none",
+                    DrawNeedRebuild= dr != null ? dr.NeedsRebuild.ToString() : "",
+                    DrawVersRev   = dr != null ? dr.msgRefVers : "",
                     DrawIsLocked = dr != null ? dr.File?.IsLocked.ToString() : ""
                 });
             }
