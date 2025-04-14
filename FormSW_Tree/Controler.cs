@@ -47,12 +47,13 @@ namespace FormSW_Tree
 
         SW sw;
         InfoF f;
-
+        string[] msgInfo;
         public Controler(InfoF _f)
         {
             WorkerReportsProgress = true;
             f = _f;
             f.Action += F_action;
+            msgInfo=new string[1];
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
@@ -95,8 +96,12 @@ namespace FormSW_Tree
             {
                 ReportProgress(1, msg);
                 sw.BuildTree();
+                msgInfo[0] = "List formation";
+                ReportProgress(2, msgInfo);
                 Tree.SearchParentFromChild();
                 Tree.FillCollection();
+                msgInfo[0] = "Load EdmFile from PDM";
+                ReportProgress(2, msgInfo);
                 GetInfoFromPDM();
             }
         }
@@ -213,15 +218,11 @@ namespace FormSW_Tree
         }
   
 
-      
-
- 
-
         Predicate<Model> IsCuby = (Model comp) =>
-       {
-           string regCuby = @"^CUBY-\d{8}$";
-           return Regex.IsMatch(comp.CubyNumber, regCuby);
-       };
+           {
+               string regCuby = @"^CUBY-\d{8}$";
+               return Regex.IsMatch(comp.CubyNumber, regCuby);
+           };
 
         Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.OnlyAss || comp.st == StateModel.ExtractPart;
         Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw || comp.st == StateModel.DrawFromPart;

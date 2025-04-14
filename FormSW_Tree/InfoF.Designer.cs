@@ -34,10 +34,11 @@
             this.lbMsg = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chB_Clean = new System.Windows.Forms.CheckBox();
             this.chB_Impossible = new System.Windows.Forms.CheckBox();
             this.chB_ToRebuild = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -87,6 +88,17 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display components in state";
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(136, 19);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(72, 17);
+            this.checkBox1.TabIndex = 3;
+            this.checkBox1.Text = "&Blocked";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // chB_Clean
             // 
             this.chB_Clean.AutoSize = true;
@@ -120,22 +132,19 @@
             this.chB_ToRebuild.UseVisualStyleBackColor = true;
             this.chB_ToRebuild.CheckedChanged += new System.EventHandler(this.chB_ToRebuild_CheckedChanged);
             // 
-            // checkBox1
+            // progressBar1
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(136, 19);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(72, 17);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "&Blocked";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.progressBar1.Location = new System.Drawing.Point(501, 66);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(400, 10);
+            this.progressBar1.TabIndex = 4;
             // 
             // InfoF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(933, 450);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.lbMsg);
@@ -164,5 +173,6 @@
         private System.Windows.Forms.CheckBox chB_Impossible;
         private System.Windows.Forms.CheckBox chB_ToRebuild;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
