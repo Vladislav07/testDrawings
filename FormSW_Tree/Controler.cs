@@ -64,8 +64,14 @@ namespace FormSW_Tree
         {
             sw = new SW();
             sw.connectSw += Sw_connectSw;
+            sw.loadTree += Sw_loadTree;
             sw.btnConnectSW();
             return true;
+        }
+
+        private void Sw_loadTree(string[] msg)
+        {
+            ReportProgress(2, msg);
         }
 
         private List<ViewUser> F_action()

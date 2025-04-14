@@ -55,11 +55,11 @@ namespace FormSW_Tree
                     break;
                 case 1:
                     this.Text = msg[2];
-                    this.lbMsg.Text = "Загрузка дерева модели";
-                    lbMsg.BackColor = Color.Green;  
+                    this.lbMsg.Text = "Загрузка спецификации";
+                    //lbMsg.BackColor = Color.Green;  
                     break;
                 case 2:          
-                    this.lbMsg.Text = "Загрузка дерева модели";
+                    this.lbMsg.Text = msg[0];
                     break;
                 default:
                     break;

@@ -15,8 +15,8 @@ namespace FormSW_Tree
 {
     internal class SW
     {
-       // string  TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
-        string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
+        string  TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
+        //string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
 
         private SldWorks swApp;
         private ModelDoc2 swMainModel;
@@ -198,6 +198,7 @@ namespace FormSW_Tree
             string designation;
             string BomName;
             bool boolstatus = false;
+            string[] result = new string[1];
 
             BomName = swBOMFeature.Name;
             nNumRow = swTableAnn.RowCount;
@@ -225,6 +226,8 @@ namespace FormSW_Tree
                 {
 
                     Tree.AddNode(AddextendedNumber, PartNumberTrim, PathName);
+                    result[0]= PartNumberTrim;
+                    loadTree?.Invoke(result);
                 }
 
             }
@@ -233,7 +236,8 @@ namespace FormSW_Tree
             boolstatus = Ext.SelectByID2("DetailItem" + numberTable + "@Annotations", "ANNOTATIONTABLES", 0, 0, 0, false, 0, null, 0);
             swMainModel.EditDelete();
             swMainModel.ClearSelection2(true);
-
+            result[0] = "Loaded doc";
+            loadTree?.Invoke(result);
         }
 
 
