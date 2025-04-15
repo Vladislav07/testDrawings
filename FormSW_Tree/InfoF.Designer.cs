@@ -104,9 +104,9 @@
             this.chB_Clean.AutoSize = true;
             this.chB_Clean.Location = new System.Drawing.Point(0, 42);
             this.chB_Clean.Name = "chB_Clean";
-            this.chB_Clean.Size = new System.Drawing.Size(117, 17);
+            this.chB_Clean.Size = new System.Drawing.Size(58, 17);
             this.chB_Clean.TabIndex = 2;
-            this.chB_Clean.Text = "&CleanOrBlocked";
+            this.chB_Clean.Text = "&Clean";
             this.chB_Clean.UseVisualStyleBackColor = true;
             this.chB_Clean.CheckedChanged += new System.EventHandler(this.chB_Clean_CheckedChanged);
             // 
