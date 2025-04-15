@@ -86,6 +86,7 @@ namespace FormSW_Tree
             listComp.Reverse();
             foreach (Model item in listComp)
             {
+                
                 item.SetState();
             }
             listComp.Reverse();

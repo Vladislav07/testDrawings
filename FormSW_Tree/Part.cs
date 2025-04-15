@@ -17,6 +17,7 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
+            
             base.SetState();
 
             if (st == StateModel.Clean || st == StateModel.Blocked) return;

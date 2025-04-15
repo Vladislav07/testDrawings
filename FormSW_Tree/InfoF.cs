@@ -157,7 +157,7 @@ namespace FormSW_Tree
                 dr[3] = v.StPDM;
                 dr[4] = v.VersionModel;
                 dr[5] = v.IsLocked;
-                if (v.DrawState != "NoDraw")
+                if (v.DrawState != "")
                 {
                   dr[6] = GetImageData(2);
                 }

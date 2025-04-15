@@ -16,7 +16,7 @@ namespace FormSW_Tree
         Blocked=5,
         ImpossibleRebuild = 6,
         Init=7,
-        NoneDraw=8
+     
     }
   public abstract class Model: IRebuild
     {
@@ -45,7 +45,7 @@ namespace FormSW_Tree
         }
         public virtual void SetState()
         {
-            if (st == StateModel.Init) st = StateModel.Clean;
+           // if (st == StateModel.Init) st = StateModel.Clean;
             if (IsWork) return;
          
             if (st == StateModel.Clean)
