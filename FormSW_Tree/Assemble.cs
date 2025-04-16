@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +23,8 @@ namespace FormSW_Tree
       
             bool isRebuildAsm = isNeedsRebuld();
 
+            if (st == StateModel.ImpossibleRebuild) return;
+
             if (isRebuildAsm)
             {
                 st = StateModel.OnlyAss;
@@ -30,6 +33,20 @@ namespace FormSW_Tree
             base.SetState();
 
         }
+        public void CascadingUpdate(StateModel stChild)
+            {
+                if (st == StateModel.ImpossibleRebuild) return;
+
+                if (stChild == StateModel.ImpossibleRebuild || stChild == StateModel.Initiated)
+                {
+                    st = StateModel.ImpossibleRebuild;
+                }
+                else
+                {
+                   st = StateModel.OnlyAss;
+                }
+            }
+
         bool isNeedsRebuld()
         {
             if (listRefChild.Count == 0) return false;
@@ -49,8 +66,8 @@ namespace FormSW_Tree
 
         }
 
-      
+   
 
-     
+
     }
 }

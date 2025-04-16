@@ -25,11 +25,16 @@ namespace FormSW_Tree
                     break;
                 case "Initiated":
                     st = StateModel.Initiated;
+                    NotificationState();
                     break;
                 case "In work":
-                    if (st == StateModel.Init)
+                    if (st == StateModel.Init|| st == StateModel.Clean)
                     {
                         st = StateModel.Clean;
+                    }
+                    else 
+                    {
+                        NotificationState();
                     }
                     break;
                 case "Pending Express Manufacturing":
@@ -44,21 +49,19 @@ namespace FormSW_Tree
                         st = StateModel.ImpossibleRebuild;
 
                     }
-                        break;
+                    NotificationState();
+                    break;
                 default:
                     break;
             }
-          
 
-            if (st == StateModel.ImpossibleRebuild)
+            void NotificationState()
             {
-              foreach (string item in listParent)
+                foreach (string item in listParent)
                 {
                     Notification(item, st);
-                } 
+                }
             }
-
-                   
 
         }
         protected void Notification(string item, StateModel st)

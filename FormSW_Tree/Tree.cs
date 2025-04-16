@@ -50,29 +50,22 @@ namespace FormSW_Tree
             else if (e == ".SLDASM" || e == ".sldasm")
             {
                 comp = new Assemble(numberCuby, path);
-                
+                comp.NotificationParent += Comp_NotificationParent;
             }
             else { 
                 return null;
             }
-              comp.NotificationParent += Comp_NotificationParent;
+              
              
             return comp;
         }
 
         private static void Comp_NotificationParent(string cubyNumber, StateModel st)
         {
-            Model comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
+            Assemble comp =(Assemble) listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
             if (comp == null) return;
-            if (st == StateModel.ImpossibleRebuild)
-            {
-                comp.st = StateModel.ImpossibleRebuild;
-            }
-            else
-            {
-               comp.st = StateModel.OnlyAss;
-            }
-             
+            comp.CascadingUpdate(st);
+   
         }
 
         public static void CompareVersions()
