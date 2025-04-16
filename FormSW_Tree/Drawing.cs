@@ -57,13 +57,8 @@ namespace FormSW_Tree
                 }
             }
             else
-            {
-                if (model.st == StateModel.ImpossibleRebuild)
-                {
-                    st = StateModel.ImpossibleRebuild;
-                    return;
-                }
-                else if(model.st==StateModel.OnlyAss|| NeedsRebuild || rf)
+            {           
+                if(NeedsRebuild || rf)
                 {
                     st = StateModel.OnlyDraw;
                 }

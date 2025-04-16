@@ -86,8 +86,15 @@ namespace FormSW_Tree
             listComp.Reverse();
             foreach (Model item in listComp)
             {
+               if( item is Part part)
+                    {
+                     part.SetState();
+                    }
+               else if( item is Assemble ass)
+                    {
+                     ass.SetState();
+                    } 
                 
-                item.SetState();
             }
             listComp.Reverse();
        

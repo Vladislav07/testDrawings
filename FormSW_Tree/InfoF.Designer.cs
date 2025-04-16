@@ -39,6 +39,8 @@
             this.chB_Impossible = new System.Windows.Forms.CheckBox();
             this.chB_ToRebuild = new System.Windows.Forms.CheckBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.chB_Init = new System.Windows.Forms.CheckBox();
+            this.chB_Stand = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -58,7 +60,7 @@
             // lbMsg
             // 
             this.lbMsg.AutoSize = true;
-            this.lbMsg.Location = new System.Drawing.Point(513, 22);
+            this.lbMsg.Location = new System.Drawing.Point(568, 17);
             this.lbMsg.Name = "lbMsg";
             this.lbMsg.Size = new System.Drawing.Size(41, 13);
             this.lbMsg.TabIndex = 1;
@@ -67,7 +69,7 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(14, 12);
+            this.button1.Location = new System.Drawing.Point(469, 64);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(104, 23);
             this.button1.TabIndex = 2;
@@ -77,13 +79,15 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chB_Stand);
+            this.groupBox1.Controls.Add(this.chB_Init);
             this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.chB_Clean);
             this.groupBox1.Controls.Add(this.chB_Impossible);
             this.groupBox1.Controls.Add(this.chB_ToRebuild);
-            this.groupBox1.Location = new System.Drawing.Point(167, 12);
+            this.groupBox1.Location = new System.Drawing.Point(22, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(306, 64);
+            this.groupBox1.Size = new System.Drawing.Size(361, 64);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display components in state";
@@ -91,7 +95,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(136, 19);
+            this.checkBox1.Location = new System.Drawing.Point(100, 19);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(72, 17);
             this.checkBox1.TabIndex = 3;
@@ -113,7 +117,7 @@
             // chB_Impossible
             // 
             this.chB_Impossible.AutoSize = true;
-            this.chB_Impossible.Location = new System.Drawing.Point(136, 42);
+            this.chB_Impossible.Location = new System.Drawing.Point(100, 42);
             this.chB_Impossible.Name = "chB_Impossible";
             this.chB_Impossible.Size = new System.Drawing.Size(143, 17);
             this.chB_Impossible.TabIndex = 1;
@@ -134,10 +138,32 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(501, 66);
+            this.progressBar1.Location = new System.Drawing.Point(597, 66);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(400, 10);
+            this.progressBar1.Size = new System.Drawing.Size(304, 10);
             this.progressBar1.TabIndex = 4;
+            // 
+            // chB_Init
+            // 
+            this.chB_Init.AutoSize = true;
+            this.chB_Init.Location = new System.Drawing.Point(258, 41);
+            this.chB_Init.Name = "chB_Init";
+            this.chB_Init.Size = new System.Drawing.Size(44, 17);
+            this.chB_Init.TabIndex = 4;
+            this.chB_Init.Text = "&Init";
+            this.chB_Init.UseVisualStyleBackColor = true;
+            this.chB_Init.CheckedChanged += new System.EventHandler(this.chB_Init_CheckedChanged);
+            // 
+            // chB_Stand
+            // 
+            this.chB_Stand.AutoSize = true;
+            this.chB_Stand.Location = new System.Drawing.Point(258, 18);
+            this.chB_Stand.Name = "chB_Stand";
+            this.chB_Stand.Size = new System.Drawing.Size(59, 17);
+            this.chB_Stand.TabIndex = 5;
+            this.chB_Stand.Text = "&Stand";
+            this.chB_Stand.UseVisualStyleBackColor = true;
+            this.chB_Stand.CheckedChanged += new System.EventHandler(this.chB_Stand_CheckedChanged);
             // 
             // InfoF
             // 
@@ -174,5 +200,7 @@
         private System.Windows.Forms.CheckBox chB_ToRebuild;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.CheckBox chB_Stand;
+        private System.Windows.Forms.CheckBox chB_Init;
     }
 }

@@ -22,6 +22,8 @@ namespace FormSW_Tree
         bool isDispleyRebuild = true;
         bool isImpossible = true;
         bool isBlocked=true;
+        bool isStand = false;
+        bool isInit = false;
         public InfoF()
         {
             InitializeComponent();
@@ -142,6 +144,8 @@ namespace FormSW_Tree
                 if (v.State=="Clean" && !isClean) continue;
                 if ( v.State == "Blocked" && !isBlocked) continue;
                 if (v.State == "ImpossibleRebuild" && !isImpossible) continue;
+                if (v.State == "Stand" && !isStand) continue;
+                if (v.State == "Initiated" && !isInit) continue;
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
                 if(v.Ext == ".sldprt"|| v.TypeComp == ".SLDPRT")
@@ -262,13 +266,29 @@ namespace FormSW_Tree
             {
                 checkBox1.Enabled = false;
             }
-            if (userView.Any(v => (v.State == "ImpossibleRebuild" || v.DrawState == "ImpossibleRebuild")))
+            if (userView.Any(v => (v.State == "ImpossibleRebuild")))
             {
                 chB_Impossible.Enabled = true;
             }
             else
             {
                 chB_Impossible.Enabled = false;
+            }
+            if (userView.Any(v => v.State == "Stand"))
+            {
+                chB_Stand.Enabled = true;
+            }
+            else
+            {
+                chB_Stand.Enabled = false;
+            }
+            if (userView.Any(v => v.State == "Initiated"))
+            {
+                chB_Init.Enabled = true;
+            }
+            else
+            {
+                chB_Init.Enabled = false;
             }
 
         }
@@ -305,6 +325,36 @@ namespace FormSW_Tree
             else
             {
                 isBlocked = false;
+            }
+            RefreshForm();
+        }
+
+        private void chB_Stand_CheckedChanged(object sender, EventArgs e)
+        {
+            if (userView == null) return;
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                isStand = true;
+            }
+            else
+            {
+                isStand = false;
+            }
+            RefreshForm();
+        }
+
+        private void chB_Init_CheckedChanged(object sender, EventArgs e)
+        {
+            if (userView == null) return;
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                isInit= true;
+            }
+            else
+            {
+                isInit= false;
             }
             RefreshForm();
         }

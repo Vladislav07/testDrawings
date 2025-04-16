@@ -25,11 +25,7 @@ namespace FormSW_Tree
             if (isRebuildAsm)
             {
                 st = StateModel.OnlyAss;
-            }
-            else if(st == StateModel.Init)
-            {
-                st = StateModel.Clean;
-            }
+            }       
 
             base.SetState();
 

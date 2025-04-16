@@ -17,15 +17,48 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
-            
-            base.SetState();
-
-            if (st == StateModel.Clean || st == StateModel.Blocked) return;
-
-            foreach (string item in listParent)
+            switch (File.CurrentState.Name)
             {
-                Notification(item, st);
-            }         
+                case "Check library item":
+                case "Kanban":
+                    st = StateModel.Stand;
+                    break;
+                case "Initiated":
+                    st = StateModel.Initiated;
+                    break;
+                case "In work":
+                    if (st == StateModel.Init)
+                    {
+                        st = StateModel.Clean;
+                    }
+                    break;
+                case "Pending Express Manufacturing":
+                case "Express Manufacturing":
+                case "Reset to in Work":
+                    if (st == StateModel.Init || st == StateModel.Clean)
+                    {
+                        st = StateModel.Blocked;
+                    }
+                    else
+                    {
+                        st = StateModel.ImpossibleRebuild;
+
+                    }
+                        break;
+                default:
+                    break;
+            }
+          
+
+            if (st == StateModel.ImpossibleRebuild)
+            {
+              foreach (string item in listParent)
+                {
+                    Notification(item, st);
+                } 
+            }
+
+                   
 
         }
         protected void Notification(string item, StateModel st)
