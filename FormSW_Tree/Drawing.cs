@@ -58,7 +58,7 @@ namespace FormSW_Tree
             }
             else
             {           
-                if(NeedsRebuild || rf)
+                if(NeedsRebuild || rf || model.st == StateModel.OnlyAss)
                 {
                     st = StateModel.OnlyDraw;
                 }

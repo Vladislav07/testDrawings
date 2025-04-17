@@ -28,7 +28,7 @@ namespace FormSW_Tree
                     NotificationState();
                     break;
                 case "In work":
-                    if (st == StateModel.Init|| st == StateModel.Clean)
+                    if (st == StateModel.Init || st == StateModel.Clean)
                     {
                         st = StateModel.Clean;
                     }
@@ -47,9 +47,9 @@ namespace FormSW_Tree
                     else
                     {
                         st = StateModel.ImpossibleRebuild;
-
+                        NotificationState();
                     }
-                    NotificationState();
+                    
                     break;
                 default:
                     break;
