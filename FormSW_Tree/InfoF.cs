@@ -18,10 +18,10 @@ namespace FormSW_Tree
         Controler c;
         DataTable dt;
         List<ViewUser> userView;
-        bool isClean=true;
+        bool isClean=false;
         bool isDispleyRebuild = true;
-        bool isImpossible = true;
-        bool isBlocked=true;
+        bool isImpossible = false;
+        bool isBlocked=false;
         bool isStand = false;
         bool isInit = false;
         public InfoF()
@@ -35,10 +35,9 @@ namespace FormSW_Tree
 
         private void InfoF_Load(object sender, EventArgs e)
         {
-            chB_Clean.Checked = true;
+
             chB_ToRebuild.Checked = true;
-            chB_Impossible.Checked = true;
-            checkBox1.Checked  = true;
+  
             c = new Controler(this);
             c.RunWorkerCompleted += C_RunWorkerCompleted;
             c.ProgressChanged += C_ProgressChanged;
@@ -141,9 +140,10 @@ namespace FormSW_Tree
             foreach (ViewUser v in userView)
             {
                 if (IsRebuldViewUser(v) && !isDispleyRebuild) continue;
-                if (v.State=="Clean" && !isClean) continue;
-                if ( v.State == "Blocked" && !isBlocked) continue;
-                if (v.State == "ImpossibleRebuild" && !isImpossible) continue;
+
+                if ((v.State=="Clean" && !isClean && v.DrawState == "Clean")||( v.State == "Clean" && !isClean && v.DrawState == "")) continue;
+                if ( v.State == "Blocked" && !isBlocked && v.DrawState == "Blocked" ) continue;
+                if (v.State == "ImpossibleRebuild" && !isImpossible && v.DrawState == "ImpossibleRebuild" ) continue;
                 if (v.State == "Stand" && !isStand) continue;
                 if (v.State == "Initiated" && !isInit) continue;
                 DataRow dr = dt.NewRow();
@@ -199,7 +199,7 @@ namespace FormSW_Tree
         bool IsRebuldViewUser(ViewUser v)
         {
              if(v.State=="OnlyAss"||
-                v.State== "DrawFromPart"||
+                v.DrawState== "DrawFromPart"||
                 v.State== "ExtractPart"||
                 v.DrawState == "OnlyDraw")
             {  return true; }
