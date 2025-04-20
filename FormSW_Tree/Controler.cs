@@ -117,18 +117,8 @@ namespace FormSW_Tree
         public bool RebuildTree()
         {
             
-            List<IRebuild> listPart = Tree.listComp.Where(d => IsRebuidModel(d))
-               .Where(d => d.Ext == ".sldprt" || d.Ext == ".SLDPRT")
-               .Select(d => (IRebuild)d).ToList();
-            List<PdmID> listPdmParts = new List<PdmID>();
-            List<string> listPathParts = new List<string>();
-            listPart.ForEach(d =>
-            {
-                listPdmParts.AddRange(d.GetIDFromPDM());
-                listPathParts.Add(d.GetPath());
-            });
-
-            List<IRebuild> listPartDraw = Tree.listDraw.Where(d => IsRebuidDraw(d))
+     
+            List<IRebuild> listPartDraw = Tree.listDraw.Where(d => d.st==StateModel.OnlyDraw || d.st == StateModel.DrawFromPart)
                 .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
                 .Select(d => (IRebuild)d).ToList();
             List<PdmID> listPdmDrawParts = new List<PdmID>();
@@ -140,7 +130,7 @@ namespace FormSW_Tree
             });
 
 
-            List<IRebuild> listAss = Tree.listComp.Where(c => IsRebuidModel(c))
+            List<IRebuild> listAss = Tree.listComp.Where(c => c.st == StateModel.OnlyAss)
                 .Where(c => IsAsm(c))
                 .Select(d => (IRebuild)d).ToList();
             List<PdmID> listPdmAss = new List<PdmID>();
@@ -152,7 +142,7 @@ namespace FormSW_Tree
             });
 
 
-            List<IRebuild> listAssDraw = Tree.listDraw.Where(d => IsRebuidDraw(d))
+            List<IRebuild> listAssDraw = Tree.listDraw.Where(d => d.st == StateModel.OnlyDraw)
                 .Where(d => d.model.Ext == ".sldasm" || d.model.Ext == ".SLDASM")
                 .Select(d => (IRebuild)d).ToList();
             List<PdmID> listPdmDrawAss = new List<PdmID>();
@@ -163,11 +153,7 @@ namespace FormSW_Tree
                 listPathDrawAss.Add(d.GetPath());
             });
 
-            if (listPart.Count > 0)
-            {
-                Update(listPdmParts, listPathParts);
-               
-            }
+          
 
             if (listPartDraw.Count > 0)
             {

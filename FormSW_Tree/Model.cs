@@ -17,7 +17,8 @@ namespace FormSW_Tree
         ImpossibleRebuild = 6,
         Init=7,
         Stand=8,
-        Initiated=9
+        Initiated=9,
+        UpdateDrawing=10,
 
     }
   public abstract class Model: IRebuild
@@ -58,6 +59,7 @@ namespace FormSW_Tree
             {
                 st = StateModel.ImpossibleRebuild;
             }
+
            
         }
 
@@ -88,6 +90,8 @@ namespace FormSW_Tree
         {
             st = StateModel.Init;
         }
+
+   
 
     }
 }

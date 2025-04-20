@@ -20,7 +20,7 @@ namespace FormSW_Tree
         public override void SetState()
         {
             this.GetReferenceFromAssemble();
-      
+
             bool isRebuildAsm = isNeedsRebuld();
 
             if (st == StateModel.ImpossibleRebuild) return;
@@ -28,24 +28,24 @@ namespace FormSW_Tree
             if (isRebuildAsm)
             {
                 st = StateModel.OnlyAss;
-            }       
+            }
 
             base.SetState();
 
         }
         public void CascadingUpdate(StateModel stChild)
-            {
-                if (st == StateModel.ImpossibleRebuild) return;
+        {
+            if (st == StateModel.ImpossibleRebuild) return;
 
-                if (stChild == StateModel.ImpossibleRebuild || stChild == StateModel.Initiated)
-                {
-                    st = StateModel.ImpossibleRebuild;
-                }
-                else
-                {
-                   st = StateModel.OnlyAss;
-                }
+            if (stChild == StateModel.ImpossibleRebuild || stChild == StateModel.Initiated)
+            {
+                st = StateModel.ImpossibleRebuild;
             }
+            else
+            {
+                st = StateModel.OnlyAss;
+            }
+        }
 
         bool isNeedsRebuld()
         {
@@ -65,9 +65,6 @@ namespace FormSW_Tree
             return (listRefChildError.Count > 0) ? true : false;
 
         }
-
-   
-
-
+      
     }
 }

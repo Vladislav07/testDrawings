@@ -28,11 +28,11 @@ namespace FormSW_Tree
                     NotificationState();
                     break;
                 case "In work":
-                    if (st == StateModel.Init || st == StateModel.Clean)
+                    if (st == StateModel.Init)
                     {
                         st = StateModel.Clean;
                     }
-                    else 
+                    else if (st == StateModel.ExtractPart|| st == StateModel.OnlyAss)
                     {
                         NotificationState();
                     }
@@ -40,7 +40,7 @@ namespace FormSW_Tree
                 case "Pending Express Manufacturing":
                 case "Express Manufacturing":
                 case "Reset to in Work":
-                    if (st == StateModel.Init || st == StateModel.Clean)
+                    if (st == StateModel.Init || st == StateModel.Clean || st == StateModel.UpdateDrawing)
                     {
                         st = StateModel.Blocked;
                     }
@@ -77,5 +77,6 @@ namespace FormSW_Tree
             }
            
         }
+
     }
 }

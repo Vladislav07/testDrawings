@@ -141,11 +141,11 @@ namespace FormSW_Tree
             {
                 if (IsRebuldViewUser(v) && !isDispleyRebuild) continue;
 
-                if ((v.State=="Clean" && !isClean && v.DrawState == "Clean")||( v.State == "Clean" && !isClean && v.DrawState == "")) continue;
-                if ( v.State == "Blocked" && !isBlocked && v.DrawState == "Blocked" ) continue;
-                if (v.State == "ImpossibleRebuild" && !isImpossible && v.DrawState == "ImpossibleRebuild" ) continue;
-                if (v.State == "Stand" && !isStand) continue;
-                if (v.State == "Initiated" && !isInit) continue;
+                if (v.State  == "Clean" && !isClean) continue;
+                if (v.State  == "Blocked" && !isBlocked) continue;
+                if (v.State  == "ImpossibleRebuild" && !isImpossible) continue;
+                if (v.State  == "Stand" && !isStand) continue;
+                if (v.State  == "Initiated" && !isInit) continue;
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
                 if(v.Ext == ".sldprt"|| v.TypeComp == ".SLDPRT")
@@ -201,7 +201,8 @@ namespace FormSW_Tree
              if(v.State=="OnlyAss"||
                 v.DrawState== "DrawFromPart"||
                 v.State== "ExtractPart"||
-                v.DrawState == "OnlyDraw")
+                v.DrawState == "OnlyDraw"||
+                v.DrawState == "UpdateDrawing")
             {  return true; }
             else
             {

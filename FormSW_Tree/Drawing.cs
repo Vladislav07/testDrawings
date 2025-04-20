@@ -43,7 +43,7 @@ namespace FormSW_Tree
                 if (!NeedsRebuild && rf)
                 {
                     st = StateModel.OnlyDraw;
-                    model.st = StateModel.Clean;
+                    model.st = StateModel.UpdateDrawing;
                 }          
                 else if (!NeedsRebuild && !rf)
                 {
@@ -58,9 +58,10 @@ namespace FormSW_Tree
             }
             else
             {           
-                if(NeedsRebuild || rf || model.st == StateModel.OnlyAss)
+                if(NeedsRebuild || rf )
                 {
                     st = StateModel.OnlyDraw;
+                    if (model.st == StateModel.Clean || model.st == StateModel.Init) model.st = StateModel.UpdateDrawing;
                 }
                 else
                 {
@@ -103,6 +104,7 @@ namespace FormSW_Tree
             model.st = StateModel.Init;
             base.ResetState();
         }
+    
 
     }
 }
