@@ -23,6 +23,22 @@ namespace FormSW_Tree
         public int FileId { get; set; }
         public int FolderId { get; set; }
     }
+    internal struct MsgData
+    {
+        internal string NumberCuby;
+        internal bool isResult;
+    }
+    internal struct MsgOperation
+    {
+        internal MsgOperation(string n, int i)
+        {
+            this.nameOperation = n;
+            this.numberOfCycles = i;
+        }
+        internal int numberOfCycles;
+        internal string nameOperation;
+
+    }
 
     internal struct ViewUser
     {
@@ -53,7 +69,19 @@ namespace FormSW_Tree
             WorkerReportsProgress = true;
             f = _f;
             f.Action += F_action;
+            Tree.msgDataOperation += Tree_msgDataOperation;
+            Tree.msgNameOperation += Tree_msgNameOperation;
             msgInfo=new string[1];
+        }
+
+        private void Tree_msgNameOperation(MsgOperation obj)
+        {
+            ReportProgress(3, obj);
+        }
+
+        private void Tree_msgDataOperation(MsgData obj)
+        {
+            throw new NotImplementedException();
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)

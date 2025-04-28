@@ -6,7 +6,7 @@ namespace FormSW_Tree
 {
     internal class Part : Model
     {
-        public virtual event Action<string, StateModel> NotificationParent;
+        public virtual event Action<string, Model> NotificationParent;
         public List<string> listParent;
         
         internal Part(string cn, string fn) : base(cn, fn)
@@ -59,16 +59,16 @@ namespace FormSW_Tree
             {
                 foreach (string item in listParent)
                 {
-                    Notification(item, st);
+                    Notification(item);
                 }
             }
 
         }
-        protected void Notification(string item, StateModel st)
+        protected void Notification(string item)
         {
             try
             {
-                NotificationParent.Invoke(item, st);
+                NotificationParent.Invoke(item, this);
             }
             catch (Exception)
             {

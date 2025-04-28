@@ -62,6 +62,10 @@ namespace FormSW_Tree
                 case 2:          
                     this.lbMsg.Text = msg[0];
                     break;
+                case 3:
+                    int count = e.UserState.
+                    this.lbMsg.Text = msg[0];
+                    break;
                 default:
                     break;
             }
@@ -181,7 +185,7 @@ namespace FormSW_Tree
 
         private void InitDT()
         {
-            dt.Columns.Add("Cuby Number", typeof(string));
+            dt.Columns.Add("Cuby_Number", typeof(string));
             
             dt.Columns.Add("Type", typeof(byte[]));
             dt.Columns.Add("Level", typeof(string));

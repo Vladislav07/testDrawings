@@ -34,13 +34,16 @@
             this.lbMsg = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chB_Stand = new System.Windows.Forms.CheckBox();
+            this.chB_Init = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chB_Clean = new System.Windows.Forms.CheckBox();
             this.chB_Impossible = new System.Windows.Forms.CheckBox();
             this.chB_ToRebuild = new System.Windows.Forms.CheckBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.chB_Init = new System.Windows.Forms.CheckBox();
-            this.chB_Stand = new System.Windows.Forms.CheckBox();
+            this.lbStart = new System.Windows.Forms.Label();
+            this.lbCount = new System.Windows.Forms.Label();
+            this.lbNumber = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -52,24 +55,24 @@
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.DataSource = this.bindingSource1;
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.dataGridView.Location = new System.Drawing.Point(0, 93);
+            this.dataGridView.Location = new System.Drawing.Point(0, 109);
             this.dataGridView.Name = "dataGridView";
-            this.dataGridView.Size = new System.Drawing.Size(933, 357);
+            this.dataGridView.Size = new System.Drawing.Size(933, 341);
             this.dataGridView.TabIndex = 0;
             // 
             // lbMsg
             // 
             this.lbMsg.AutoSize = true;
-            this.lbMsg.Location = new System.Drawing.Point(568, 17);
+            this.lbMsg.Location = new System.Drawing.Point(422, 12);
             this.lbMsg.Name = "lbMsg";
-            this.lbMsg.Size = new System.Drawing.Size(41, 13);
+            this.lbMsg.Size = new System.Drawing.Size(84, 13);
             this.lbMsg.TabIndex = 1;
-            this.lbMsg.Text = "label1";
+            this.lbMsg.Text = "msgOperation";
             // 
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(469, 64);
+            this.button1.Location = new System.Drawing.Point(22, 82);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(104, 23);
             this.button1.TabIndex = 2;
@@ -91,6 +94,28 @@
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display components in state";
+            // 
+            // chB_Stand
+            // 
+            this.chB_Stand.AutoSize = true;
+            this.chB_Stand.Location = new System.Drawing.Point(258, 18);
+            this.chB_Stand.Name = "chB_Stand";
+            this.chB_Stand.Size = new System.Drawing.Size(59, 17);
+            this.chB_Stand.TabIndex = 5;
+            this.chB_Stand.Text = "&Stand";
+            this.chB_Stand.UseVisualStyleBackColor = true;
+            this.chB_Stand.CheckedChanged += new System.EventHandler(this.chB_Stand_CheckedChanged);
+            // 
+            // chB_Init
+            // 
+            this.chB_Init.AutoSize = true;
+            this.chB_Init.Location = new System.Drawing.Point(258, 41);
+            this.chB_Init.Name = "chB_Init";
+            this.chB_Init.Size = new System.Drawing.Size(44, 17);
+            this.chB_Init.TabIndex = 4;
+            this.chB_Init.Text = "&Init";
+            this.chB_Init.UseVisualStyleBackColor = true;
+            this.chB_Init.CheckedChanged += new System.EventHandler(this.chB_Init_CheckedChanged);
             // 
             // checkBox1
             // 
@@ -138,38 +163,46 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(597, 66);
+            this.progressBar1.Location = new System.Drawing.Point(425, 90);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(304, 10);
+            this.progressBar1.Size = new System.Drawing.Size(449, 13);
             this.progressBar1.TabIndex = 4;
             // 
-            // chB_Init
+            // lbStart
             // 
-            this.chB_Init.AutoSize = true;
-            this.chB_Init.Location = new System.Drawing.Point(258, 41);
-            this.chB_Init.Name = "chB_Init";
-            this.chB_Init.Size = new System.Drawing.Size(44, 17);
-            this.chB_Init.TabIndex = 4;
-            this.chB_Init.Text = "&Init";
-            this.chB_Init.UseVisualStyleBackColor = true;
-            this.chB_Init.CheckedChanged += new System.EventHandler(this.chB_Init_CheckedChanged);
+            this.lbStart.AutoSize = true;
+            this.lbStart.Location = new System.Drawing.Point(385, 90);
+            this.lbStart.Name = "lbStart";
+            this.lbStart.Size = new System.Drawing.Size(34, 13);
+            this.lbStart.TabIndex = 5;
+            this.lbStart.Text = "Start";
             // 
-            // chB_Stand
+            // lbCount
             // 
-            this.chB_Stand.AutoSize = true;
-            this.chB_Stand.Location = new System.Drawing.Point(258, 18);
-            this.chB_Stand.Name = "chB_Stand";
-            this.chB_Stand.Size = new System.Drawing.Size(59, 17);
-            this.chB_Stand.TabIndex = 5;
-            this.chB_Stand.Text = "&Stand";
-            this.chB_Stand.UseVisualStyleBackColor = true;
-            this.chB_Stand.CheckedChanged += new System.EventHandler(this.chB_Stand_CheckedChanged);
+            this.lbCount.AutoSize = true;
+            this.lbCount.Location = new System.Drawing.Point(880, 90);
+            this.lbCount.Name = "lbCount";
+            this.lbCount.Size = new System.Drawing.Size(40, 13);
+            this.lbCount.TabIndex = 6;
+            this.lbCount.Text = "Count";
+            // 
+            // lbNumber
+            // 
+            this.lbNumber.AutoSize = true;
+            this.lbNumber.Location = new System.Drawing.Point(425, 53);
+            this.lbNumber.Name = "lbNumber";
+            this.lbNumber.Size = new System.Drawing.Size(78, 13);
+            this.lbNumber.TabIndex = 7;
+            this.lbNumber.Text = "NumberCuby";
             // 
             // InfoF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(933, 450);
+            this.Controls.Add(this.lbNumber);
+            this.Controls.Add(this.lbCount);
+            this.Controls.Add(this.lbStart);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button1);
@@ -202,5 +235,8 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.CheckBox chB_Stand;
         private System.Windows.Forms.CheckBox chB_Init;
+        private System.Windows.Forms.Label lbStart;
+        private System.Windows.Forms.Label lbCount;
+        private System.Windows.Forms.Label lbNumber;
     }
 }

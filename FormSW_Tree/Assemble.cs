@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace FormSW_Tree
 {
+
     internal class Assemble : Part
     {
         public Dictionary<string, int> listRefChild;
@@ -22,10 +23,8 @@ namespace FormSW_Tree
             this.GetReferenceFromAssemble();
 
             bool isRebuildAsm = isNeedsRebuld();
-
-            if (st == StateModel.ImpossibleRebuild) return;
-
-            if (isRebuildAsm)
+  
+            if (isRebuildAsm && st != StateModel.ImpossibleRebuild)
             {
                 st = StateModel.OnlyAss;
             }
@@ -33,24 +32,31 @@ namespace FormSW_Tree
             base.SetState();
 
         }
-        public void CascadingUpdate(StateModel stChild)
+        public void CascadingUpdate(Model child)
         {
-            if (st == StateModel.ImpossibleRebuild) return;
+            switch (child.st)
+            {
+                  
+                case StateModel.DrawFromPart:
+                case StateModel.OnlyAss:
+                    st = StateModel.OnlyAss;
+                    break;
 
-            if (stChild == StateModel.ImpossibleRebuild || stChild == StateModel.Initiated)
-            {
-                st = StateModel.ImpossibleRebuild;
-            }
-            else
-            {
-                st = StateModel.OnlyAss;
+                case StateModel.ImpossibleRebuild:
+                case StateModel.Initiated:
+                    st = StateModel.ImpossibleRebuild;
+
+                    break;
+                
+                default:
+                    break;
             }
         }
 
         bool isNeedsRebuld()
         {
             if (listRefChild.Count == 0) return false;
-            listRefChildError.Clear();
+          
             foreach (KeyValuePair<string, int> item in listRefChild)
             {
 
@@ -60,6 +66,7 @@ namespace FormSW_Tree
                 {
                     listRefChildError.Add(item.Key, item.Value.ToString() + "/" + isVers.ToString());
                 }
+
 
             }
             return (listRefChildError.Count > 0) ? true : false;

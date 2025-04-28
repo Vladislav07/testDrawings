@@ -9,14 +9,19 @@ using System.Windows.Forms;
 using System.IO;
 
 namespace FormSW_Tree
+
 {
+   
     public static class Tree
     {
 
         static Dictionary<string, Part> ModelTree;
         public static List<Model> listComp;
         public static List<Drawing> listDraw;
+
         static Dictionary<string, string> structuralNumbers;
+        internal static event Action<MsgData> msgDataOperation;
+        internal static event Action<MsgOperation> msgNameOperation;
         static Tree()
         {
            
@@ -60,11 +65,11 @@ namespace FormSW_Tree
             return comp;
         }
 
-        private static void Comp_NotificationParent(string cubyNumber, StateModel st)
+        private static void Comp_NotificationParent(string cubyNumber, Model child)
         {
             Assemble comp =(Assemble) listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
             if (comp == null) return;
-            comp.CascadingUpdate(st);
+            comp.CascadingUpdate(child);
    
         }
 
@@ -104,10 +109,10 @@ namespace FormSW_Tree
           {
      
             Model comp = listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
-              if (comp == null) return -1;
-              if (comp.File.CurrentVersion != VersChild) return comp.File.CurrentVersion;
-              return -1;
-          }
+            if (comp == null) return -1;
+            if (comp.File.CurrentVersion != VersChild) return comp.File.CurrentVersion;
+            return -1;
+        }
       
         public static void SearchParentFromChild()
         {
@@ -160,6 +165,7 @@ namespace FormSW_Tree
 
         public static void GetInfoPDM()
         {
+            InfoAboutProcessing("Extract from storage PDM", listComp.Count);
             foreach (Model comp in listComp)
                 {
                     comp.GetEdmFile();
@@ -172,6 +178,12 @@ namespace FormSW_Tree
         {
             listComp.ForEach(c => c.RefreshPdmFile());
             listDraw.ForEach(c => c.RefreshPdmFile());
+        }
+
+        private static void InfoAboutProcessing(string nameOper, int countCycl)
+        {
+            MsgOperation mno =new MsgOperation(nameOper, countCycl);
+            msgNameOperation.Invoke(mno);
         }
 
     }

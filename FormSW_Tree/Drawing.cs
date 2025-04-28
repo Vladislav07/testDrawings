@@ -61,11 +61,12 @@ namespace FormSW_Tree
                 if(NeedsRebuild || rf )
                 {
                     st = StateModel.OnlyDraw;
-                    if (model.st == StateModel.Clean || model.st == StateModel.Init) model.st = StateModel.UpdateDrawing;
+                    if (model.st == StateModel.Clean) model.st = StateModel.UpdateDrawing;
                 }
-                else
+
+                if(model.st == StateModel.OnlyAss)
                 {
-                    st = StateModel.Clean;
+                    st = StateModel.OnlyDraw;
                 }
             }
           
