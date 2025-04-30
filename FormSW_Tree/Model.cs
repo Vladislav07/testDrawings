@@ -19,6 +19,7 @@ namespace FormSW_Tree
         Stand=8,
         Initiated=9,
         UpdateDrawing=10,
+        ChildCannotBeUpdated=11,
 
     }
   public abstract class Model: IRebuild

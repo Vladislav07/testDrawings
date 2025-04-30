@@ -63,8 +63,16 @@ namespace FormSW_Tree
                     this.lbMsg.Text = msg[0];
                     break;
                 case 3:
-                    int count = e.UserState.
+                    int count =Convert.ToInt16( msg[1]);
                     this.lbMsg.Text = msg[0];
+                    this.progressBar1.Maximum = count;
+                    this.lbCount.Text = count.ToString();
+                    break;
+                case 4:
+                    int i = Convert.ToInt16(msg[1]);
+                    this.lbNumber.Text = msg[0];
+                    this.progressBar1.Value = i;
+                    this.lbStart.Text = i.ToString();
                     break;
                 default:
                     break;
@@ -145,14 +153,14 @@ namespace FormSW_Tree
             {
                 if (IsRebuldViewUser(v) && !isDispleyRebuild) continue;
 
-                if (v.State  == "Clean" && !isClean) continue;
-                if (v.State  == "Blocked" && !isBlocked) continue;
+                if ((v.State  == "Clean" || v.State == "Blocked") && !isClean) continue;
+                if (v.State  == "ChildCannotBeUpdated" && !isBlocked) continue;
                 if (v.State  == "ImpossibleRebuild" && !isImpossible) continue;
                 if (v.State  == "Stand" && !isStand) continue;
                 if (v.State  == "Initiated" && !isInit) continue;
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
-                if(v.Ext == ".sldprt"|| v.TypeComp == ".SLDPRT")
+                if(v.Ext == ".sldprt"|| v.Ext== ".SLDPRT")
                 {
                     dr[1] = GetImageData(0);
                 }
@@ -163,7 +171,7 @@ namespace FormSW_Tree
 
                 dr[2] = v.Level;
                 dr[3] = v.StPDM;
-                dr[4] = v.VersionModel;
+                dr[4] = v.IsChildRefError;
                 dr[5] = v.IsLocked;
                 if (v.DrawState != "")
                 {
@@ -263,7 +271,7 @@ namespace FormSW_Tree
             {
                 chB_Clean.Enabled = false;
             }
-            if (userView.Any(v =>  v.State == "Blocked"))
+            if (userView.Any(v =>  v.State == "ChildCannotBeUpdated"))
             {
                 checkBox1.Enabled = true;
             }
@@ -271,7 +279,7 @@ namespace FormSW_Tree
             {
                 checkBox1.Enabled = false;
             }
-            if (userView.Any(v => (v.State == "ImpossibleRebuild")))
+            if (userView.Any(v => (v.State == "ImpossibleRebuild" )))
             {
                 chB_Impossible.Enabled = true;
             }

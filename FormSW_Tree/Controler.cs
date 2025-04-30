@@ -23,22 +23,25 @@ namespace FormSW_Tree
         public int FileId { get; set; }
         public int FolderId { get; set; }
     }
-    internal struct MsgData
+
+    public enum StateProcessing
     {
-        internal string NumberCuby;
-        internal bool isResult;
-    }
-    internal struct MsgOperation
-    {
-        internal MsgOperation(string n, int i)
-        {
-            this.nameOperation = n;
-            this.numberOfCycles = i;
-        }
-        internal int numberOfCycles;
-        internal string nameOperation;
+        Connecting=0,
+        ConnectFailed=1,
+        Connected=2,
+        LoadModelTree=3,
+        LoadModelTreeFailed=4,
+        LoadDataPDM=5,
+        LoadDataPDMFailed=6,
+        ProcessingState=7,
+        FullUpdateIsNotPossible=8,
+        ReadyToUpdate=9,
+        RebuildTree =10,
+        RebuildTreeFailed=11,
+        Rebuilt=12
 
     }
+
 
     internal struct ViewUser
     {
@@ -74,14 +77,16 @@ namespace FormSW_Tree
             msgInfo=new string[1];
         }
 
-        private void Tree_msgNameOperation(MsgOperation obj)
+        private void Tree_msgNameOperation(string[] obj)
         {
+    
             ReportProgress(3, obj);
         }
 
-        private void Tree_msgDataOperation(MsgData obj)
+        private void Tree_msgDataOperation(string[] obj)
         {
-            throw new NotImplementedException();
+ 
+            ReportProgress(4, obj);
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
@@ -93,14 +98,20 @@ namespace FormSW_Tree
         {
             sw = new SW();
             sw.connectSw += Sw_connectSw;
+            sw.operationSW += Sw_operationSW;
             sw.loadTree += Sw_loadTree;
             sw.btnConnectSW();
             return true;
         }
 
+        private void Sw_operationSW(string[] obj)
+        {
+            ReportProgress(3, obj);
+        }
+
         private void Sw_loadTree(string[] msg)
         {
-            ReportProgress(2, msg);
+            ReportProgress(4, msg);
         }
 
         private List<ViewUser> F_action()
@@ -124,6 +135,7 @@ namespace FormSW_Tree
             {
                 ReportProgress(1, msg);
                 sw.BuildTree();
+
                 msgInfo[0] = "List formation";
                 ReportProgress(2, msgInfo);
                 Tree.SearchParentFromChild();
@@ -252,21 +264,22 @@ namespace FormSW_Tree
             {
                 Drawing dr = drawList.FirstOrDefault(d => d.CubyNumber == item.CubyNumber);
 
-              lv.Add(  new ViewUser
+                lv.Add(new ViewUser
                 {
                     NameComp = item.CubyNumber,
                     TypeComp = item.Section,
-                    Ext=item.Ext,
+                    Ext = item.Ext,
                     Level = item.Level.ToString(),
-                    StPDM= item.File.CurrentState.Name.ToString(),
-                    State =item.st.ToString(),
+                    StPDM = item.File.CurrentState.Name.ToString(),
+                    State = item.st.ToString(),
                     VersionModel = item.File?.CurrentVersion.ToString() ?? "",
                     IsLocked = item.File?.IsLocked.ToString() ?? "",
+                    IsChildRefError = item is Assemble ? (item as Assemble).listRefChildError.Count.ToString() : "",
 
                     DrawState = dr != null ? dr.st.ToString() : "",
                     StDrPDM = dr != null ? dr.File.CurrentState.Name : "",
-                    DrawNeedRebuild= dr != null ? dr.NeedsRebuild.ToString() : "",
-                    DrawVersRev   = dr != null ? dr.msgRefVers : "",
+                    DrawNeedRebuild = dr != null ? dr.NeedsRebuild.ToString() : "",
+                    DrawVersRev = dr != null ? dr.msgRefVers : "",
                     DrawIsLocked = dr != null ? dr.File?.IsLocked.ToString() : ""
                 });
             }

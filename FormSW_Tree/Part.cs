@@ -36,7 +36,11 @@ namespace FormSW_Tree
                     {
                         NotificationState();
                     }
-                    break;
+                    else if(st == StateModel.ChildCannotBeUpdated)
+                    {
+                        NotificationState();
+                    }
+                        break;
                 case "Pending Express Manufacturing":
                 case "Express Manufacturing":
                 case "Reset to in Work":
@@ -44,6 +48,7 @@ namespace FormSW_Tree
                     {
                         st = StateModel.Blocked;
                     }
+                 
                     else
                     {
                         st = StateModel.ImpossibleRebuild;

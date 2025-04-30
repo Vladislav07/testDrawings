@@ -22,10 +22,19 @@ namespace FormSW_Tree
         private ModelDoc2 swMainModel;
         private AssemblyDoc swMainAssy;
         private Configuration swMainConfig;
+
+        private string[] operSW;
   
         public event Action<string[], bool> connectSw;
+        public event Action<string[]> operationSW;
         public event Action<string[]> loadTree;
 
+        public SW()
+        {
+            operSW = new string[2];
+            //operSW[0] - операция
+            //operSW[1] - count elements
+        }
         public void btnConnectSW()
         {
             string strAttach = swAttach();
@@ -175,6 +184,7 @@ namespace FormSW_Tree
 
          void GetBomTable()
         {
+
             ModelDocExtension Ext = default(ModelDocExtension);
             Ext=swMainModel.Extension;
             BomFeature swBOMFeature = default(BomFeature);
@@ -197,10 +207,14 @@ namespace FormSW_Tree
             string designation;
             string BomName;
             bool boolstatus = false;
-            string[] result = new string[1];
+            string[] result = new string[2];
 
             BomName = swBOMFeature.Name;
             nNumRow = swTableAnn.RowCount;
+
+            operSW[0] = "Read Specification";
+            operSW[1]= nNumRow.ToString();
+            operationSW?.Invoke(operSW);
             for (J = 0; J <= nNumRow - 1; J++)
             {
                 swBOMAnnotation.GetComponentsCount2(J, Configuration, out ItemNumber, out PartNumber);
@@ -226,6 +240,7 @@ namespace FormSW_Tree
 
                     Tree.AddNode(AddextendedNumber, PartNumberTrim, PathName);
                     result[0]= PartNumberTrim;
+                    result[1]= J.ToString();
                     loadTree?.Invoke(result);
                 }
 
@@ -235,8 +250,7 @@ namespace FormSW_Tree
             boolstatus = Ext.SelectByID2("DetailItem" + numberTable + "@Annotations", "ANNOTATIONTABLES", 0, 0, 0, false, 0, null, 0);
             swMainModel.EditDelete();
             swMainModel.ClearSelection2(true);
-            result[0] = "Loaded doc";
-            loadTree?.Invoke(result);
+           
         }
 
 

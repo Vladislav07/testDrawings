@@ -20,8 +20,8 @@ namespace FormSW_Tree
         public static List<Drawing> listDraw;
 
         static Dictionary<string, string> structuralNumbers;
-        internal static event Action<MsgData> msgDataOperation;
-        internal static event Action<MsgOperation> msgNameOperation;
+        internal static event Action<string[]> msgDataOperation;
+        internal static event Action<string[]> msgNameOperation;
         static Tree()
         {
            
@@ -154,7 +154,8 @@ namespace FormSW_Tree
                 foreach (Model comp in item)
                 {
                    
-                    comp.Level = level_;                  
+                    comp.Level = level_; 
+                    if(listComp.Contains(comp))continue;
                     listComp.Add(comp);
                 }
                 level_++;
@@ -165,12 +166,15 @@ namespace FormSW_Tree
 
         public static void GetInfoPDM()
         {
+            int i = 1;
             InfoAboutProcessing("Extract from storage PDM", listComp.Count);
             foreach (Model comp in listComp)
-                {
-                    comp.GetEdmFile();
-                    comp.IsDrawings();
-                }
+             {
+                comp.GetEdmFile();
+                comp.IsDrawings();
+                InfoDataProcessing(comp.CubyNumber, i);
+                i++;
+             }
             
         }
 
@@ -182,8 +186,18 @@ namespace FormSW_Tree
 
         private static void InfoAboutProcessing(string nameOper, int countCycl)
         {
-            MsgOperation mno =new MsgOperation(nameOper, countCycl);
+            string[] mno = new string[2];
+            mno[0] = nameOper;
+            mno[1]=countCycl.ToString();
             msgNameOperation.Invoke(mno);
+        }
+        private static void InfoDataProcessing(string nameCuby, int i)
+        {
+           
+            string[] mdata = new string[2];
+            mdata[0]=nameCuby;
+            mdata[1] = i.ToString();
+            msgDataOperation.Invoke(mdata);
         }
 
     }

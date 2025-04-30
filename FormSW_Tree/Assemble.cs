@@ -24,7 +24,7 @@ namespace FormSW_Tree
 
             bool isRebuildAsm = isNeedsRebuld();
   
-            if (isRebuildAsm && st != StateModel.ImpossibleRebuild)
+            if (isRebuildAsm && st != StateModel.ChildCannotBeUpdated)
             {
                 st = StateModel.OnlyAss;
             }
@@ -44,7 +44,8 @@ namespace FormSW_Tree
 
                 case StateModel.ImpossibleRebuild:
                 case StateModel.Initiated:
-                    st = StateModel.ImpossibleRebuild;
+                case StateModel.ChildCannotBeUpdated:
+                    st = StateModel.ChildCannotBeUpdated;
 
                     break;
                 
