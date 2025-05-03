@@ -156,8 +156,25 @@ namespace FormSW_Tree
 
         public bool RebuildTree()
         {
-            
-     
+            List<PdmID> listExstactPDM = new List<PdmID>();
+
+            List<IRebuild> listPart = Tree.listComp.Where(d => IsRebuidModel(d))
+            .Where(d => d.Ext == ".sldprt" || d.Ext == ".SLDPRT")
+            .Select(d => (IRebuild)d).ToList();
+            List<PdmID> listPdmParts = new List<PdmID>();
+            List<string> listPathParts = new List<string>();
+            listPart.ForEach(d =>
+            {
+                listPdmParts.AddRange(d.GetIDFromPDM());
+                listPathParts.Add(d.GetPath());
+              
+            });
+
+            if (listPdmParts.Count > 0)
+            {
+                listExstactPDM = listExstactPDM.Union(listPdmParts).ToList();
+            }
+
             List<IRebuild> listPartDraw = Tree.listDraw.Where(d => d.st==StateModel.OnlyDraw || d.st == StateModel.DrawFromPart)
                 .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
                 .Select(d => (IRebuild)d).ToList();
@@ -167,8 +184,13 @@ namespace FormSW_Tree
             {
                 listPdmDrawParts.AddRange(d.GetIDFromPDM());
                 listPathDrawParts.Add(d.GetPath());
+ 
             });
+            if (listPdmDrawParts.Count > 0)
+            {
 
+                listExstactPDM = listExstactPDM.Union(listPdmDrawParts).ToList();
+            }
 
             List<IRebuild> listAss = Tree.listComp.Where(c => c.st == StateModel.OnlyAss)
                 .Where(c => IsAsm(c))
@@ -179,8 +201,14 @@ namespace FormSW_Tree
             {
                 listPdmAss.AddRange(a.GetIDFromPDM());
                 listPathAss.Add(a.GetPath());
+               
+             
             });
+            if (listPdmAss.Count > 0)
+            {
 
+                listExstactPDM = listExstactPDM.Union(listPdmAss).ToList();
+            }
 
             List<IRebuild> listAssDraw = Tree.listDraw.Where(d => d.st == StateModel.OnlyDraw)
                 .Where(d => d.model.Ext == ".sldasm" || d.model.Ext == ".SLDASM")
@@ -191,9 +219,26 @@ namespace FormSW_Tree
             {
                 listPdmDrawAss.AddRange(d.GetIDFromPDM());
                 listPathDrawAss.Add(d.GetPath());
+               
+              
             });
+            if (listPdmDrawAss.Count > 0)
+            {
 
-          
+                listExstactPDM = listExstactPDM.Union(listPdmDrawAss).ToList();
+            }
+            if (listExstactPDM.Count > 0){
+                try
+                {
+                    PDM.AddSelItemToList(listExstactPDM);
+                    PDM.BatchGet();
+                }
+                catch (Exception)
+                {
+
+                    MessageBox.Show("Error extactFilePDM");
+                }
+            }
 
             if (listPartDraw.Count > 0)
             {
@@ -231,7 +276,7 @@ namespace FormSW_Tree
             try
             {
                 PDM.AddSelItemToList(listToPdm);
-                PDM.BatchGet(listToPdm);
+              
                 sw.OpenAndRefresh(listToSw);
                 PDM.DocBatchUnLock();
             }

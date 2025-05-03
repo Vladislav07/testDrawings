@@ -13,11 +13,11 @@ namespace FormSW_Tree
         {
             listParent = new List<string>();
         }
-      
+
 
         public override void SetState()
         {
-            
+
             switch (File.CurrentState.Name)
             {
                 case "Check library item":
@@ -29,35 +29,35 @@ namespace FormSW_Tree
                     NotificationState();
                     break;
                 case "In work":
-                    if (isNeedsRebuildPart())            
+                    if (isNeedsRebuildPart())
                     {
-                      st =  StateModel.ExtractPart;
-                      NotificationState();
-                    }                
+                        st = StateModel.ExtractPart;
+                        NotificationState();
+                    }
                     break;
                 case "Pending Express Manufacturing":
                 case "Express Manufacturing":
                 case "Reset to in Work":
-                    if (isNeedsRebuildPart()) 
-                    {                         
+                    if (isNeedsRebuildPart())
+                    {
                         st = StateModel.ImpossibleRebuild;
                         NotificationState();
                     }
-                   
+
                     break;
                 default:
                     break;
             }
-
-            void NotificationState()
-            {
-                foreach (string item in listParent)
-                {
-                    Notification(item);
-                }
-            }
-
         }
+        protected void NotificationState()
+        {
+            foreach (string item in listParent)
+            {
+                Notification(item);
+            }
+        }
+
+
         protected void Notification(string item)
         {
             try

@@ -129,7 +129,7 @@ namespace FormSW_Tree
             }
         }
 
-        public static  void BatchGet(List<PdmID> list)
+        public static  void BatchGet()
         {       
             try
             {

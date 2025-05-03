@@ -28,8 +28,17 @@ namespace FormSW_Tree
             {
                 st = StateModel.OnlyAss;
             }
-
-            base.SetState();
+        
+            if (File.CurrentState.Name != "In work" && st == StateModel.OnlyAss)
+            {
+                st = StateModel.Blocked;
+                NotificationState();
+            }
+            else if(File.CurrentState.Name == "In work" && st == StateModel.OnlyAss)
+            {
+                NotificationState();
+            }
+            if (st == StateModel.Init) st = StateModel.Clean;
 
         }
         public void CascadingUpdate(Model child)
@@ -43,6 +52,7 @@ namespace FormSW_Tree
                     break;
 
                 case StateModel.ImpossibleRebuild:
+                case StateModel.Blocked:
                 case StateModel.Initiated:
                 case StateModel.ChildCannotBeUpdated:
                     st = StateModel.ChildCannotBeUpdated;
