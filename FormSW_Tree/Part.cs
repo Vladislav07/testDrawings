@@ -17,6 +17,7 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
+            
             switch (File.CurrentState.Name)
             {
                 case "Check library item":
@@ -28,33 +29,21 @@ namespace FormSW_Tree
                     NotificationState();
                     break;
                 case "In work":
-                    if (st == StateModel.Init)
+                    if (isNeedsRebuildPart())            
                     {
-                        st = StateModel.Clean;
-                    }
-                    else if (st == StateModel.ExtractPart|| st == StateModel.OnlyAss)
-                    {
-                        NotificationState();
-                    }
-                    else if(st == StateModel.ChildCannotBeUpdated)
-                    {
-                        NotificationState();
-                    }
-                        break;
+                      st =  StateModel.ExtractPart;
+                      NotificationState();
+                    }                
+                    break;
                 case "Pending Express Manufacturing":
                 case "Express Manufacturing":
                 case "Reset to in Work":
-                    if (st == StateModel.Init || st == StateModel.Clean || st == StateModel.UpdateDrawing)
-                    {
-                        st = StateModel.Blocked;
-                    }
-                 
-                    else
-                    {
+                    if (isNeedsRebuildPart()) 
+                    {                         
                         st = StateModel.ImpossibleRebuild;
                         NotificationState();
                     }
-                    
+                   
                     break;
                 default:
                     break;
@@ -81,6 +70,11 @@ namespace FormSW_Tree
                 
             }
            
+        }
+
+        private bool isNeedsRebuildPart()
+        {
+            return File.NeedsRegeneration(File.CurrentVersion, bFolder) ? true : false;
         }
 
     }
