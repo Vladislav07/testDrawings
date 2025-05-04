@@ -31,8 +31,12 @@ namespace FormSW_Tree
                 case "In work":
                     if (isNeedsRebuildPart())
                     {
-                        st = StateModel.ExtractPart;
+                        st = StateModel.DrawFromPart;
                         NotificationState();
+                    }
+                    else
+                    {
+                        if (st == StateModel.Init) st = StateModel.Clean;
                     }
                     break;
                 case "Pending Express Manufacturing":
@@ -40,7 +44,7 @@ namespace FormSW_Tree
                 case "Reset to in Work":
                     if (isNeedsRebuildPart())
                     {
-                        st = StateModel.ImpossibleRebuild;
+                        st = StateModel.Blocked;
                         NotificationState();
                     }
 

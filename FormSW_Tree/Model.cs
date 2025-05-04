@@ -8,17 +8,16 @@ namespace FormSW_Tree
 {
     public enum StateModel
     {
-        OnlyDraw=0,   
-        DrawFromPart=1,
+        OnlyDraw=0,   //u drawing
+        DrawFromPart=1,  //u part,u drawing
         OnlyAss=2,
-        ExtractPart = 3,
-        Clean=4,
+        ExtractPart = 3,  //extract
+        Clean=4,         
         Blocked=5,
-        ImpossibleRebuild = 6,
-        Init=7,
+        Init=7,   
         Stand=8,
         Initiated=9,
-        UpdateDrawing=10,
+        UpdateDrawing=10,     //u drawingAss not ex ass
         ChildCannotBeUpdated=11,
 
     }
@@ -67,7 +66,7 @@ namespace FormSW_Tree
         }
         public virtual void SetState()
         {
-         
+       /*  
             if (IsWork) return;
          
             if (st == StateModel.Clean)
@@ -79,25 +78,11 @@ namespace FormSW_Tree
                 st = StateModel.ImpossibleRebuild;
             }
 
-           
+          */ 
         }
 
-        public virtual void SetMode()
-        {
-
-            if (IsWork) return;
-
-            if (st == StateModel.Clean)
-            {
-                st = StateModel.Blocked;
-            }
-            else
-            {
-                st = StateModel.ImpossibleRebuild;
-            }
-
-
-        }
+    
+        
 
         bool IsWork
         {

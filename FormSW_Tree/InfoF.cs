@@ -153,9 +153,9 @@ namespace FormSW_Tree
             {
                 if (IsRebuldViewUser(v) && !isDispleyRebuild) continue;
 
-                if ((v.State  == "Clean" || v.State == "Blocked") && !isClean) continue;
-                if (v.State  == "ChildCannotBeUpdated" && !isBlocked) continue;
-                if (v.State  == "ImpossibleRebuild" && !isImpossible) continue;
+                if (v.State  == "Clean"  && !isClean) continue;
+                if (v.State  == "Blocked" && !isBlocked) continue;
+                if (v.State  == "ChildCannotBeUpdated" && !isImpossible) continue;
                 if (v.State  == "Stand" && !isStand) continue;
                 if (v.State  == "Initiated" && !isInit) continue;
                 DataRow dr = dt.NewRow();
@@ -171,7 +171,7 @@ namespace FormSW_Tree
 
                 dr[2] = v.Level;
                 dr[3] = v.StPDM;
-                dr[4] = v.IsChildRefError;
+                dr[4] = v.State;
                 dr[5] = v.IsLocked;
                 if (v.DrawState != "")
                 {
@@ -184,7 +184,7 @@ namespace FormSW_Tree
                 dr[7] = v.StDrPDM;
                 dr[8] = v.DrawVersRev;
                 dr[9] = v.DrawNeedRebuild;
-                dr[10] = v.DrawIsLocked;
+                dr[10] = v.DrawState;
 
                 dt.Rows.Add(dr);
             }
@@ -271,7 +271,7 @@ namespace FormSW_Tree
             {
                 chB_Clean.Enabled = false;
             }
-            if (userView.Any(v =>  v.State == "ChildCannotBeUpdated"))
+            if (userView.Any(v =>  v.State == "Blocked"))
             {
                 checkBox1.Enabled = true;
             }
@@ -279,7 +279,7 @@ namespace FormSW_Tree
             {
                 checkBox1.Enabled = false;
             }
-            if (userView.Any(v => (v.State == "ImpossibleRebuild" )))
+            if (userView.Any(v => (v.State == "ChildCannotBeUpdated")))
             {
                 chB_Impossible.Enabled = true;
             }

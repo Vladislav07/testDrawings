@@ -48,10 +48,11 @@ namespace FormSW_Tree
                   
                 case StateModel.DrawFromPart:
                 case StateModel.OnlyAss:
+                case StateModel.ExtractPart:
                     st = StateModel.OnlyAss;
                     break;
 
-                case StateModel.ImpossibleRebuild:
+           
                 case StateModel.Blocked:
                 case StateModel.Initiated:
                 case StateModel.ChildCannotBeUpdated:

@@ -39,28 +39,26 @@ namespace FormSW_Tree
         {
 
             bool rf = RevVersion(ref msgRefVers);
+
             if (isPart)
             {
-                if (model.st == StateModel.ExtractPart)
-                {
-                    st = StateModel.DrawFromPart;
-                }
-
-                if (!NeedsRebuild && rf)
+                
+                if (NeedsRebuild || rf)
                 {
                     st = StateModel.OnlyDraw;
-                }
-                else if (!NeedsRebuild && !rf)
-                {
-                    st = StateModel.Clean;
+                    model.st = StateModel.ExtractPart;
                 }
                 else
                 {
-                    st = StateModel.DrawFromPart;
-                    model.st = StateModel.ExtractPart;
+                    st = StateModel.Clean;
                 }
-                
-              
+
+                if (model.st == StateModel.DrawFromPart)
+                {
+                    st = StateModel.OnlyDraw;
+                }
+
+
             }
             else
             {
@@ -76,6 +74,11 @@ namespace FormSW_Tree
                 if (model.st == StateModel.OnlyAss)
                 {
                     st = StateModel.OnlyDraw;
+                }
+
+                if(st == StateModel.OnlyDraw && model.st == StateModel.Init)
+                {
+                    model.st = StateModel.UpdateDrawing;
                 }
             }
 
@@ -99,19 +102,19 @@ namespace FormSW_Tree
             return (refDrToModel == model.File.CurrentVersion) ? false:true;
         }
 
-
+        
         public override List<PdmID> GetIDFromPDM()
         {
             List<PdmID> list = new List<PdmID>();
             
             list.Add(new PdmID(bFile, bFolder));
-            if (st == StateModel.DrawFromPart)
+            if (st == StateModel.ExtractPart)
             {
                 list.Add(new PdmID(model.bFile, model.bFolder));
             }
             return list;
         }
-
+       
         public override void ResetState()
         {
             model.st = StateModel.Init;

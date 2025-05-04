@@ -157,76 +157,59 @@ namespace FormSW_Tree
         public bool RebuildTree()
         {
             List<PdmID> listExstactPDM = new List<PdmID>();
-
-            List<IRebuild> listPart = Tree.listComp.Where(d => IsRebuidModel(d))
-            .Where(d => d.Ext == ".sldprt" || d.Ext == ".SLDPRT")
+            //parts
+            List<IRebuild> listPart = Tree.listComp.Where(d => d.st == StateModel.DrawFromPart)
             .Select(d => (IRebuild)d).ToList();
-            List<PdmID> listPdmParts = new List<PdmID>();
+
             List<string> listPathParts = new List<string>();
             listPart.ForEach(d =>
             {
-                listPdmParts.AddRange(d.GetIDFromPDM());
+                listExstactPDM.AddRange(d.GetIDFromPDM());
                 listPathParts.Add(d.GetPath());
               
             });
 
-            if (listPdmParts.Count > 0)
-            {
-                listExstactPDM = listExstactPDM.Union(listPdmParts).ToList();
-            }
-
-            List<IRebuild> listPartDraw = Tree.listDraw.Where(d => d.st==StateModel.OnlyDraw || d.st == StateModel.DrawFromPart)
+       
+            //drawsPart
+            List<IRebuild> listPartDraw = Tree.listDraw.Where(d => d.st==StateModel.OnlyDraw)
                 .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
                 .Select(d => (IRebuild)d).ToList();
-            List<PdmID> listPdmDrawParts = new List<PdmID>();
+     
             List<string> listPathDrawParts = new List<string>();
             listPartDraw.ForEach(d =>
             {
-                listPdmDrawParts.AddRange(d.GetIDFromPDM());
+                listExstactPDM.AddRange(d.GetIDFromPDM());
                 listPathDrawParts.Add(d.GetPath());
  
             });
-            if (listPdmDrawParts.Count > 0)
-            {
-
-                listExstactPDM = listExstactPDM.Union(listPdmDrawParts).ToList();
-            }
+         
 
             List<IRebuild> listAss = Tree.listComp.Where(c => c.st == StateModel.OnlyAss)
-                .Where(c => IsAsm(c))
                 .Select(d => (IRebuild)d).ToList();
-            List<PdmID> listPdmAss = new List<PdmID>();
+      
             List<string> listPathAss = new List<string>();
             listAss.ForEach(a =>
             {
-                listPdmAss.AddRange(a.GetIDFromPDM());
+                listExstactPDM.AddRange(a.GetIDFromPDM());
                 listPathAss.Add(a.GetPath());
                
              
             });
-            if (listPdmAss.Count > 0)
-            {
-
-                listExstactPDM = listExstactPDM.Union(listPdmAss).ToList();
-            }
+         
 
             List<IRebuild> listAssDraw = Tree.listDraw.Where(d => d.st == StateModel.OnlyDraw)
                 .Where(d => d.model.Ext == ".sldasm" || d.model.Ext == ".SLDASM")
                 .Select(d => (IRebuild)d).ToList();
-            List<PdmID> listPdmDrawAss = new List<PdmID>();
+
             List<string> listPathDrawAss = new List<string>();
             listAssDraw.ForEach(d =>
             {
-                listPdmDrawAss.AddRange(d.GetIDFromPDM());
+                listExstactPDM.AddRange(d.GetIDFromPDM());
                 listPathDrawAss.Add(d.GetPath());
                
               
             });
-            if (listPdmDrawAss.Count > 0)
-            {
-
-                listExstactPDM = listExstactPDM.Union(listPdmDrawAss).ToList();
-            }
+      
             if (listExstactPDM.Count > 0){
                 try
                 {
@@ -239,25 +222,18 @@ namespace FormSW_Tree
                     MessageBox.Show("Error extactFilePDM");
                 }
             }
-
-            if (listPartDraw.Count > 0)
-            {
-                Update(listPdmDrawParts, listPathDrawParts);
-               
-            }
-
-                if (listAss.Count > 0)
+            if (listPart.Count > 0) Update(listPathParts);
+            if (listPartDraw.Count > 0) Update(listPathDrawParts);
+         
+            if (listAss.Count > 0)
             {
                 listPathAss.Reverse();
-                Update(listPdmAss, listPathAss);
-             
+                Update(listPathAss);            
             }
 
-            if (listAssDraw.Count > 0)
-            {
-                Update(listPdmDrawAss, listPathDrawAss);
-                
-            }
+            if (listAssDraw.Count > 0) Update(listPathDrawAss);
+
+            PDM.DocBatchUnLock();
              Tree.listComp.ForEach(c => c.ResetState());
              Tree.listDraw.ForEach(c => c.ResetState());
             return true;
@@ -271,18 +247,15 @@ namespace FormSW_Tree
         }
 
 
-        private void Update(List<PdmID> listToPdm, List<string> listToSw)
+        private void Update(List<string> listToSw)
         {
             try
-            {
-                PDM.AddSelItemToList(listToPdm);
-              
+            {     
                 sw.OpenAndRefresh(listToSw);
-                PDM.DocBatchUnLock();
             }
             catch (Exception)
             {
-                MessageBox.Show("Error updating");
+                MessageBox.Show("Error updating SW");
 
             }
 
@@ -295,8 +268,8 @@ namespace FormSW_Tree
                return Regex.IsMatch(comp.CubyNumber, regCuby);
            };
 
-        Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.OnlyAss || comp.st == StateModel.ExtractPart;
-        Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw || comp.st == StateModel.DrawFromPart;
+        Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.OnlyAss || comp.st == StateModel.ExtractPart || comp.st == StateModel.DrawFromPart;
+        Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw ;
         Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
         Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
 
