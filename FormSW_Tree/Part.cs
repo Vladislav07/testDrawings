@@ -46,6 +46,9 @@ namespace FormSW_Tree
                     {
                         st = StateModel.Blocked;
                         NotificationState();
+                    } else
+                    {
+                        if (st == StateModel.Init) st = StateModel.Clean;
                     }
 
                     break;

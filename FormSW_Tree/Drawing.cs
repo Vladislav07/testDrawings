@@ -39,10 +39,14 @@ namespace FormSW_Tree
         {
 
             bool rf = RevVersion(ref msgRefVers);
+            if (CubyNumber == "CUBY-00300703")
+            {
+                int i = 0;
+            }
 
             if (isPart)
             {
-                
+               
                 if (NeedsRebuild || rf)
                 {
                     st = StateModel.OnlyDraw;
@@ -76,7 +80,7 @@ namespace FormSW_Tree
                     st = StateModel.OnlyDraw;
                 }
 
-                if(st == StateModel.OnlyDraw && model.st == StateModel.Init)
+                if(st == StateModel.OnlyDraw && (model.st == StateModel.Init || model.st == StateModel.Clean))
                 {
                     model.st = StateModel.UpdateDrawing;
                 }

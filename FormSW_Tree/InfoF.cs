@@ -211,10 +211,9 @@ namespace FormSW_Tree
         bool IsRebuldViewUser(ViewUser v)
         {
              if(v.State=="OnlyAss"||
-                v.DrawState== "DrawFromPart"||
-                v.State== "ExtractPart"||
-                v.DrawState == "OnlyDraw"||
-                v.DrawState == "UpdateDrawing")
+                v.State == "ExtractPart" ||
+                v.State== "DrawFromPart" ||
+                v.DrawState == "OnlyDraw")
             {  return true; }
             else
             {
