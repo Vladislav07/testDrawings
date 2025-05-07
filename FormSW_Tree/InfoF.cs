@@ -212,7 +212,6 @@ namespace FormSW_Tree
         {
              if(v.State=="OnlyAss"||
                 v.State == "ExtractPart" ||
-                v.State== "DrawFromPart" ||
                 v.DrawState == "OnlyDraw")
             {  return true; }
             else

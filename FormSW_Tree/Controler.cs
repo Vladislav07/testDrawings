@@ -278,17 +278,6 @@ namespace FormSW_Tree
         }
   
 
-        Predicate<Model> IsCuby = (Model comp) =>
-           {
-               string regCuby = @"^CUBY-\d{8}$";
-               return Regex.IsMatch(comp.CubyNumber, regCuby);
-           };
-
-        Predicate<Model> IsRebuidModel = (Model comp) => comp.st == StateModel.OnlyAss || comp.st == StateModel.ExtractPart || comp.st == StateModel.DrawFromPart;
-        Predicate<Drawing> IsRebuidDraw = (Drawing comp) => comp.st == StateModel.OnlyDraw ;
-        Predicate<Model> IsParts = (Model comp) => comp.Ext == ".sldprt" || comp.Ext == ".SLDPRT";
-        Predicate<Model> IsAsm = (Model comp) => comp.Ext == ".sldasm" || comp.Ext == ".SLDASM";
-
         internal  List<ViewUser> JoinCompAndDraw( )
         {
             List<Model> compList = Tree.listComp;

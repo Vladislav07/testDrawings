@@ -54,12 +54,7 @@ namespace FormSW_Tree
                     st = StateModel.Clean;
                 }
 
-                if (model.st == StateModel.DrawFromPart)
-                {
-                    st = StateModel.OnlyDraw;
-                }
-
-
+   
             }
             else
             {
@@ -79,11 +74,11 @@ namespace FormSW_Tree
 
                 if(st == StateModel.OnlyDraw && (model.st == StateModel.Init || model.st == StateModel.Clean))
                 {
-                    model.st = StateModel.UpdateDrawing;
+                    model.st = StateModel.OnlyAss;
                 }
             }
 
-            if (File.CurrentState.Name != "In work" && (st == StateModel.OnlyDraw || st == StateModel.DrawFromPart))
+            if (File.CurrentState.Name != "In work" && st == StateModel.OnlyDraw )
             {
                 st = StateModel.Blocked;
             }

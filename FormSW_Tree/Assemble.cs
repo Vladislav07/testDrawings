@@ -44,9 +44,7 @@ namespace FormSW_Tree
         public void CascadingUpdate(Model child)
         {
             switch (child.st)
-            {
-                  
-                case StateModel.DrawFromPart:
+            {               
                 case StateModel.OnlyAss:
                 case StateModel.ExtractPart:
                     st = StateModel.OnlyAss;

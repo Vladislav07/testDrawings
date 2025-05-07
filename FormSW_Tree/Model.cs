@@ -17,8 +17,7 @@ namespace FormSW_Tree
         Init=7,   
         Stand=8,
         Initiated=9,
-        UpdateDrawing=10,     //u drawingAss not ex ass
-        ChildCannotBeUpdated=11,
+        ChildCannotBeUpdated=10,
 
     }
     [Flags]
@@ -66,28 +65,12 @@ namespace FormSW_Tree
         }
         public virtual void SetState()
         {
-       /*  
-            if (IsWork) return;
-         
-            if (st == StateModel.Clean)
-            {
-                st = StateModel.Blocked;
-            }
-            else
-            {
-                st = StateModel.ImpossibleRebuild;
-            }
-
-          */ 
+   
         }
 
     
         
 
-        bool IsWork
-        {
-            get { return (File.CurrentState.Name == "In work") ? true : false; }
-        }
 
         public virtual  List<PdmID> GetIDFromPDM()
         {

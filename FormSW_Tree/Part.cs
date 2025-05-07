@@ -17,51 +17,40 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
-            if (CubyNumber == "CUBY-00300703")
-            {
-                int i = 1;
-            }
+
             switch (File.CurrentState.Name)
             {
                 case "Check library item":
                 case "Kanban":
                 case "Approved to use":
-
                     st = StateModel.Stand;
                     break;
+
                 case "Initiated":
                     st = StateModel.Initiated;
                     NotificationState();
                     break;
+
                 case "In work":
-                    if (isNeedsRebuildPart())
-                    {
-                        st = StateModel.DrawFromPart;
-                        NotificationState();
-                    }
-                    else
-                    {
-                        if (st == StateModel.Init) st = StateModel.Clean;
-                    }
+                    if (st == StateModel.Init) st = StateModel.Clean;                   
                     if (st == StateModel.ExtractPart)
-                    {
-                        
+                    {                     
                         NotificationState();
                     }
                     break;
+
                 case "Pending Express Manufacturing":
                 case "Express Manufacturing":
                 case "Reset to in Work":
-                    if (isNeedsRebuildPart())
+
+                    if (st == StateModel.Init) st = StateModel.Clean;
+                    if (st == StateModel.ExtractPart)
                     {
                         st = StateModel.Blocked;
                         NotificationState();
-                    } else
-                    {
-                        if (st == StateModel.Init) st = StateModel.Clean;
                     }
-
                     break;
+
                 default:
                     break;
             }
@@ -89,10 +78,6 @@ namespace FormSW_Tree
            
         }
 
-        private bool isNeedsRebuildPart()
-        {
-            return File.NeedsRegeneration(File.CurrentVersion, bFolder) ? true : false;
-        }
 
     }
 }
