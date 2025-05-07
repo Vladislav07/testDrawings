@@ -208,13 +208,17 @@ namespace FormSW_Tree
 
         public static bool IsDrawings(this Model comp)
         {
-
+            IEdmFolder5 bFolder;
             IEdmFile7 bFile = null;
             try
             {
                 string p = Path.Combine(Path.GetDirectoryName(comp.FullPath), comp.CubyNumber + ".SLDDRW");
-                bFile = (IEdmFile7)vault.GetFileFromPath(p, out IEdmFolder5 bFolder);
-
+                bFile = (IEdmFile7)vault.GetFileFromPath(p, out bFolder);
+                if(bFile == null)
+                {
+                    p = Path.Combine(Path.GetDirectoryName(comp.FullPath), comp.CubyNumber + ".slddrw");
+                    bFile = (IEdmFile7)vault.GetFileFromPath(p, out bFolder);
+                }
                 if (bFile != null)                                         
                 {                
                     Drawing draw = new Drawing(comp.CubyNumber, p, comp, bFile, bFolder.ID);

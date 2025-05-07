@@ -194,7 +194,7 @@ namespace FormSW_Tree
             int nbrType = (int)swNumberingType_e.swNumberingType_Detailed;
             int BomType = (int)swBomType_e.swBomType_Indented;
 
-            swBOMAnnotation = Ext.InsertBomTable3(TemplateName, 0, 0, BomType, Configuration, false, nbrType, false);
+            swBOMAnnotation = Ext.InsertBomTable3(TemplateName, 0, 0, BomType, Configuration, true, nbrType, false);
             swBOMFeature = swBOMAnnotation.BomFeature;
 
             TableAnnotation swTableAnn = (TableAnnotation)swBOMAnnotation;

@@ -158,6 +158,7 @@ namespace FormSW_Tree
         {
             List<PdmID> listExstactPDM = new List<PdmID>();
             //parts
+            /*
             List<IRebuild> listPart = Tree.listComp.Where(d => d.st == StateModel.DrawFromPart)
             .Select(d => (IRebuild)d).ToList();
 
@@ -168,16 +169,17 @@ namespace FormSW_Tree
                 listPathParts.Add(d.GetPath());
               
             });
-
+            */
        
             //drawsPart
             List<IRebuild> listPartDraw = Tree.listDraw.Where(d => d.st==StateModel.OnlyDraw)
                 .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
                 .Select(d => (IRebuild)d).ToList();
-     
+            List<PdmID> listPDMDrawPart = new List<PdmID>();
             List<string> listPathDrawParts = new List<string>();
             listPartDraw.ForEach(d =>
             {
+                listPDMDrawPart.AddRange(d.GetIDFromPDM());
                 listExstactPDM.AddRange(d.GetIDFromPDM());
                 listPathDrawParts.Add(d.GetPath());
  
@@ -186,11 +188,12 @@ namespace FormSW_Tree
 
             List<IRebuild> listAss = Tree.listComp.Where(c => c.st == StateModel.OnlyAss)
                 .Select(d => (IRebuild)d).ToList();
-      
+            List<PdmID> listPDMAss = new List<PdmID>();
             List<string> listPathAss = new List<string>();
             listAss.ForEach(a =>
             {
                 listExstactPDM.AddRange(a.GetIDFromPDM());
+                listPDMAss.AddRange(a.GetIDFromPDM());
                 listPathAss.Add(a.GetPath());
                
              
@@ -200,11 +203,13 @@ namespace FormSW_Tree
             List<IRebuild> listAssDraw = Tree.listDraw.Where(d => d.st == StateModel.OnlyDraw)
                 .Where(d => d.model.Ext == ".sldasm" || d.model.Ext == ".SLDASM")
                 .Select(d => (IRebuild)d).ToList();
+            List<PdmID> listPDMDrawAss = new List<PdmID>();
 
             List<string> listPathDrawAss = new List<string>();
             listAssDraw.ForEach(d =>
             {
                 listExstactPDM.AddRange(d.GetIDFromPDM());
+                listPDMDrawAss.AddRange(d.GetIDFromPDM());
                 listPathDrawAss.Add(d.GetPath());
                
               
@@ -222,18 +227,18 @@ namespace FormSW_Tree
                     MessageBox.Show("Error extactFilePDM");
                 }
             }
-            if (listPart.Count > 0) Update(listPathParts);
-            if (listPartDraw.Count > 0) Update(listPathDrawParts);
+        
+            if (listPartDraw.Count > 0) Update(listPathDrawParts, listPDMDrawPart);
          
             if (listAss.Count > 0)
             {
                 listPathAss.Reverse();
-                Update(listPathAss);            
+                Update(listPathAss, listPDMAss);            
             }
 
-            if (listAssDraw.Count > 0) Update(listPathDrawAss);
+            if (listAssDraw.Count > 0) Update(listPathDrawAss, listPDMDrawAss);
 
-            PDM.DocBatchUnLock();
+           
              Tree.listComp.ForEach(c => c.ResetState());
              Tree.listDraw.ForEach(c => c.ResetState());
             return true;
@@ -247,7 +252,7 @@ namespace FormSW_Tree
         }
 
 
-        private void Update(List<string> listToSw)
+        private void Update(List<string> listToSw, List<PdmID> listPdm)
         {
             try
             {     
@@ -256,6 +261,17 @@ namespace FormSW_Tree
             catch (Exception)
             {
                 MessageBox.Show("Error updating SW");
+
+            }
+            try
+            {
+                PDM.AddSelItemToList(listPdm);
+                PDM.DocBatchUnLock();
+             
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error BatchUnLockPDM");
 
             }
 

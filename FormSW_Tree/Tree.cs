@@ -125,6 +125,7 @@ namespace FormSW_Tree
             string parentNumber=null;
             foreach (KeyValuePair<string, string> item in structuralNumbers)
             {
+               
                 child = ModelTree[item.Key];
                 StructureNumberChild = item.Key;
                 if (StructureNumberChild == "0") continue;
@@ -147,8 +148,8 @@ namespace FormSW_Tree
             int level_ = 0;
             var uniqueModelByGroup = ModelTree
             .GroupBy(pair => pair.Key.Count(o => o == s))
-            .Select(group => group.Select(g => g.Value).Distinct().ToList())
-            .ToList();
+            .Select(group => group.Select(g => g.Value).Distinct().ToList()).ToList();
+                                                                           
             foreach (var item in uniqueModelByGroup)
             {
                 foreach (Model comp in item)

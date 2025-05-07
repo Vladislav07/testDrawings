@@ -39,10 +39,7 @@ namespace FormSW_Tree
         {
 
             bool rf = RevVersion(ref msgRefVers);
-            if (CubyNumber == "CUBY-00300703")
-            {
-                int i = 0;
-            }
+          
 
             if (isPart)
             {
@@ -112,7 +109,7 @@ namespace FormSW_Tree
             List<PdmID> list = new List<PdmID>();
             
             list.Add(new PdmID(bFile, bFolder));
-            if (st == StateModel.ExtractPart)
+            if (model.st == StateModel.ExtractPart)
             {
                 list.Add(new PdmID(model.bFile, model.bFolder));
             }

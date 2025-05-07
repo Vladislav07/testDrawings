@@ -17,11 +17,16 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
-
+            if (CubyNumber == "CUBY-00300703")
+            {
+                int i = 1;
+            }
             switch (File.CurrentState.Name)
             {
                 case "Check library item":
                 case "Kanban":
+                case "Approved to use":
+
                     st = StateModel.Stand;
                     break;
                 case "Initiated":
@@ -37,6 +42,11 @@ namespace FormSW_Tree
                     else
                     {
                         if (st == StateModel.Init) st = StateModel.Clean;
+                    }
+                    if (st == StateModel.ExtractPart)
+                    {
+                        
+                        NotificationState();
                     }
                     break;
                 case "Pending Express Manufacturing":
