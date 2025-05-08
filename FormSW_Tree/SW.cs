@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -117,11 +118,14 @@ namespace FormSW_Tree
 
             // Get the active document
             swDoc = (ModelDoc2)swApp.ActiveDoc;
+
             if (swDoc == null)
             {
                 strReturn[0] = "Could not acquire an active document";
                 return (strReturn);
             }
+
+
 
             //Check for the correct doc type
             strModelFile = swDoc.GetPathName();
@@ -156,13 +160,56 @@ namespace FormSW_Tree
                 swMainConfig = (Configuration)swMainModel.GetActiveConfiguration();
             }
             swMainAssy = (AssemblyDoc)swMainModel;
-
+            Component2 swRootComp;
+            swRootComp = (Component2)swMainConfig.GetRootComponent();
+            ResolvedLigthWeiht(swMainAssy);
 
             // Write model info to return array
             strReturn[1] = strModelFile;
             strReturn[2] = strModelName;
             strReturn[3] = strConfigName;
             return (strReturn);
+
+        }
+
+        private void ResolvedLigthWeiht(AssemblyDoc ass)
+        {
+            int countLigthWeiht = ass.GetLightWeightComponentCount();
+            if (countLigthWeiht > 0)
+            {
+                ass.ResolveAllLightweight();
+            }
+        }
+
+        public void TraverseComponent(Component2 swComp)
+        {
+            object[] ChildComps;
+            Component2 swChildComp;
+            string childName;
+            string e;
+            ModelDoc2 swModelChild;
+
+            AssemblyDoc swAssyChild;
+
+            ChildComps = (object[])swComp.GetChildren();
+
+            for (int i = 0; i < ChildComps.Length; i++)
+            {
+                swChildComp = (Component2)ChildComps[i];
+                swChildComp.SetSuppression2((int)swComponentSuppressionState_e.swComponentFullyResolved);
+                if (swChildComp.IsSuppressed()) continue;
+                childName = swChildComp.GetPathName();
+                e = Path.GetExtension(childName);
+
+                if (e == ".SLDASM" || e == ".sldasm")
+                {
+                    swModelChild = (ModelDoc2)swChildComp.GetModelDoc2();
+                    swAssyChild = (AssemblyDoc)swModelChild;
+                    ResolvedLigthWeiht(swAssyChild);
+                    TraverseComponent(swChildComp);
+                }
+            }
+
 
         }
         public void BuildTree()
@@ -187,6 +234,7 @@ namespace FormSW_Tree
 
             ModelDocExtension Ext = default(ModelDocExtension);
             Ext=swMainModel.Extension;
+           
             BomFeature swBOMFeature = default(BomFeature);
             BomTableAnnotation swBOMAnnotation = default(BomTableAnnotation);
             string Configuration = swMainConfig.Name;
