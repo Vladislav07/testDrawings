@@ -73,37 +73,7 @@ namespace FormSW_Tree
    
         }
 
-        public static void CompareVersions()
-        {
-            foreach (Drawing item in listDraw)
-            {
-                if (!item.isPart) continue;
-                item.SetState();
-            }
-
-            listComp.Reverse();
-            foreach (Model item in listComp)
-            {
-               if( item is Part part)
-                    {
-                     part.SetState();
-                    }
-               else if( item is Assemble ass)
-                    {
-                     ass.SetState();
-                    } 
-                
-            }
-            listComp.Reverse();
        
-
-            foreach (Drawing item in listDraw)
-            {
-                if (item.isPart) continue;
-                item.SetState();
-            }
-          
-        }
 
         public  static int Part_IsChild(string cubyNumber, int VersChild)
           {
@@ -178,11 +148,55 @@ namespace FormSW_Tree
              }
             
         }
+        public static void CompareVersions()
+        {
+            foreach (Drawing item in listDraw)
+            {
+                if (!item.isPart) continue;
+                item.SetState();
+            }
+
+            listComp.Reverse();
+            foreach (Model item in listComp)
+            {
+               if( item is Part part)
+                    {
+                     part.SetState();
+                    }
+               else if( item is Assemble ass)
+                    {
+                     ass.SetState();
+                    } 
+                
+            }
+            listComp.Reverse();
+       
+
+            foreach (Drawing item in listDraw)
+            {
+                if (item.isPart) continue;
+                item.SetState();
+            }
+          
+        }
 
         public static void Refresh()
         {
-            listComp.ForEach(c => c.RefreshPdmFile());
-            listDraw.ForEach(c => c.RefreshPdmFile());
+            int i = 1;
+            InfoAboutProcessing("Updating part and assembly files from the repository PDM", listComp.Count);
+            listComp.ForEach(c => {
+                c.RefreshPdmFile();
+                InfoDataProcessing(c.CubyNumber, i);
+                i++;
+            });
+            i = 1;
+            InfoAboutProcessing("Updating part and assembly files from the repository PDM", listComp.Count);
+            listDraw.ForEach(d =>
+            {
+                d.RefreshPdmFile();
+                InfoDataProcessing(d.CubyNumber, i);
+                i++;
+            });
         }
 
         private static void InfoAboutProcessing(string nameOper, int countCycl)

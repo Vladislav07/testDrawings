@@ -24,25 +24,6 @@ namespace FormSW_Tree
         public int FolderId { get; set; }
     }
 
-    public enum StateProcessing
-    {
-        Connecting=0,
-        ConnectFailed=1,
-        Connected=2,
-        LoadModelTree=3,
-        LoadModelTreeFailed=4,
-        LoadDataPDM=5,
-        LoadDataPDMFailed=6,
-        ProcessingState=7,
-        FullUpdateIsNotPossible=8,
-        ReadyToUpdate=9,
-        RebuildTree =10,
-        RebuildTreeFailed=11,
-        Rebuilt=12
-
-    }
-
-
     internal struct ViewUser
     {
         internal string NameComp { get; set; }
@@ -98,11 +79,14 @@ namespace FormSW_Tree
         {
             sw = new SW();
             sw.connectSw += Sw_connectSw;
+            sw.readedTree += Sw_readedTree;
             sw.operationSW += Sw_operationSW;
             sw.loadTree += Sw_loadTree;
             sw.btnConnectSW();
             return true;
         }
+
+       
 
         private void Sw_operationSW(string[] obj)
         {
@@ -136,42 +120,30 @@ namespace FormSW_Tree
                 ReportProgress(1, msg);
                 sw.BuildTree();
 
+               
+            }
+        }
+        private void Sw_readedTree(bool arg2)
+        {
+            if (arg2)
+            {
                 msgInfo[0] = "List formation";
                 ReportProgress(2, msgInfo);
                 Tree.SearchParentFromChild();
                 Tree.FillCollection();
                 msgInfo[0] = "Load EdmFile from PDM";
                 ReportProgress(2, msgInfo);
-                GetInfoFromPDM();
+                Tree.GetInfoPDM();
+                Tree.CompareVersions();
             }
         }
 
-        public bool GetInfoFromPDM()
-        {
-            Tree.GetInfoPDM();
-            Tree.CompareVersions();
-            return true;
-        }
-
+      
 
         public bool RebuildTree()
         {
             List<PdmID> listExstactPDM = new List<PdmID>();
-            //parts
-            /*
-            List<IRebuild> listPart = Tree.listComp.Where(d => d.st == StateModel.DrawFromPart)
-            .Select(d => (IRebuild)d).ToList();
 
-            List<string> listPathParts = new List<string>();
-            listPart.ForEach(d =>
-            {
-                listExstactPDM.AddRange(d.GetIDFromPDM());
-                listPathParts.Add(d.GetPath());
-              
-            });
-            */
-       
-            //drawsPart
             List<IRebuild> listPartDraw = Tree.listDraw.Where(d => d.st==StateModel.OnlyDraw)
                 .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
                 .Select(d => (IRebuild)d).ToList();

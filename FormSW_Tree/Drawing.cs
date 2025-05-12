@@ -58,6 +58,7 @@ namespace FormSW_Tree
             }
             else
             {
+               Assemble ass = (Assemble)model;
                 if (NeedsRebuild || rf)
                 {
                     st = StateModel.OnlyDraw;
@@ -67,20 +68,23 @@ namespace FormSW_Tree
                     st = StateModel.Clean;
                 }
 
-                if (model.st == StateModel.OnlyAss)
-                {
-                    st = StateModel.OnlyDraw;
-                }
+            if (model.st == StateModel.OnlyAss)
+            {
+                st = StateModel.OnlyDraw;
+            }
 
-                if(st == StateModel.OnlyDraw && (model.st == StateModel.Init || model.st == StateModel.Clean))
-                {
-                    model.st = StateModel.OnlyAss;
-                }
+            if (st == StateModel.OnlyDraw && (model.st == StateModel.Init || model.st == StateModel.Clean))
+            {
+                model.st = StateModel.OnlyAss;
+                    
+                ass.NotificationState();
+            }
             }
 
             if (File.CurrentState.Name != "In work" && st == StateModel.OnlyDraw )
             {
                 st = StateModel.Blocked;
+
             }
 
         }

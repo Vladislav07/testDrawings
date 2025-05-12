@@ -65,6 +65,7 @@ namespace FormSW_Tree
                 case 3:
                     int count =Convert.ToInt16( msg[1]);
                     this.lbMsg.Text = msg[0];
+                    this.progressBar1.Maximum = 0;
                     this.progressBar1.Maximum = count;
                     this.lbCount.Text = count.ToString();
                     break;

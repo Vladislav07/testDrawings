@@ -27,6 +27,7 @@ namespace FormSW_Tree
         private string[] operSW;
   
         public event Action<string[], bool> connectSw;
+        public event Action<bool> readedTree;
         public event Action<string[]> operationSW;
         public event Action<string[]> loadTree;
 
@@ -181,7 +182,7 @@ namespace FormSW_Tree
             }
         }
 
-        public void TraverseComponent(Component2 swComp)
+        private void TraverseComponent(Component2 swComp)
         {
             object[] ChildComps;
             Component2 swChildComp;
@@ -293,12 +294,13 @@ namespace FormSW_Tree
                 }
 
             }
+            readedTree?.Invoke(true);
             int i = BomName.Length;
             string numberTable = BomName.Substring(17);
             boolstatus = Ext.SelectByID2("DetailItem" + numberTable + "@Annotations", "ANNOTATIONTABLES", 0, 0, 0, false, 0, null, 0);
             swMainModel.EditDelete();
             swMainModel.ClearSelection2(true);
-           
+            
         }
 
 

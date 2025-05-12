@@ -55,7 +55,7 @@ namespace FormSW_Tree
                     break;
             }
         }
-        protected void NotificationState()
+        public void NotificationState()
         {
             foreach (string item in listParent)
             {

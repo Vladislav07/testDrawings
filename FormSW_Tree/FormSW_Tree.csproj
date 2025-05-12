@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assemble.cs" />
+    <Compile Include="ConditionStandard.cs" />
     <Compile Include="Controler.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -81,6 +82,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ModelCondition.cs" />
     <Compile Include="SW.cs" />
     <Compile Include="Tree.cs" />
     <EmbeddedResource Include="InfoF.resx">
