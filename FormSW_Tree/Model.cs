@@ -32,6 +32,8 @@ namespace FormSW_Tree
         public int bFile { get; set; }
         public int Level { get; set; }
 
+        internal ModelCondition condition;
+
         public StateModel st { get; set; }
 
         public IEdmFile7 File { get; set; }
@@ -48,11 +50,41 @@ namespace FormSW_Tree
         }
         public virtual void SetState()
         {
-   
+          
+        }
+        public virtual void SetMode()
+        {
+            condition = CreateModeCondition();
         }
 
-    
-        
+        internal ModelCondition CreateModeCondition()
+        {
+            ModelCondition mode = null;
+            switch (File.CurrentState.Name)
+            {
+                case "Check library item":
+                case "Kanban":
+                case "Approved to use":
+                case "In work":
+                    mode = new ModeClear();
+                    break;
+
+                case "Initiated":
+                    mode = new ModeBloced();
+                    break;
+
+                case "Pending Express Manufacturing":
+                case "Express Manufacturing":
+                case "Reset to in Work":
+                    mode = new ModeManufacturing();
+                    break;
+
+                default:
+                    break;
+            }
+
+            return mode;
+        }
 
 
         public virtual  List<PdmID> GetIDFromPDM()

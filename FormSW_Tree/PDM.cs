@@ -58,8 +58,10 @@ namespace FormSW_Tree
             catch (Exception)
             {
                 
-            }      
-            
+            }
+            item.SetMode();
+
+
         }
 
         internal static void GetReferenceFromAssemble(this Assemble ass)
@@ -223,6 +225,7 @@ namespace FormSW_Tree
                 {                
                     Drawing draw = new Drawing(comp.CubyNumber, p, comp, bFile, bFolder.ID);
                     Tree.listDraw.Add(draw);
+                    draw.SetMode();
                     return true;
                 }
                 

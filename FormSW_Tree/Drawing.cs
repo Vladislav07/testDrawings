@@ -37,56 +37,10 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
-
             bool rf = RevVersion(ref msgRefVers);
-          
-
-            if (isPart)
-            {
-               
-                if (NeedsRebuild || rf)
-                {
-                    st = StateModel.OnlyDraw;
-                    model.st = StateModel.ExtractPart;
-                }
-                else
-                {
-                    st = StateModel.Clean;
-                }
-
-   
-            }
-            else
-            {
-               Assemble ass = (Assemble)model;
-                if (NeedsRebuild || rf)
-                {
-                    st = StateModel.OnlyDraw;
-                }
-                else
-                {
-                    st = StateModel.Clean;
-                }
-
-            if (model.st == StateModel.OnlyAss)
-            {
-                st = StateModel.OnlyDraw;
-            }
-
-            if (st == StateModel.OnlyDraw && (model.st == StateModel.Init || model.st == StateModel.Clean))
-            {
-                model.st = StateModel.OnlyAss;
-                    
-                ass.NotificationState();
-            }
-            }
-
-            if (File.CurrentState.Name != "In work" && st == StateModel.OnlyDraw )
-            {
-                st = StateModel.Blocked;
-
-            }
-
+            bool isRebuldDraw = (NeedsRebuild || rf) ? true:false;               
+            condition = condition.GetState(isRebuldDraw);
+            model.condition = condition.GetState(isRebuldDraw);
         }
         
 
