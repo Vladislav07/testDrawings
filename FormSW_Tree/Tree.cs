@@ -65,11 +65,11 @@ namespace FormSW_Tree
             return comp;
         }
 
-        private static void Comp_NotificationParent(string cubyNumber, Model child)
+        private static void Comp_NotificationParent(string cubyNumber, bool isBlocedchild)
         {
             Assemble comp =(Assemble) listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
             if (comp == null) return;
-            comp.CascadingUpdate(child);
+            comp.CascadingUpdate(isBlocedchild);
    
         }
 
@@ -150,34 +150,44 @@ namespace FormSW_Tree
         }
         public static void CompareVersions()
         {
-            foreach (Drawing item in listDraw)
+            foreach(Drawing dr in listDraw)
             {
-                if (!item.isPart) continue;
-                item.SetState();
+                if (!dr.isPart)continue;
+                dr.SetState();
             }
 
             listComp.Reverse();
             foreach (Model item in listComp)
-            {
-               if( item is Part part)
-                    {
-                     part.SetState();
-                    }
-               else if( item is Assemble ass)
+            {          
+               if ( item is Assemble ass)
                     {
                      ass.SetState();
-                    } 
-                
+                    }
+               else if(item is Part pr)
+                {
+                    pr.SetState();
+                }
+            }
+
+            foreach (Drawing dr in listDraw)
+            {
+                if (dr.isPart) continue;
+                 dr.SetState();
+            }
+
+            foreach (Model item in listComp)
+            {
+                if (item is Part part)
+                {
+                    part.NotificationState();
+                }
+                else if (item is Assemble ass)
+                {
+                    ass.NotificationState();
+                }
             }
             listComp.Reverse();
-       
 
-            foreach (Drawing item in listDraw)
-            {
-                if (item.isPart) continue;
-                item.SetState();
-            }
-          
         }
 
         public static void Refresh()

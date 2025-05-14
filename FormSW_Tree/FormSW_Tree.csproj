@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assemble.cs" />
-    <Compile Include="ConditionStandard.cs" />
     <Compile Include="Controler.cs">
       <SubType>Component</SubType>
     </Compile>

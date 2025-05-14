@@ -34,8 +34,6 @@
             this.lbMsg = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chB_Stand = new System.Windows.Forms.CheckBox();
-            this.chB_Init = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.chB_Clean = new System.Windows.Forms.CheckBox();
             this.chB_Impossible = new System.Windows.Forms.CheckBox();
@@ -82,8 +80,6 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.chB_Stand);
-            this.groupBox1.Controls.Add(this.chB_Init);
             this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.chB_Clean);
             this.groupBox1.Controls.Add(this.chB_Impossible);
@@ -94,28 +90,6 @@
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display components in state";
-            // 
-            // chB_Stand
-            // 
-            this.chB_Stand.AutoSize = true;
-            this.chB_Stand.Location = new System.Drawing.Point(258, 18);
-            this.chB_Stand.Name = "chB_Stand";
-            this.chB_Stand.Size = new System.Drawing.Size(59, 17);
-            this.chB_Stand.TabIndex = 5;
-            this.chB_Stand.Text = "&Stand";
-            this.chB_Stand.UseVisualStyleBackColor = true;
-            this.chB_Stand.CheckedChanged += new System.EventHandler(this.chB_Stand_CheckedChanged);
-            // 
-            // chB_Init
-            // 
-            this.chB_Init.AutoSize = true;
-            this.chB_Init.Location = new System.Drawing.Point(258, 41);
-            this.chB_Init.Name = "chB_Init";
-            this.chB_Init.Size = new System.Drawing.Size(44, 17);
-            this.chB_Init.TabIndex = 4;
-            this.chB_Init.Text = "&Init";
-            this.chB_Init.UseVisualStyleBackColor = true;
-            this.chB_Init.CheckedChanged += new System.EventHandler(this.chB_Init_CheckedChanged);
             // 
             // checkBox1
             // 
@@ -233,8 +207,6 @@
         private System.Windows.Forms.CheckBox chB_ToRebuild;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.CheckBox chB_Stand;
-        private System.Windows.Forms.CheckBox chB_Init;
         private System.Windows.Forms.Label lbStart;
         private System.Windows.Forms.Label lbCount;
         private System.Windows.Forms.Label lbNumber;

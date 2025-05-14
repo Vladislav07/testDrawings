@@ -144,7 +144,7 @@ namespace FormSW_Tree
         {
             List<PdmID> listExstactPDM = new List<PdmID>();
 
-            List<IRebuild> listPartDraw = Tree.listDraw.Where(d => d.st==StateModel.OnlyDraw)
+            List<IRebuild> listPartDraw = Tree.listDraw.Where(d => d.condition.stateModel==StateModel.Rebuild)
                 .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
                 .Select(d => (IRebuild)d).ToList();
             List<PdmID> listPDMDrawPart = new List<PdmID>();
@@ -158,7 +158,7 @@ namespace FormSW_Tree
             });
          
 
-            List<IRebuild> listAss = Tree.listComp.Where(c => c.st == StateModel.OnlyAss)
+            List<IRebuild> listAss = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
                 .Select(d => (IRebuild)d).ToList();
             List<PdmID> listPDMAss = new List<PdmID>();
             List<string> listPathAss = new List<string>();
@@ -172,7 +172,7 @@ namespace FormSW_Tree
             });
          
 
-            List<IRebuild> listAssDraw = Tree.listDraw.Where(d => d.st == StateModel.OnlyDraw)
+            List<IRebuild> listAssDraw = Tree.listDraw.Where(d => d.condition.stateModel == StateModel.Rebuild)
                 .Where(d => d.model.Ext == ".sldasm" || d.model.Ext == ".SLDASM")
                 .Select(d => (IRebuild)d).ToList();
             List<PdmID> listPDMDrawAss = new List<PdmID>();
@@ -211,14 +211,15 @@ namespace FormSW_Tree
             if (listAssDraw.Count > 0) Update(listPathDrawAss, listPDMDrawAss);
 
            
-             Tree.listComp.ForEach(c => c.ResetState());
-             Tree.listDraw.ForEach(c => c.ResetState());
+             
             return true;
         }
 
         private bool Refresh()
         {
             Tree.Refresh();
+            Tree.listComp.ForEach(c => c.ResetState());
+            Tree.listDraw.ForEach(c => c.ResetState());         
             Tree.CompareVersions();
             return true;
         }
@@ -266,12 +267,12 @@ namespace FormSW_Tree
                     Ext = item.Ext,
                     Level = item.Level.ToString(),
                     StPDM = item.File.CurrentState.Name.ToString(),
-                    State = item.st.ToString(),
+                    State = item.condition.stateModel.ToString(),
                     VersionModel = item.File?.CurrentVersion.ToString() ?? "",
                     IsLocked = item.File?.IsLocked.ToString() ?? "",
                     IsChildRefError = item is Assemble ? (item as Assemble).listRefChildError.Count.ToString() : "",
 
-                    DrawState = dr != null ? dr.st.ToString() : "",
+                    DrawState = dr != null ? dr.condition.stateModel.ToString() : "",
                     StDrPDM = dr != null ? dr.File.CurrentState.Name : "",
                     DrawNeedRebuild = dr != null ? dr.NeedsRebuild.ToString() : "",
                     DrawVersRev = dr != null ? dr.msgRefVers : "",

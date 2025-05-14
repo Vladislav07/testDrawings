@@ -8,16 +8,11 @@ namespace FormSW_Tree
 {
     public enum StateModel
     {
-        OnlyDraw=0,   //u drawing
-        DrawFromPart=1,  //u part,u drawing
-        OnlyAss=2,
-        ExtractPart = 3,  //extract
+        Rebuild=0,   
+        Manufacturing=1,  
         Clean=4,         
         Blocked=5,
-        Init=7,   
-        Stand=8,
-        Initiated=9,
-        ChildCannotBeUpdated=10,
+      
 
     }
 
@@ -33,9 +28,6 @@ namespace FormSW_Tree
         public int Level { get; set; }
 
         internal ModelCondition condition;
-
-        public StateModel st { get; set; }
-
         public IEdmFile7 File { get; set; }
 
         public Model(string cn, string fn)
@@ -43,15 +35,16 @@ namespace FormSW_Tree
             CubyNumber = cn;
             FullPath = fn;
             Ext = Path.GetExtension(fn);
-            st = StateModel.Init;
+          
             File = null;
         
                  
         }
         public virtual void SetState()
         {
-          
+         
         }
+
         public virtual void SetMode()
         {
             condition = CreateModeCondition();
@@ -105,9 +98,9 @@ namespace FormSW_Tree
             File.Refresh();
         }
 
-        public virtual void ResetState()
+        public  void ResetState()
         {
-            st = StateModel.Init;
+            condition = CreateModeCondition();
         }
 
    

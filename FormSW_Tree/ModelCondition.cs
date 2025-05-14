@@ -9,16 +9,24 @@ namespace FormSW_Tree
 {
     internal abstract class ModelCondition
     {
+        public StateModel stateModel;
         public abstract ModelCondition GetState(bool isMode);
-              
+        public abstract ModelCondition GetStateFromChild (bool isModeFromChild);
+       
+
     }
 
  
     internal  class ModeClear : ModelCondition
     {
+      
+        public ModeClear()
+        {
+            stateModel = StateModel.Clean;
+        }
         public override ModelCondition GetState(bool isMode)
         {
-            ModelCondition mode = null;
+          ModelCondition mode = null;
             if (isMode) {
                 mode = new ModeRebuild(); 
             }
@@ -29,26 +37,71 @@ namespace FormSW_Tree
             return mode;
         }
 
+        public override ModelCondition GetStateFromChild(bool isModeFromChild)
+        {
+            ModelCondition mode = null;
+            if (isModeFromChild)
+            {
+                mode = new ModeBloced();
+            }
+            else
+            {
+                mode = new ModeRebuild();
+            }
+            return mode;
+        }
     }
     internal  class ModeBloced : ModelCondition
     {
+      
+         public ModeBloced()
+        {
+            stateModel = StateModel.Blocked;
+        }
         public override ModelCondition GetState(bool isMode)
         {
             return this;
         }
 
+        public override ModelCondition GetStateFromChild(bool isModeFromChild)
+        {
+            return this;
+        }
     }
 
     internal  class ModeRebuild : ModelCondition
     {
+       
+        public ModeRebuild()
+        {
+            stateModel = StateModel.Rebuild;
+        }
         public override ModelCondition GetState(bool isMode)
         {
-
+            return this;
         }
 
+        public override ModelCondition GetStateFromChild(bool isModeFromChild)
+        {
+            ModelCondition mode = null;
+            if (isModeFromChild)
+            {
+                mode = new ModeBloced();
+            }
+            else
+            {
+                mode = this;
+            }
+            return mode;
+        }
     }
     internal class ModeManufacturing : ModelCondition
     {
+        
+        public ModeManufacturing()
+        {
+            stateModel = StateModel.Manufacturing;
+        }
         public override ModelCondition GetState(bool isMode)
         {
             ModelCondition mode = null;
@@ -63,5 +116,9 @@ namespace FormSW_Tree
             return mode;
         }
 
+        public override ModelCondition GetStateFromChild(bool isModeFromChild)
+        {           
+             return new ModeBloced();
+        }
     }
 }

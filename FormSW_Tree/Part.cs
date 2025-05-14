@@ -6,7 +6,7 @@ namespace FormSW_Tree
 {
     internal class Part : Model
     {
-        public virtual event Action<string, Model> NotificationParent;
+        public virtual event Action<string, bool> NotificationParent;
         public List<string> listParent;
         
         internal Part(string cn, string fn) : base(cn, fn)
@@ -14,61 +14,36 @@ namespace FormSW_Tree
             listParent = new List<string>();
         }
 
-
-        public override void SetState()
-        {
-
-            switch (File.CurrentState.Name)
-            {
-                case "Check library item":
-                case "Kanban":
-                case "Approved to use":
-                    st = StateModel.Stand;
-                    break;
-
-                case "Initiated":
-                    st = StateModel.Initiated;
-                    NotificationState();
-                    break;
-
-                case "In work":
-                    if (st == StateModel.Init) st = StateModel.Clean;                   
-                    if (st == StateModel.ExtractPart)
-                    {                     
-                        NotificationState();
-                    }
-                    break;
-
-                case "Pending Express Manufacturing":
-                case "Express Manufacturing":
-                case "Reset to in Work":
-
-                    if (st == StateModel.Init) st = StateModel.Clean;
-                    if (st == StateModel.ExtractPart)
-                    {
-                        st = StateModel.Blocked;
-                        NotificationState();
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
+        
+   
         public void NotificationState()
         {
+            bool isBloced=false;
+            if (condition is ModeBloced)
+            {
+                isBloced = true;
+
+            }
+            else if (condition is ModeRebuild) {
+                isBloced = false;
+            }
+            else
+            {
+                return;
+            }
+
             foreach (string item in listParent)
             {
-                Notification(item);
+                Notification(item, isBloced);
             }
         }
 
 
-        protected void Notification(string item)
+        protected void Notification(string item, bool isBloced)
         {
             try
             {
-                NotificationParent.Invoke(item, this);
+                NotificationParent.Invoke(item, isBloced);
             }
             catch (Exception)
             {
@@ -76,6 +51,17 @@ namespace FormSW_Tree
                 
             }
            
+        }
+        public override void SetState()
+        {
+
+
+
+            bool isRebuildPart = File.NeedsRegeneration((int)File.CurrentVersion, bFolder);
+
+            if (isRebuildPart) condition = condition.GetState(true);
+
+
         }
 
 

@@ -22,7 +22,7 @@ namespace FormSW_Tree
             bFile = _bFile.ID;
             File = _bFile;
             bFolder = _bFolder;
-            st = StateModel.Init;
+         
          
             if(model.Ext == ".SLDPRT" || model.Ext == ".sldprt")
             {
@@ -36,7 +36,8 @@ namespace FormSW_Tree
 
 
         public override void SetState()
-        {
+        {  
+          
             bool rf = RevVersion(ref msgRefVers);
             bool isRebuldDraw = (NeedsRebuild || rf) ? true:false;               
             condition = condition.GetState(isRebuldDraw);
@@ -62,19 +63,11 @@ namespace FormSW_Tree
             List<PdmID> list = new List<PdmID>();
             
             list.Add(new PdmID(bFile, bFolder));
-            if (model.st == StateModel.ExtractPart)
-            {
-                list.Add(new PdmID(model.bFile, model.bFolder));
-            }
+
             return list;
         }
        
-        public override void ResetState()
-        {
-            model.st = StateModel.Init;
-            base.ResetState();
-        }
-    
+       
 
     }
 }

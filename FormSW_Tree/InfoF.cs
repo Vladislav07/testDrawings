@@ -22,8 +22,7 @@ namespace FormSW_Tree
         bool isDispleyRebuild = true;
         bool isImpossible = false;
         bool isBlocked=false;
-        bool isStand = false;
-        bool isInit = false;
+
         public InfoF()
         {
             InitializeComponent();
@@ -152,13 +151,11 @@ namespace FormSW_Tree
             if (userView.Count == 0) return;
             foreach (ViewUser v in userView)
             {
-                if (IsRebuldViewUser(v) && !isDispleyRebuild) continue;
-
+                if (v.State == "Rebuild" && !isDispleyRebuild) continue;
                 if (v.State  == "Clean"  && !isClean) continue;
                 if (v.State  == "Blocked" && !isBlocked) continue;
-                if (v.State  == "ChildCannotBeUpdated" && !isImpossible) continue;
-                if (v.State  == "Stand" && !isStand) continue;
-                if (v.State  == "Initiated" && !isInit) continue;
+                if (v.State  == "Manufacturing" && !isImpossible) continue;
+
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
                 if(v.Ext == ".sldprt"|| v.Ext== ".SLDPRT")
@@ -209,17 +206,6 @@ namespace FormSW_Tree
             dt.Columns.Add("DrawIsLocked", typeof(string));
         }
 
-        bool IsRebuldViewUser(ViewUser v)
-        {
-             if(v.State=="OnlyAss"||
-                v.State == "ExtractPart" ||
-                v.DrawState == "OnlyDraw")
-            {  return true; }
-            else
-            {
-                return false;
-            }
-        }
 
         private void chB_Clean_CheckedChanged(object sender, EventArgs e)
         {
@@ -254,7 +240,7 @@ namespace FormSW_Tree
         private void SetStateForm()
         {
             if (userView == null) return;
-            if (userView.Any(v => IsRebuldViewUser(v) == true))
+            if (userView.Any(v => v.State == "Rebuild"))
             {
                 chB_ToRebuild.Enabled = true;
             }
@@ -278,7 +264,7 @@ namespace FormSW_Tree
             {
                 checkBox1.Enabled = false;
             }
-            if (userView.Any(v => (v.State == "ChildCannotBeUpdated")))
+            if (userView.Any(v => (v.State == "Manufacturing")))
             {
                 chB_Impossible.Enabled = true;
             }
@@ -286,22 +272,7 @@ namespace FormSW_Tree
             {
                 chB_Impossible.Enabled = false;
             }
-            if (userView.Any(v => v.State == "Stand"))
-            {
-                chB_Stand.Enabled = true;
-            }
-            else
-            {
-                chB_Stand.Enabled = false;
-            }
-            if (userView.Any(v => v.State == "Initiated"))
-            {
-                chB_Init.Enabled = true;
-            }
-            else
-            {
-                chB_Init.Enabled = false;
-            }
+            
 
         }
         private void RefreshForm()
@@ -341,34 +312,8 @@ namespace FormSW_Tree
             RefreshForm();
         }
 
-        private void chB_Stand_CheckedChanged(object sender, EventArgs e)
-        {
-            if (userView == null) return;
-            CheckBox checkBox = (CheckBox)sender;
-            if (checkBox.Checked == true)
-            {
-                isStand = true;
-            }
-            else
-            {
-                isStand = false;
-            }
-            RefreshForm();
-        }
+   
 
-        private void chB_Init_CheckedChanged(object sender, EventArgs e)
-        {
-            if (userView == null) return;
-            CheckBox checkBox = (CheckBox)sender;
-            if (checkBox.Checked == true)
-            {
-                isInit= true;
-            }
-            else
-            {
-                isInit= false;
-            }
-            RefreshForm();
-        }
+   
     }
 }

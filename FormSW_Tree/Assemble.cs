@@ -20,46 +20,20 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
+          
             this.GetReferenceFromAssemble();
 
             bool isRebuildAsm = isNeedsRebuld();
   
-            if (isRebuildAsm && st != StateModel.ChildCannotBeUpdated)
-            {
-                st = StateModel.OnlyAss;
-            }
-        
-            if (File.CurrentState.Name != "In work" && st == StateModel.OnlyAss)
-            {
-                st = StateModel.Blocked;
-                NotificationState();
-            }
-            else if(File.CurrentState.Name == "In work" && st == StateModel.OnlyAss)
-            {
-                NotificationState();
-            }
-            if (st == StateModel.Init) st = StateModel.Clean;
+            if (isRebuildAsm) condition=condition.GetState(true);
+           
 
         }
-        public void CascadingUpdate(Model child)
+        public void CascadingUpdate(bool isBlocrdChild)
         {
-            switch (child.st)
-            {               
-                case StateModel.OnlyAss:
-                case StateModel.ExtractPart:
-                    st = StateModel.OnlyAss;
-                    break;
-
-           
-                case StateModel.Blocked:
-                case StateModel.Initiated:
-                case StateModel.ChildCannotBeUpdated:
-                    st = StateModel.ChildCannotBeUpdated;
-
-                    break;
-                
-                default:
-                    break;
+           if (isBlocrdChild)
+            {
+                condition = condition.GetStateFromChild(isBlocrdChild);
             }
         }
 
