@@ -4,10 +4,10 @@ using System.Windows.Forms;
 
 namespace FormSW_Tree
 {
-    internal class Part : Model
+    public class Part : Model
     {
-        public virtual event Action<string, bool> NotificationParent;
-        public List<string> listParent;
+        public virtual event Action<string, StateModel> NotificationParent;
+        
         
         internal Part(string cn, string fn) : base(cn, fn)
         {
@@ -16,30 +16,17 @@ namespace FormSW_Tree
 
         
    
-        public void NotificationState()
+        public void NotificationState(StateModel mode)
         {
-            bool isBloced=false;
-            if (condition is ModeBloced)
-            {
-                isBloced = true;
-
-            }
-            else if (condition is ModeRebuild) {
-                isBloced = false;
-            }
-            else
-            {
-                return;
-            }
-
+         
             foreach (string item in listParent)
             {
-                Notification(item, isBloced);
+                Notification(item, mode);
             }
         }
 
 
-        protected void Notification(string item, bool isBloced)
+        protected void Notification(string item, StateModel isBloced)
         {
             try
             {
@@ -52,17 +39,7 @@ namespace FormSW_Tree
             }
            
         }
-        public override void SetState()
-        {
-
-
-
-            bool isRebuildPart = File.NeedsRegeneration((int)File.CurrentVersion, bFolder);
-
-            if (isRebuildPart) condition = condition.GetState(true);
-
-
-        }
+        
 
 
     }

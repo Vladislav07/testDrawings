@@ -16,7 +16,7 @@ namespace FormSW_Tree
     {
 
         static Dictionary<string, Part> ModelTree;
-        public static List<Model> listComp;
+        public static List<Part> listComp;
         public static List<Drawing> listDraw;
 
         static Dictionary<string, string> structuralNumbers;
@@ -26,7 +26,7 @@ namespace FormSW_Tree
         {
            
             ModelTree = new Dictionary<string, Part>();
-            listComp = new List<Model>();
+            listComp = new List<Part>();
             listDraw = new List<Drawing>();
             structuralNumbers = new Dictionary<string, string>();
         }
@@ -65,7 +65,7 @@ namespace FormSW_Tree
             return comp;
         }
 
-        private static void Comp_NotificationParent(string cubyNumber, bool isBlocedchild)
+        private static void Comp_NotificationParent(string cubyNumber, StateModel isBlocedchild)
         {
             Assemble comp =(Assemble) listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
             if (comp == null) return;
@@ -122,7 +122,7 @@ namespace FormSW_Tree
                                                                            
             foreach (var item in uniqueModelByGroup)
             {
-                foreach (Model comp in item)
+                foreach (Part comp in item)
                 {
                    
                     comp.Level = level_; 
@@ -150,52 +150,19 @@ namespace FormSW_Tree
         }
         public static void CompareVersions()
         {
-            foreach(Drawing dr in listDraw)
-            {
-                if (!dr.isPart)continue;
-                dr.SetState();
-            }
-
             listComp.Reverse();
-            
-            foreach (Model item in listComp)
-            {
-                if (item.CubyNumber == "CUBY-0030593")
-                {
-                    int y= 1;
-                }
-               if ( item is Assemble ass)
-                    {
-                     ass.SetState();
-                    }
-               else if(item is Part pr)
-                {
-                    pr.SetState();
-                }
-            }
+            listDraw.Reverse();
 
-            foreach (Drawing dr in listDraw)
-            {
-                if (dr.isPart) continue;
-                 dr.SetState();
-            }
-
-            foreach (Model item in listComp)
-            {
-                if (item is Part part)
-                {
-                    part.NotificationState();
-                }
-                if (item is Assemble ass)
-                {
-                    ass.NotificationState();
-                }
-            }
-            listComp.Reverse();
+            listDraw.ForEach(dr => dr.SetState());
+            listComp.ForEach(prt=>prt.SetState());
+            listComp.ForEach(prt => {
+                if (prt.condition.stateModel == StateModel.Clean || prt.condition.stateModel == StateModel.Manufacturing) return;
+                prt.NotificationState(prt.condition.stateModel);
+            });
 
         }
 
-        public static void Refresh()
+     /*   public static void Refresh()
         {
             int i = 1;
             InfoAboutProcessing("Updating part and assembly files from the repository PDM", listComp.Count);
@@ -212,7 +179,7 @@ namespace FormSW_Tree
                // InfoDataProcessing(d.CubyNumber, i);
                 i++;
             });
-        }
+        }*/
 
         private static void InfoAboutProcessing(string nameOper, int countCycl)
         {

@@ -52,7 +52,7 @@ namespace FormSW_Tree
         {
             WorkerReportsProgress = true;
             f = _f;
-            f.Action += F_action;
+            f.cmdRebuild += F_action;
             Tree.msgDataOperation += Tree_msgDataOperation;
             Tree.msgNameOperation += Tree_msgNameOperation;
             msgInfo=new string[1];
@@ -98,15 +98,10 @@ namespace FormSW_Tree
             ReportProgress(4, msg);
         }
 
-        private List<ViewUser> F_action()
+        private void F_action()
         {
             sw.CloseDoc();
             RebuildTree();
-            Refresh();
-            string p = Tree.listComp.First(c => c.Level == 0).FullPath;
-            sw.OpenFile(p);
-            List<ViewUser> LV = JoinCompAndDraw();
-            return LV;
         }
 
         private void Sw_connectSw(string[] msg, bool arg)
@@ -215,14 +210,14 @@ namespace FormSW_Tree
             return true;
         }
 
-        private bool Refresh()
+      /*  private bool Refresh()
         {
             Tree.Refresh();
             Tree.listComp.ForEach(c => c.ResetState());
             Tree.listDraw.ForEach(c => c.ResetState());         
             Tree.CompareVersions();
             return true;
-        }
+        }*/
 
 
         private void Update(List<string> listToSw, List<PdmID> listPdm)
@@ -253,7 +248,7 @@ namespace FormSW_Tree
 
         internal  List<ViewUser> JoinCompAndDraw( )
         {
-            List<Model> compList = Tree.listComp;
+            List<Part> compList = Tree.listComp;
             List<Drawing> drawList = Tree.listDraw;
             List<ViewUser> lv = new List<ViewUser>();
             foreach (Part item in compList)

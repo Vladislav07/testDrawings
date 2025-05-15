@@ -14,7 +14,7 @@ namespace FormSW_Tree
 {
     public partial class InfoF : Form
     {
-        internal event Func<List<ViewUser>> Action;
+        internal event  Action cmdRebuild;
         Controler c;
         DataTable dt;
         List<ViewUser> userView;
@@ -123,7 +123,7 @@ namespace FormSW_Tree
 
         public void button1_Click(object sender, EventArgs e)
         {
-            userView= Action?.Invoke();
+            cmdRebuild?.Invoke();
             SetStateForm();
             FillToListIsRebuild();
             this.Refresh();

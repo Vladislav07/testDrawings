@@ -11,7 +11,7 @@ namespace FormSW_Tree
     {
         public StateModel stateModel;
         public abstract ModelCondition GetState(bool isMode);
-        public abstract ModelCondition GetStateFromChild (bool isModeFromChild);
+        public abstract ModelCondition GetStateFromChild (StateModel isModeFromChild);
        
 
     }
@@ -26,7 +26,7 @@ namespace FormSW_Tree
         }
         public override ModelCondition GetState(bool isMode)
         {
-          ModelCondition mode = null;
+            ModelCondition mode = null;
             if (isMode) {
                 mode = new ModeRebuild(); 
             }
@@ -37,10 +37,10 @@ namespace FormSW_Tree
             return mode;
         }
 
-        public override ModelCondition GetStateFromChild(bool isModeFromChild)
+        public override ModelCondition GetStateFromChild(StateModel isModeFromChild)
         {
             ModelCondition mode = null;
-            if (isModeFromChild)
+            if (isModeFromChild==StateModel.Blocked)
             {
                 mode = new ModeBloced();
             }
@@ -63,7 +63,7 @@ namespace FormSW_Tree
             return this;
         }
 
-        public override ModelCondition GetStateFromChild(bool isModeFromChild)
+        public override ModelCondition GetStateFromChild(StateModel isModeFromChild)
         {
             return this;
         }
@@ -81,10 +81,10 @@ namespace FormSW_Tree
             return this;
         }
 
-        public override ModelCondition GetStateFromChild(bool isModeFromChild)
+        public override ModelCondition GetStateFromChild(StateModel isModeFromChild)
         {
             ModelCondition mode = null;
-            if (isModeFromChild)
+            if (isModeFromChild == StateModel.Blocked)
             {
                 mode = new ModeBloced();
             }
@@ -116,7 +116,7 @@ namespace FormSW_Tree
             return mode;
         }
 
-        public override ModelCondition GetStateFromChild(bool isModeFromChild)
+        public override ModelCondition GetStateFromChild(StateModel isModeFromChild)
         {           
              return new ModeBloced();
         }

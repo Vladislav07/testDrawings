@@ -20,16 +20,15 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
-          
+            base.SetState();
             this.GetReferenceFromAssemble();
 
             bool isRebuildAsm = isNeedsRebuld();
   
             if (isRebuildAsm) condition=condition.GetState(true);
-           
-
+          
         }
-        public void CascadingUpdate(bool isBlocrdChild)
+        public void CascadingUpdate(StateModel isBlocrdChild)
         {
          
             condition = condition.GetStateFromChild(isBlocrdChild);

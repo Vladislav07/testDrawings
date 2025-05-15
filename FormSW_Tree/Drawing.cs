@@ -37,7 +37,7 @@ namespace FormSW_Tree
 
         public override void SetState()
         {  
-          
+            base.SetState();
             bool rf = RevVersion(ref msgRefVers);
             bool isRebuldDraw = (NeedsRebuild || rf) ? true:false;               
             condition = condition.GetState(isRebuldDraw);
