@@ -31,10 +31,9 @@ namespace FormSW_Tree
         }
         public void CascadingUpdate(bool isBlocrdChild)
         {
-           if (isBlocrdChild)
-            {
-                condition = condition.GetStateFromChild(isBlocrdChild);
-            }
+         
+            condition = condition.GetStateFromChild(isBlocrdChild);
+            
         }
 
         bool isNeedsRebuld()

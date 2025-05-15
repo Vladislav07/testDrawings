@@ -157,8 +157,13 @@ namespace FormSW_Tree
             }
 
             listComp.Reverse();
+            
             foreach (Model item in listComp)
-            {          
+            {
+                if (item.CubyNumber == "CUBY-0030593")
+                {
+                    int y= 1;
+                }
                if ( item is Assemble ass)
                     {
                      ass.SetState();
@@ -181,7 +186,7 @@ namespace FormSW_Tree
                 {
                     part.NotificationState();
                 }
-                else if (item is Assemble ass)
+                if (item is Assemble ass)
                 {
                     ass.NotificationState();
                 }
@@ -196,7 +201,7 @@ namespace FormSW_Tree
             InfoAboutProcessing("Updating part and assembly files from the repository PDM", listComp.Count);
             listComp.ForEach(c => {
                 c.RefreshPdmFile();
-                InfoDataProcessing(c.CubyNumber, i);
+               // InfoDataProcessing(c.CubyNumber, i);
                 i++;
             });
             i = 1;
@@ -204,7 +209,7 @@ namespace FormSW_Tree
             listDraw.ForEach(d =>
             {
                 d.RefreshPdmFile();
-                InfoDataProcessing(d.CubyNumber, i);
+               // InfoDataProcessing(d.CubyNumber, i);
                 i++;
             });
         }

@@ -39,7 +39,7 @@ namespace FormSW_Tree
                 item.File = File;
                 item.bFolder = ParentFolder.ID;
                 item.bFile = File.ID;
-    
+                 item.SetMode();
                 enumVar = File.GetEnumeratorVariable();
                 object val = null;
                 EdmStrLst5 listConf = File.GetConfigurations(0);
@@ -59,7 +59,7 @@ namespace FormSW_Tree
             {
                 
             }
-            item.SetMode();
+           
 
 
         }
