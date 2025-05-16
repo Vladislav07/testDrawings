@@ -159,6 +159,7 @@ namespace FormSW_Tree
                 if (prt.condition.stateModel == StateModel.Clean || prt.condition.stateModel == StateModel.Manufacturing) return;
                 prt.NotificationState(prt.condition.stateModel);
             });
+            listDraw.ForEach(dr => dr.CompareStateFromModel());
 
         }
 

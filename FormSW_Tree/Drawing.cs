@@ -43,6 +43,16 @@ namespace FormSW_Tree
             condition = condition.GetState(isRebuldDraw);
             model.condition = condition.GetState(isRebuldDraw);
         }
+
+        public void CompareStateFromModel()
+        {
+            StateModel st = model.condition.stateModel;
+           // StateModel stDr = condition.stateModel;
+            if (st.ToString()== "Rebuild")
+            {
+                condition=condition.GetState(true);
+            }
+        }
         
 
         public bool NeedsRebuild

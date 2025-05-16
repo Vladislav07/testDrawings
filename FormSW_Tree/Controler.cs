@@ -199,7 +199,7 @@ namespace FormSW_Tree
          
             if (listAss.Count > 0)
             {
-                listPathAss.Reverse();
+              
                 Update(listPathAss, listPDMAss);            
             }
 
