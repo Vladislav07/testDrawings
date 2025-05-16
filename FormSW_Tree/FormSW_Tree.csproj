@@ -59,6 +59,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionControler.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ActionControler.Designer.cs">
+      <DependentUpon>ActionControler.cs</DependentUpon>
+    </Compile>
     <Compile Include="Assemble.cs" />
     <Compile Include="Controler.cs">
       <SubType>Component</SubType>

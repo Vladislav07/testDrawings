@@ -14,7 +14,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace FormSW_Tree
 {
-    internal class SW
+    public class SW
     {
         string  TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
        // string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";

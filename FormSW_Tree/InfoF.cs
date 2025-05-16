@@ -14,8 +14,9 @@ namespace FormSW_Tree
 {
     public partial class InfoF : Form
     {
-        internal event  Action cmdRebuild;
-        Controler c;
+      
+        ReadControler c;
+        ActionControler actionControler;
         DataTable dt;
         List<ViewUser> userView;
         bool isClean=false;
@@ -29,18 +30,18 @@ namespace FormSW_Tree
             dt= new DataTable();
             InitDT();
             this.dataGridView.AutoGenerateColumns = true;
-            
+            chB_ToRebuild.Checked = true;
+            button1.Enabled = false;
+            userView=new List<ViewUser>();
         }
 
         private void InfoF_Load(object sender, EventArgs e)
         {
-
-            chB_ToRebuild.Checked = true;
-            userView=new List<ViewUser>();
-            c = new Controler(this, ref userView);
+            c = new ReadControler(this, ref userView);
             c.RunWorkerCompleted += C_RunWorkerCompleted;
             c.ProgressChanged += C_ProgressChanged;
             c.RunWorkerAsync();
+            
         }
 
         private void C_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -76,7 +77,7 @@ namespace FormSW_Tree
                     break;
                 case 5:
                     this.lbMsg.Text = msg[0];
-                    RefreshForm();
+                    
                     break;
                 default:
                     break;
@@ -87,10 +88,24 @@ namespace FormSW_Tree
 
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-           
-            //userView = c.JoinCompAndDraw();
-            
+            RefreshForm();
+            button1.Enabled = true;
+            actionControler = new ActionControler(this);
+            actionControler.RunWorkerCompleted += ActionControler_RunWorkerCompleted;
+            actionControler.ProgressChanged += ActionControler_ProgressChanged;
+
         }
+
+        private void ActionControler_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ActionControler_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private byte[] GetImageData(int i)
         {
 
@@ -127,10 +142,7 @@ namespace FormSW_Tree
 
         public void button1_Click(object sender, EventArgs e)
         {
-            cmdRebuild?.Invoke();
-            SetStateForm();
-            FillToListIsRebuild();
-            this.Refresh();
+            actionControler.RunWorkerAsync();
         }
 
         private void chB_ToRebuild_CheckedChanged(object sender, EventArgs e)
@@ -313,10 +325,25 @@ namespace FormSW_Tree
                 isBlocked = false;
             }
             RefreshForm();
-        }
-
+        } 
    
+    }
 
-   
+    public struct ViewUser
+    {
+        internal string NameComp { get; set; }
+        internal string TypeComp { get; set; }
+        internal string Ext { get; set; }
+        internal string Level { get; set; }
+        internal string State { get; set; }
+        internal string StPDM { get; set; }
+        internal string VersionModel { get; set; }
+        internal string IsLocked { get; set; }
+        internal string IsChildRefError { get; set; }
+        internal string DrawState { get; set; }
+        internal string StDrPDM { get; set; }
+        internal string DrawVersRev { get; set; }
+        internal string DrawNeedRebuild { get; set; }
+        internal string DrawIsLocked { get; set; }
     }
 }
