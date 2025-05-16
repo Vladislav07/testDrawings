@@ -172,7 +172,6 @@ namespace FormSW_Tree
             return (strReturn);
 
         }
-
         private void ResolvedLigthWeiht(AssemblyDoc ass)
         {
             int countLigthWeiht = ass.GetLightWeightComponentCount();
@@ -181,7 +180,6 @@ namespace FormSW_Tree
                 ass.ResolveAllLightweight();
             }
         }
-
         private void TraverseComponent(Component2 swComp)
         {
             object[] ChildComps;
@@ -218,9 +216,7 @@ namespace FormSW_Tree
             GetRootComponent();
             GetBomTable();
         }
-
-
-         void GetRootComponent()
+        private void GetRootComponent()
         {
        
             string rootPath = swMainModel.GetPathName();
@@ -229,8 +225,7 @@ namespace FormSW_Tree
 
             Tree.AddNode("0", nameRoot, rootPath);
         }
-
-         void GetBomTable()
+        private void GetBomTable()
         {
 
             ModelDocExtension Ext = default(ModelDocExtension);
@@ -302,26 +297,11 @@ namespace FormSW_Tree
             swMainModel.ClearSelection2(true);
             
         }
-
-
-
-        public void OpenFile(string path)
-        {
-            ModelDoc2 swModelDoc = default(ModelDoc2);
-            int errors = 0;
-            int warnings = 0;
-            int lErrors = 0;
-            int lWarnings = 0;
-            swModelDoc = (ModelDoc2)swApp.OpenDoc6(path, (int)swDocumentTypes_e.swDocASSEMBLY,
-                (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
-        }
-
         public void CloseDoc()
         {
             swApp.CloseAllDocuments(true);
         }
-
-        public void OpenAndRefresh(List<string> list)
+        public void OpenAndRefresh(string item)
         {
             ModelDoc2 swModelDoc = default(ModelDoc2);
             int errors = 0;
@@ -339,47 +319,46 @@ namespace FormSW_Tree
 
             try
             {
-                foreach (string item in list)
+
+                fileName = item;
+                string ext = Path.GetExtension(fileName);
+
+                if (ext == ".sldpart" || ext == ".SLDPART")
                 {
-                    fileName = item;
-                    string ext = Path.GetExtension(fileName);
-
-                    if(ext == ".sldpart" || ext == ".SLDPART")
-                    {
-                       type= (int)swDocumentTypes_e.swDocPART;
-                    }
-                    else if(ext == ".sldasm" || ext == ".SLDASM")
-                    {
-                        type = (int)swDocumentTypes_e.swDocASSEMBLY;
-                    }
-                    else if (ext == ".slddrw" || ext == ".SLDDRW")
-                    {
-                       type= (int)swDocumentTypes_e.swDocDRAWING;
-                    }
-
-                    swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, type, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
-                    extMod = swModelDoc.Extension;
-
-                    if (ext == ".slddrw" || ext == ".SLDDRW")
-                    {
-                        swDraw = (DrawingDoc)swModelDoc;
-                        vSheetName = (object[])swDraw.GetSheetNames();
-                        for (i = 0; i < vSheetName.Length; i++)
-
-                        {
-                            sheetName = (string)vSheetName[i];
-                            bRet = swDraw.ActivateSheet(sheetName);
-                            extMod.Rebuild((int)swRebuildOptions_e.swCurrentSheetDisp);
-                            swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
-                            Sheet swSheet = default(Sheet);
-                            swSheet = (Sheet)swDraw.GetCurrentSheet();
-                        }
-                    }
-                    extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
-                    swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
-                    swApp.CloseDoc(fileName);
-                    swModelDoc = null;
+                    type = (int)swDocumentTypes_e.swDocPART;
                 }
+                else if (ext == ".sldasm" || ext == ".SLDASM")
+                {
+                    type = (int)swDocumentTypes_e.swDocASSEMBLY;
+                }
+                else if (ext == ".slddrw" || ext == ".SLDDRW")
+                {
+                    type = (int)swDocumentTypes_e.swDocDRAWING;
+                }
+
+                swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, type, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                extMod = swModelDoc.Extension;
+
+                if (ext == ".slddrw" || ext == ".SLDDRW")
+                {
+                    swDraw = (DrawingDoc)swModelDoc;
+                    vSheetName = (object[])swDraw.GetSheetNames();
+                    for (i = 0; i < vSheetName.Length; i++)
+
+                    {
+                        sheetName = (string)vSheetName[i];
+                        bRet = swDraw.ActivateSheet(sheetName);
+                        extMod.Rebuild((int)swRebuildOptions_e.swCurrentSheetDisp);
+                        swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
+                        Sheet swSheet = default(Sheet);
+                        swSheet = (Sheet)swDraw.GetCurrentSheet();
+                    }
+                }
+                extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
+                swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
+                swApp.CloseDoc(fileName);
+                swModelDoc = null;
+
             }
             catch (Exception error)
             {

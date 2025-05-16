@@ -64,7 +64,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Drawing.cs" />
-    <Compile Include="IDisplay.cs" />
     <Compile Include="InfoF.cs">
       <SubType>Form</SubType>
     </Compile>

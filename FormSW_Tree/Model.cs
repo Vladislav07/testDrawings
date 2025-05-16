@@ -16,9 +16,8 @@ namespace FormSW_Tree
 
     }
 
-    public abstract class Model: IRebuild
-    {
-       
+    public abstract class Model
+    {      
         public string CubyNumber { get; private set; }
         public string FullPath { get; private set; }
         public string Ext { get; private set; }
@@ -71,34 +70,6 @@ namespace FormSW_Tree
 
            
         }
-
-     
-
-
-        public virtual  List<PdmID> GetIDFromPDM()
-        {
-            List<PdmID> list = new List<PdmID>();
-            list.Add(new PdmID(bFile, bFolder));
-            return list;
-        }
-
-
-        public string GetPath()
-        {
-            return FullPath;
-        }
-
-       public void RefreshPdmFile()
-        {
-            File.Refresh();
-        }
-
-        public  void ResetState()
-        {
-            //
-        }
-
-   
 
     }
 }

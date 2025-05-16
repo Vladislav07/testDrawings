@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FormSW_Tree
 {
-    public class Drawing: Model, IRebuild
+    public class Drawing: Model
     {
 
         public string msgRefVers;
@@ -67,17 +67,6 @@ namespace FormSW_Tree
             return (refDrToModel == model.File.CurrentVersion) ? false:true;
         }
 
-        
-        public override List<PdmID> GetIDFromPDM()
-        {
-            List<PdmID> list = new List<PdmID>();
-            
-            list.Add(new PdmID(bFile, bFolder));
-
-            return list;
-        }
-       
-       
 
     }
 }

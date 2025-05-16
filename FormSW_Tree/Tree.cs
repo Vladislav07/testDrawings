@@ -163,25 +163,6 @@ namespace FormSW_Tree
 
         }
 
-     /*   public static void Refresh()
-        {
-            int i = 1;
-            InfoAboutProcessing("Updating part and assembly files from the repository PDM", listComp.Count);
-            listComp.ForEach(c => {
-                c.RefreshPdmFile();
-               // InfoDataProcessing(c.CubyNumber, i);
-                i++;
-            });
-            i = 1;
-            InfoAboutProcessing("Updating part and assembly files from the repository PDM", listComp.Count);
-            listDraw.ForEach(d =>
-            {
-                d.RefreshPdmFile();
-               // InfoDataProcessing(d.CubyNumber, i);
-                i++;
-            });
-        }*/
-
         private static void InfoAboutProcessing(string nameOper, int countCycl)
         {
             string[] mno = new string[2];

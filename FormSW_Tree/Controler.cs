@@ -13,18 +13,8 @@ using System.ComponentModel;
 
 namespace FormSW_Tree
 {
-    public struct PdmID
-    {
-        public PdmID(int file, int folder)
-        {
-            FileId = file;
-            FolderId = folder;
-        }
-        public int FileId { get; set; }
-        public int FolderId { get; set; }
-    }
 
-    internal struct ViewUser
+    public struct ViewUser
     {
         internal string NameComp { get; set; }
         internal string TypeComp { get; set; }
@@ -47,26 +37,26 @@ namespace FormSW_Tree
 
         SW sw;
         InfoF f;
+        List<ViewUser> listVU;
         string[] msgInfo;
-        public Controler(InfoF _f)
+        public Controler(InfoF _f, ref List<ViewUser> viewUser)
         {
             WorkerReportsProgress = true;
+            listVU=viewUser;
             f = _f;
             f.cmdRebuild += F_action;
             Tree.msgDataOperation += Tree_msgDataOperation;
             Tree.msgNameOperation += Tree_msgNameOperation;
-            msgInfo=new string[1];
+            msgInfo=new string[2];
         }
 
         private void Tree_msgNameOperation(string[] obj)
-        {
-    
+        { 
             ReportProgress(3, obj);
         }
 
         private void Tree_msgDataOperation(string[] obj)
         {
- 
             ReportProgress(4, obj);
         }
 
@@ -130,127 +120,84 @@ namespace FormSW_Tree
                 ReportProgress(2, msgInfo);
                 Tree.GetInfoPDM();
                 Tree.CompareVersions();
+                JoinCompAndDraw(listVU);
             }
         }
 
-      
 
-        public bool RebuildTree()
+       
+
+        public void RebuildTree()
         {
-            List<PdmID> listExstactPDM = new List<PdmID>();
-
-            List<IRebuild> listPartDraw = Tree.listDraw.Where(d => d.condition.stateModel==StateModel.Rebuild)
-                .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
-                .Select(d => (IRebuild)d).ToList();
-            List<PdmID> listPDMDrawPart = new List<PdmID>();
-            List<string> listPathDrawParts = new List<string>();
-            listPartDraw.ForEach(d =>
-            {
-                listPDMDrawPart.AddRange(d.GetIDFromPDM());
-                listExstactPDM.AddRange(d.GetIDFromPDM());
-                listPathDrawParts.Add(d.GetPath());
  
-            });
-         
+            List<Drawing> listPartDraw = Tree.listDraw.Where(d => d.condition.stateModel==StateModel.Rebuild)
+                .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
+                .ToList();
 
-            List<IRebuild> listAss = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
-                .Select(d => (IRebuild)d).ToList();
-            List<PdmID> listPDMAss = new List<PdmID>();
-            List<string> listPathAss = new List<string>();
-            listAss.ForEach(a =>
-            {
-                listExstactPDM.AddRange(a.GetIDFromPDM());
-                listPDMAss.AddRange(a.GetIDFromPDM());
-                listPathAss.Add(a.GetPath());
-               
-             
-            });
-         
+            List<Part> listAss = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
+                .ToList();
 
-            List<IRebuild> listAssDraw = Tree.listDraw.Where(d => d.condition.stateModel == StateModel.Rebuild)
+            List<Drawing> listAssDraw = Tree.listDraw.Where(d => d.condition.stateModel == StateModel.Rebuild)
                 .Where(d => d.model.Ext == ".sldasm" || d.model.Ext == ".SLDASM")
-                .Select(d => (IRebuild)d).ToList();
-            List<PdmID> listPDMDrawAss = new List<PdmID>();
+                .ToList();
 
-            List<string> listPathDrawAss = new List<string>();
-            listAssDraw.ForEach(d =>
+            
+
+            int CountItemToCheckOut = listAssDraw.Count + listAss.Count + listPartDraw.Count;
+
+            msgInfo[0] = "Extract files from storage - CheckOut";
+            msgInfo[1] = CountItemToCheckOut.ToString();
+            Sw_operationSW(msgInfo);
+
+            PDM.CockSelList(CountItemToCheckOut);
+            listPartDraw.ForEach(d => d.AddItemToSelList());
+            listAss.ForEach(d => d.AddItemToSelList());
+            listAssDraw.ForEach(d => d.AddItemToSelList());
+            PDM.BatchGet();
+
+            if(listAssDraw.Count > 0)
             {
-                listExstactPDM.AddRange(d.GetIDFromPDM());
-                listPDMDrawAss.AddRange(d.GetIDFromPDM());
-                listPathDrawAss.Add(d.GetPath());
-               
-              
-            });
-      
-            if (listExstactPDM.Count > 0){
-                try
-                {
-                    PDM.AddSelItemToList(listExstactPDM);
-                    PDM.BatchGet();
-                }
-                catch (Exception)
-                {
-
-                    MessageBox.Show("Error extactFilePDM");
-                }
+                msgInfo[0] = "opening and rebuilding drawings of parts";
+                msgInfo[1] = CountItemToCheckOut.ToString();
+                Sw_operationSW(msgInfo);
+                BatchRefreshFile( listPartDraw);
             }
-        
-            if (listPartDraw.Count > 0) Update(listPathDrawParts, listPDMDrawPart);
-         
+
             if (listAss.Count > 0)
             {
-              
-                Update(listPathAss, listPDMAss);            
-            }
-
-            if (listAssDraw.Count > 0) Update(listPathDrawAss, listPDMDrawAss);
-
-           
-             
-            return true;
-        }
-
-      /*  private bool Refresh()
-        {
-            Tree.Refresh();
-            Tree.listComp.ForEach(c => c.ResetState());
-            Tree.listDraw.ForEach(c => c.ResetState());         
-            Tree.CompareVersions();
-            return true;
-        }*/
-
-
-        private void Update(List<string> listToSw, List<PdmID> listPdm)
-        {
-            try
-            {     
-                sw.OpenAndRefresh(listToSw);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Error updating SW");
-
-            }
-            try
-            {
-                PDM.AddSelItemToList(listPdm);
+                msgInfo[0] = "opening and rebuilding assemble";
+                msgInfo[1] = CountItemToCheckOut.ToString();
+                Sw_operationSW(msgInfo);
+                listAss.ForEach(d => sw.OpenAndRefresh(d.FullPath));
+                PDM.CockSelList(listAss.Count);
+                listAss.ForEach(d => d.AddItemToSelList());
                 PDM.DocBatchUnLock();
-             
             }
-            catch (Exception)
+         
+            if(listAssDraw.Count > 0)
             {
-                MessageBox.Show("Error BatchUnLockPDM");
-
+                msgInfo[0] = "opening and rebuilding drawings of Assemble";
+                msgInfo[1] = CountItemToCheckOut.ToString();
+                Sw_operationSW(msgInfo);
+                BatchRefreshFile( listAssDraw);
             }
+            
+
 
         }
-  
+        private void BatchRefreshFile( List<Drawing> listDraw)
+        {
+            listDraw.ForEach(d => sw.OpenAndRefresh(d.FullPath));
+            PDM.CockSelList(listDraw.Count);
+            listDraw.ForEach(d => d.AddItemToSelList());
+            PDM.DocBatchUnLock();
+        }
 
-        internal  List<ViewUser> JoinCompAndDraw( )
+        internal  List<ViewUser> JoinCompAndDraw(List<ViewUser> lv )
         {
             List<Part> compList = Tree.listComp;
             List<Drawing> drawList = Tree.listDraw;
-            List<ViewUser> lv = new List<ViewUser>();
+           // List<ViewUser> lv = new List<ViewUser>();
             foreach (Part item in compList)
             {
                 Drawing dr = drawList.FirstOrDefault(d => d.CubyNumber == item.CubyNumber);
@@ -274,8 +221,9 @@ namespace FormSW_Tree
                     DrawIsLocked = dr != null ? dr.File?.IsLocked.ToString() : ""
                 });
             }
-         
 
+            msgInfo[0] = "----------------------";
+            ReportProgress(5, msgInfo);
             return lv;
         }
     }

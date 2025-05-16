@@ -20,6 +20,7 @@ namespace FormSW_Tree
         static IEdmBatchUnlock2 batchUnlocker;
         static IEdmEnumeratorVariable5 enumVar = default(IEdmEnumeratorVariable5);
         public static event Action<string> UnLock;
+        private static int i;
 
         static PDM()
         {
@@ -40,7 +41,7 @@ namespace FormSW_Tree
                 item.bFolder = ParentFolder.ID;
                 item.bFile = File.ID;
             
-                enumVar = File.GetEnumeratorVariable();
+            /*    enumVar = File.GetEnumeratorVariable();
                 object val = null;
                 EdmStrLst5 listConf = File.GetConfigurations(0);
 
@@ -53,15 +54,12 @@ namespace FormSW_Tree
                 {
                      error = enumVar.GetVar("Раздел", "@", out val);
                      item.Section = val != null? (string)val: "none";
-                }
+                }*/
             }
             catch (Exception)
             {
                 
-            }
-           
-
-
+            }         
         }
 
         internal static void GetReferenceFromAssemble(this Assemble ass)
@@ -104,7 +102,7 @@ namespace FormSW_Tree
 
     
 
-        public static void AddSelItemToList(List<PdmID>updateList)
+    /*    public static void AddSelItemToList(List<PdmID>updateList)
         {
             int i = 0;
             try
@@ -119,6 +117,33 @@ namespace FormSW_Tree
            
                     i++;
                 }
+
+            }
+            catch (System.Runtime.InteropServices.COMException ex)
+            {
+                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }*/
+
+        public static void CockSelList(int count)
+        {
+            ppoSelection = new EdmSelItem[count];
+            i= 0;
+        }
+
+        public static void AddItemToSelList(this Model item)
+        {
+           
+            try
+            {              
+                ppoSelection[i] = new EdmSelItem();
+                ppoSelection[i].mlDocID = item.bFile;
+                ppoSelection[i].mlProjID = item.bFolder;
+                i++;
 
             }
             catch (System.Runtime.InteropServices.COMException ex)

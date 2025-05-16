@@ -36,8 +36,8 @@ namespace FormSW_Tree
         {
 
             chB_ToRebuild.Checked = true;
-  
-            c = new Controler(this);
+            userView=new List<ViewUser>();
+            c = new Controler(this, ref userView);
             c.RunWorkerCompleted += C_RunWorkerCompleted;
             c.ProgressChanged += C_ProgressChanged;
             c.RunWorkerAsync();
@@ -74,6 +74,10 @@ namespace FormSW_Tree
                     this.progressBar1.Value = i;
                     this.lbStart.Text = i.ToString();
                     break;
+                case 5:
+                    this.lbMsg.Text = msg[0];
+                    RefreshForm();
+                    break;
                 default:
                     break;
             }
@@ -84,8 +88,8 @@ namespace FormSW_Tree
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
            
-            userView = c.JoinCompAndDraw();
-            RefreshForm();
+            //userView = c.JoinCompAndDraw();
+            
         }
         private byte[] GetImageData(int i)
         {
@@ -112,7 +116,7 @@ namespace FormSW_Tree
                  return ms.ToArray();
              }
         }
-        public void FillDataGridView()
+        private void FillDataGridView()
         {
 
             dataGridView.Cursor = Cursors.WaitCursor;
@@ -144,7 +148,7 @@ namespace FormSW_Tree
             }
             RefreshForm();
         }
-        internal void FillToListIsRebuild()
+        private void FillToListIsRebuild()
         {
             dt.Clear();
 
@@ -205,7 +209,6 @@ namespace FormSW_Tree
             dt.Columns.Add("DrawNeedRebuild", typeof(string));
             dt.Columns.Add("DrawIsLocked", typeof(string));
         }
-
 
         private void chB_Clean_CheckedChanged(object sender, EventArgs e)
         {
