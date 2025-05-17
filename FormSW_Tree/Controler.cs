@@ -11,7 +11,6 @@ namespace FormSW_Tree
 
         SW sw;
         InfoF f;
-        List<ViewUser> listVU;
   
         public ReadControler(InfoF _f)
         {
@@ -60,16 +59,16 @@ namespace FormSW_Tree
                 Tree.FillCollection();
                 Tree.GetInfoPDM();
                 Tree.CompareVersions();
-                f.userView= JoinCompAndDraw(listVU);
+                f.userView= JoinCompAndDraw();
             }
         }
      
   
-        internal  List<ViewUser> JoinCompAndDraw(List<ViewUser> lv )
+        internal  List<ViewUser> JoinCompAndDraw()
         {
             List<Part> compList = Tree.listComp;
             List<Drawing> drawList = Tree.listDraw;
-           // List<ViewUser> lv = new List<ViewUser>();
+            List<ViewUser> lv = new List<ViewUser>();
             foreach (Part item in compList)
             {
                 Drawing dr = drawList.FirstOrDefault(d => d.CubyNumber == item.CubyNumber);
