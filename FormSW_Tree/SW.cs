@@ -50,7 +50,6 @@ namespace FormSW_Tree
                 return;
             }
 
-            // Get active model
             string[] strResult = LoadActiveModel();
           
             IsConnect(strResult);
@@ -60,6 +59,8 @@ namespace FormSW_Tree
         {   bool isInit = false;
             if (statLabel[0] == "") {
                isInit = true;
+               
+               ResolvedLigthWeiht(swMainAssy);
             }
             connectSw?.Invoke(statLabel, isInit);
 
@@ -160,8 +161,7 @@ namespace FormSW_Tree
             swMainAssy = (AssemblyDoc)swMainModel;
             Component2 swRootComp;
             swRootComp = (Component2)swMainConfig.GetRootComponent();
-            ResolvedLigthWeiht(swMainAssy);
-
+         
             // Write model info to return array
             strReturn[1] = strModelFile;
             strReturn[2] = strModelName;
@@ -224,76 +224,104 @@ namespace FormSW_Tree
         }
         private void GetBomTable()
         {
+            ModelDocExtension Ext;
+            BomFeature swBOMFeature;
+            BomTableAnnotation swBOMAnnotation;
+            string Configuration;
+            TableAnnotation swTableAnn;
+            ExtractomTable(out Ext, out swBOMFeature, out swBOMAnnotation, out Configuration, out swTableAnn);
 
-            ModelDocExtension Ext = default(ModelDocExtension);
-            Ext=swMainModel.Extension;
-           
-            BomFeature swBOMFeature = default(BomFeature);
-            BomTableAnnotation swBOMAnnotation = default(BomTableAnnotation);
-            string Configuration = swMainConfig.Name;
+            int nNumRow = 0;
+            int J = 0;
 
+
+            nNumRow = swTableAnn.RowCount;
+
+            NotifyStartOperation(nNumRow);
+
+            for (J = 0; J <= nNumRow - 1; J++)
+            {
+                ExtractItem(swBOMAnnotation, Configuration, J);
+            }
+            readedTree?.Invoke(true);
+
+            string BomName = swBOMFeature.Name;
+            bool boolstatus = TableBomClose(Ext, BomName);
+
+        }
+
+        private void NotifyStartOperation(int nNumRow)
+        {
+            operSW[0] = "Read Specification";
+            operSW[1] = nNumRow.ToString();
+
+            operationSW?.Invoke(operSW);
+        }
+
+        private void ExtractItem(BomTableAnnotation swBOMAnnotation, string Configuration, int J)
+        {
+            string ItemNumber;
+            string PartNumber;
+            string PathName;
+            string e;
+            string designation;
+            string[] result = new string[2];
+            swBOMAnnotation.GetComponentsCount2(J, Configuration, out ItemNumber, out PartNumber);
+
+            if (PartNumber == null) return;
+            string PartNumberTrim = PartNumber.Trim();
+            if (PartNumberTrim == "") return;
+
+            string[] str = (string[])swBOMAnnotation.GetModelPathNames(J, out ItemNumber, out PartNumber);
+            PathName = str[0];
+            designation = Path.GetFileNameWithoutExtension(PathName);
+            string regCuby = @"^CUBY-\d{8}$";
+            bool IsCUBY = Regex.IsMatch(PartNumberTrim, regCuby);
+
+            if (!IsCUBY)
+            {
+                PartNumberTrim = designation;
+            }
+
+            e = Path.GetExtension(PathName);
+            string AddextendedNumber = "0." + ItemNumber;
+            if (e == ".SLDPRT" || e == ".sldprt" || e == ".SLDASM" || e == ".sldasm")
+            {
+
+                Tree.AddNode(AddextendedNumber, PartNumberTrim, PathName);
+                result[0] = PartNumberTrim;
+                result[1] = J.ToString();
+                loadTree?.Invoke(result);
+            }
+        }
+
+        private bool TableBomClose(ModelDocExtension Ext, string BomName)
+        {
+            bool boolstatus;
+            string numberTable = BomName.Substring(17);
+            boolstatus = Ext.SelectByID2("DetailItem" + numberTable + "@Annotations", "ANNOTATIONTABLES", 0, 0, 0, false, 0, null, 0);
+            swMainModel.EditDelete();
+            swMainModel.ClearSelection2(true);
+            return boolstatus;
+        }
+
+        private void ExtractomTable(out ModelDocExtension Ext, out BomFeature swBOMFeature, out BomTableAnnotation swBOMAnnotation, out string Configuration, out TableAnnotation swTableAnn)
+        {
+            Ext = default(ModelDocExtension);
+            Ext = swMainModel.Extension;
+
+            swBOMFeature = default(BomFeature);
+            swBOMAnnotation = default(BomTableAnnotation);
+            Configuration = swMainConfig.Name;
             int nbrType = (int)swNumberingType_e.swNumberingType_Detailed;
             int BomType = (int)swBomType_e.swBomType_Indented;
 
             swBOMAnnotation = Ext.InsertBomTable3(TemplateName, 0, 0, BomType, Configuration, true, nbrType, false);
             swBOMFeature = swBOMAnnotation.BomFeature;
 
-            TableAnnotation swTableAnn = (TableAnnotation)swBOMAnnotation;
-            int nNumRow = 0;
-            int J = 0;
-            string ItemNumber = null;
-            string PartNumber = null;
-            string PathName;
-            string e;
-            string designation;
-            string BomName;
-            bool boolstatus = false;
-            string[] result = new string[2];
-
-            BomName = swBOMFeature.Name;
-            nNumRow = swTableAnn.RowCount;
-
-            operSW[0] = "Read Specification";
-            operSW[1]= nNumRow.ToString();
-            operationSW?.Invoke(operSW);
-            for (J = 0; J <= nNumRow - 1; J++)
-            {
-                swBOMAnnotation.GetComponentsCount2(J, Configuration, out ItemNumber, out PartNumber);
-
-                if (PartNumber == null) continue;
-                string PartNumberTrim = PartNumber.Trim();
-                if (PartNumberTrim == "") continue;
-                string[] str = (string[])swBOMAnnotation.GetModelPathNames(J, out ItemNumber, out PartNumber);
-                PathName = str[0];
-                designation = Path.GetFileNameWithoutExtension(PathName);
-                string regCuby = @"^CUBY-\d{8}$";
-                bool IsCUBY = Regex.IsMatch(PartNumberTrim, regCuby);
-                
-                if (!IsCUBY)
-                {
-                    PartNumberTrim = designation;
-                }  
-                
-                e = Path.GetExtension(PathName);
-                string AddextendedNumber = "0." + ItemNumber;
-                if (e == ".SLDPRT" || e == ".sldprt" || e == ".SLDASM" || e == ".sldasm")
-                {
-
-                    Tree.AddNode(AddextendedNumber, PartNumberTrim, PathName);
-                    result[0]= PartNumberTrim;
-                    result[1]= J.ToString();
-                    loadTree?.Invoke(result);
-                }
-
-            }
-            readedTree?.Invoke(true);
-            int i = BomName.Length;
-            string numberTable = BomName.Substring(17);
-            boolstatus = Ext.SelectByID2("DetailItem" + numberTable + "@Annotations", "ANNOTATIONTABLES", 0, 0, 0, false, 0, null, 0);
-            swMainModel.EditDelete();
-            swMainModel.ClearSelection2(true);
-            
+            swTableAnn = (TableAnnotation)swBOMAnnotation;
         }
+
         public void CloseDoc()
         {
             swApp.CloseAllDocuments(true);
