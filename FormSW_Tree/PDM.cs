@@ -40,7 +40,6 @@ namespace FormSW_Tree
            
             IEdmFile7 File = null;
             IEdmFolder5 ParentFolder = null;
-
             try
             {
                 File = (IEdmFile7)vault1.GetFileFromPath(item.FullPath, out ParentFolder); 
@@ -48,7 +47,7 @@ namespace FormSW_Tree
                 item.bFolder = ParentFolder.ID;
                 item.bFile = File.ID;
             
-            /*    enumVar = File.GetEnumeratorVariable();
+                enumVar = File.GetEnumeratorVariable();
                 object val = null;
                 EdmStrLst5 listConf = File.GetConfigurations(0);
 
@@ -61,7 +60,7 @@ namespace FormSW_Tree
                 {
                      error = enumVar.GetVar("Раздел", "@", out val);
                      item.Section = val != null? (string)val: "none";
-                }*/
+                }
             }
             catch (Exception)
             {

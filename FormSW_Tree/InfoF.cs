@@ -18,7 +18,7 @@ namespace FormSW_Tree
         ReadControler c;
         ActionControler actionControler;
         DataTable dt;
-        List<ViewUser> userView;
+        public List<ViewUser> userView { get; set; }
         bool isClean=false;
         bool isDispleyRebuild = true;
         bool isImpossible = false;
@@ -32,68 +32,29 @@ namespace FormSW_Tree
             this.dataGridView.AutoGenerateColumns = true;
             chB_ToRebuild.Checked = true;
             button1.Enabled = false;
-            userView=new List<ViewUser>();
+           
         }
 
         private void InfoF_Load(object sender, EventArgs e)
         {
-            c = new ReadControler(this, ref userView);
+            c = new ReadControler(this);
             c.RunWorkerCompleted += C_RunWorkerCompleted;
             c.ProgressChanged += C_ProgressChanged;
             c.RunWorkerAsync();
             
         }
 
-        private void NotifacationProgress(int t, string[] msg)
-        {
-            switch (t)
-            {
-                case 0:
-                    this.lbMsg.Text = msg[0];
-                    // lbMsg.;
-                    break;
-                case 1:
-                    this.Text = msg[2];
-                    this.lbMsg.Text = "Загрузка спецификации";
-                    //lbMsg.BackColor = Color.Green;  
-                    break;
-                case 2:
-                    this.lbMsg.Text = msg[0];
-                    break;
-                case 3:
-                    int count = Convert.ToInt16(msg[1]);
-                    this.lbMsg.Text = msg[0];
-                    this.progressBar1.Maximum = 0;
-                    this.progressBar1.Maximum = count;
-                    this.lbCount.Text = count.ToString();
-                    break;
-                case 4:
-                    int i = Convert.ToInt16(msg[1]);
-                    this.lbNumber.Text = msg[0];
-                    this.progressBar1.Value = i;
-                    this.lbStart.Text = i.ToString();
-                    break;
-                case 5:
-                    this.lbMsg.Text = msg[0];
-                    lbNumber.Text = "";
-                    break;
-                default:
-                    break;
-            }
-        }
-
         private void C_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            string[] msg = (string[])e.UserState;
+            MsgInfo msg = (MsgInfo)e.UserState;
             int t = e.ProgressPercentage;
-            NotifacationProgress(t, msg);
-
-
+            Notifacation(t, msg);
 
         }
 
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+
             RefreshForm();
             button1.Enabled = true;
             actionControler = new ActionControler();

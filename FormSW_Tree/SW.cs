@@ -27,9 +27,6 @@ namespace FormSW_Tree
         private string[] operSW;
   
         public event Action<string[], bool> connectSw;
-        public event Action<bool> readedTree;
-        public event Action<string[]> operationSW;
-        public event Action<string[]> loadTree;
         public event Action<int,MsgInfo> rebuild;
         public SW()
         {
@@ -237,26 +234,18 @@ namespace FormSW_Tree
 
             nNumRow = swTableAnn.RowCount;
 
-            NotifyStartOperation(nNumRow);
-
             for (J = 0; J <= nNumRow - 1; J++)
             {
                 ExtractItem(swBOMAnnotation, Configuration, J);
             }
-            readedTree?.Invoke(true);
+          
 
             string BomName = swBOMFeature.Name;
             bool boolstatus = TableBomClose(Ext, BomName);
 
         }
 
-        private void NotifyStartOperation(int nNumRow)
-        {
-            operSW[0] = "Read Specification";
-            operSW[1] = nNumRow.ToString();
-
-            operationSW?.Invoke(operSW);
-        }
+ 
 
         private void ExtractItem(BomTableAnnotation swBOMAnnotation, string Configuration, int J)
         {
@@ -289,9 +278,9 @@ namespace FormSW_Tree
             {
 
                 Tree.AddNode(AddextendedNumber, PartNumberTrim, PathName);
-                result[0] = PartNumberTrim;
+               /* result[0] = PartNumberTrim;
                 result[1] = J.ToString();
-                loadTree?.Invoke(result);
+                loadTree?.Invoke(result);*/
             }
         }
 

@@ -20,8 +20,8 @@ namespace FormSW_Tree
         public static List<Drawing> listDraw;
 
         static Dictionary<string, string> structuralNumbers;
-        internal static event Action<string[]> msgDataOperation;
-        internal static event Action<string[]> msgNameOperation;
+        internal static event Action<MsgInfo> msgDataOperation;
+        internal static event Action<MsgInfo> msgNameOperation;
         static Tree()
         {
            
@@ -34,7 +34,6 @@ namespace FormSW_Tree
         {
 
             ModelTree.Add(NodeNumber, GetModelFromNumber(cubyNumber, pathNode));
-
             structuralNumbers.Add(NodeNumber, cubyNumber);
         }
 
@@ -67,7 +66,7 @@ namespace FormSW_Tree
 
         private static void Comp_NotificationParent(string cubyNumber, StateModel isBlocedchild)
         {
-            Assemble comp =(Assemble) listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
+            Assemble comp = (Assemble)listComp.FirstOrDefault(p => p.CubyNumber == cubyNumber);
             if (comp == null) return;
             comp.CascadingUpdate(isBlocedchild);
    
@@ -86,29 +85,26 @@ namespace FormSW_Tree
       
         public static void SearchParentFromChild()
         {
-
             string StructureNumberChild;
             string ParentStructurenumber;
             int index = 0;
             char separate = new char[] { '.' }[0];
             Part child = null;
-            string parentNumber=null;
+            string parentNumber;
             foreach (KeyValuePair<string, string> item in structuralNumbers)
             {
                
                 child = ModelTree[item.Key];
                 StructureNumberChild = item.Key;
-                if (StructureNumberChild == "0") continue;
-                if (child == null && child.CubyNumber != item.Value) continue;
+                  if (StructureNumberChild == "0") continue;
+                  if (child == null && child.CubyNumber != item.Value) continue;
                 index = StructureNumberChild.LastIndexOf(separate);
                 ParentStructurenumber = StructureNumberChild.Substring(0,index);
-                if (!structuralNumbers.ContainsKey(ParentStructurenumber)) continue;
+                  if (!structuralNumbers.ContainsKey(ParentStructurenumber)) continue;
                 parentNumber = structuralNumbers[ParentStructurenumber];
-                if (child.listParent.Contains(parentNumber))continue;
+                  if (child.listParent.Contains(parentNumber))continue;
                 child.listParent.Add(parentNumber);
-
-            }
-      
+            }      
         }
       
         public static void FillCollection()
@@ -165,17 +161,17 @@ namespace FormSW_Tree
 
         private static void InfoAboutProcessing(string nameOper, int countCycl)
         {
-            string[] mno = new string[2];
-            mno[0] = nameOper;
-            mno[1]=countCycl.ToString();
+            MsgInfo mno = new MsgInfo();
+            mno.typeOperation = nameOper;
+            mno.countStep=countCycl;
             msgNameOperation.Invoke(mno);
         }
         private static void InfoDataProcessing(string nameCuby, int i)
         {
-           
-            string[] mdata = new string[2];
-            mdata[0]=nameCuby;
-            mdata[1] = i.ToString();
+
+            MsgInfo mdata = new MsgInfo();
+            mdata.numberCuby=nameCuby;
+            mdata.currentStep = i;
             msgDataOperation.Invoke(mdata);
         }
 

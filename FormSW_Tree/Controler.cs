@@ -12,87 +12,58 @@ namespace FormSW_Tree
         SW sw;
         InfoF f;
         List<ViewUser> listVU;
-        string[] msgInfo;
-        public ReadControler(InfoF _f, ref List<ViewUser> viewUser)
+  
+        public ReadControler(InfoF _f)
         {
             WorkerReportsProgress = true;
-            listVU=viewUser;
+ 
             f = _f;
+            sw = new SW();
+            sw.connectSw += Sw_connectSw;
+              
             Tree.msgDataOperation += Tree_msgDataOperation;
             Tree.msgNameOperation += Tree_msgNameOperation;
-            msgInfo=new string[2];
+    
         }
 
-        private void Tree_msgNameOperation(string[] obj)
-        { 
-            ReportProgress(3, obj);
-        }
-
-        private void Tree_msgDataOperation(string[] obj)
+        private void Tree_msgNameOperation(MsgInfo obj)
         {
-            ReportProgress(4, obj);
+            ReportProgress(2, obj);
+        }
+
+        private void Tree_msgDataOperation(MsgInfo obj)
+        {
+            ReportProgress(3, obj);
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-            Init();
-        }
-
-        public bool Init()
-        {
-            sw = new SW();
-            sw.connectSw += Sw_connectSw;
-            sw.readedTree += Sw_readedTree;
-            sw.operationSW += Sw_operationSW;
-            sw.loadTree += Sw_loadTree;
-            sw.btnConnectSW();
-            return true;
+           sw.btnConnectSW();
         }
 
        
-
-        private void Sw_operationSW(string[] obj)
-        {
-            ReportProgress(3, obj);
-        }
-
-        private void Sw_loadTree(string[] msg)
-        {
-            ReportProgress(4, msg);
-        }
-
-     
         private void Sw_connectSw(string[] msg, bool arg)
         {
+            MsgInfo info = new MsgInfo();
+
             if (!arg)
             {
-                 ReportProgress(0, msg);
-               
+                 info.errorMsg = msg[0];
+                 ReportProgress(0, msg);              
             }
             else
             {
- 
-                ReportProgress(1, msg);
+                info.numberCuby = msg[2];
+                ReportProgress(1,info);
                 sw.BuildTree();
-
-               
-            }
-        }
-        private void Sw_readedTree(bool arg2)
-        {
-            if (arg2)
-            {
-                msgInfo[0] = "List formation";
-                ReportProgress(2, msgInfo);
                 Tree.SearchParentFromChild();
                 Tree.FillCollection();
-                msgInfo[0] = "Load EdmFile from PDM";
-                ReportProgress(2, msgInfo);
                 Tree.GetInfoPDM();
                 Tree.CompareVersions();
-                JoinCompAndDraw(listVU);
+                f.userView= JoinCompAndDraw(listVU);
             }
         }
+     
   
         internal  List<ViewUser> JoinCompAndDraw(List<ViewUser> lv )
         {
@@ -123,8 +94,7 @@ namespace FormSW_Tree
                 });
             }
 
-            msgInfo[0] = "----------------------";
-            ReportProgress(5, msgInfo);
+     
             return lv;
         }
     }
