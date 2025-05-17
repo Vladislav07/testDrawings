@@ -11,7 +11,7 @@ namespace FormSW_Tree
     public static class PDM
     {
         static string NAME_PDM = "CUBY_PDM";
-        //static string NAME_PDM = "My";
+
 
         static IEdmVault5 vault1 = null;
         static IEdmVault7 vault = null;
@@ -19,13 +19,20 @@ namespace FormSW_Tree
         static EdmSelItem[] ppoSelection = null;
         static IEdmBatchUnlock2 batchUnlocker;
         static IEdmEnumeratorVariable5 enumVar = default(IEdmEnumeratorVariable5);
-        public static event Action<string> UnLock;
+    
+        public static event Action<int,MsgInfo> NotifyPDM;
         private static int i;
+
+
 
         static PDM()
         {
             vault1 = new EdmVault5();
             ConnectingPDM();
+        }
+        public static void NotifyOperation(int stage, MsgInfo msgInfo)
+        {
+            NotifyPDM?.Invoke(stage, msgInfo);
         }
 
         public static void GetEdmFile(this Model item)
@@ -100,35 +107,6 @@ namespace FormSW_Tree
             
         }
 
-    
-
-    /*    public static void AddSelItemToList(List<PdmID>updateList)
-        {
-            int i = 0;
-            try
-            {
-                ppoSelection = new EdmSelItem[updateList.Count];
-
-                foreach (PdmID item in updateList)
-                {
-                    ppoSelection[i] = new EdmSelItem();
-                    ppoSelection[i].mlDocID = item.FileId;
-                    ppoSelection[i].mlProjID = item.FolderId;
-           
-                    i++;
-                }
-
-            }
-            catch (System.Runtime.InteropServices.COMException ex)
-            {
-                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }*/
-
         public static void CockSelList(int count)
         {
             ppoSelection = new EdmSelItem[count];
@@ -160,15 +138,14 @@ namespace FormSW_Tree
         {       
             try
             {
-
+                 EdmCallbackGet cbGet = new EdmCallbackGet();
                 batchGetter = (IEdmBatchGet)vault.CreateUtility(EdmUtility.EdmUtil_BatchGet);
      
                 batchGetter.AddSelection((EdmVault5)vault1, ppoSelection);
                 if ((batchGetter != null))
                 {
                     batchGetter.CreateTree(0, (int)EdmGetCmdFlags.Egcf_Lock + (int)EdmGetCmdFlags.Egcf_SkipOpenFileChecks);// + (int)EdmGetCmdFlags.Egcf_IncludeAutoCacheFiles);  
-                   // batchGetter.ShowDlg(0);
-                    batchGetter.GetFiles(0, null);
+                    batchGetter.GetFiles(0, cbGet);
                 }
 
             }
@@ -186,12 +163,13 @@ namespace FormSW_Tree
         {
             try
             {
+                EDMCallback cb = new EDMCallback();
                 batchUnlocker = (IEdmBatchUnlock2)vault.CreateUtility(EdmUtility.EdmUtil_BatchUnlock);
                 batchUnlocker.AddSelection((EdmVault5)vault1, ref ppoSelection);
                 batchUnlocker.CreateTree(0, (int)EdmUnlockBuildTreeFlags.Eubtf_MayUnlock);
                 batchUnlocker.Comment = "Refresh";
-                batchUnlocker.UnlockFiles(0, null);
-                EventProcess("Processing completed");
+                batchUnlocker.UnlockFiles(0, cb);
+
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {
@@ -204,13 +182,7 @@ namespace FormSW_Tree
 
         }
 
-        static void EventProcess(string message)
-        {
-            if(UnLock != null)
-            {
-                UnLock.Invoke(message);
-            }
-        }
+    
 
         static void  ConnectingPDM()
          {

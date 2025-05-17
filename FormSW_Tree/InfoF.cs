@@ -44,26 +44,24 @@ namespace FormSW_Tree
             
         }
 
-        private void C_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void NotifacationProgress(int t, string[] msg)
         {
-            string[] msg = (string[])e.UserState;
-            int t = e.ProgressPercentage;
             switch (t)
             {
                 case 0:
                     this.lbMsg.Text = msg[0];
-                   // lbMsg.;
+                    // lbMsg.;
                     break;
                 case 1:
                     this.Text = msg[2];
                     this.lbMsg.Text = "Загрузка спецификации";
                     //lbMsg.BackColor = Color.Green;  
                     break;
-                case 2:          
+                case 2:
                     this.lbMsg.Text = msg[0];
                     break;
                 case 3:
-                    int count =Convert.ToInt16( msg[1]);
+                    int count = Convert.ToInt16(msg[1]);
                     this.lbMsg.Text = msg[0];
                     this.progressBar1.Maximum = 0;
                     this.progressBar1.Maximum = count;
@@ -77,20 +75,28 @@ namespace FormSW_Tree
                     break;
                 case 5:
                     this.lbMsg.Text = msg[0];
-                    
+                    lbNumber.Text = "";
                     break;
                 default:
                     break;
             }
-            
-            
+        }
+
+        private void C_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            string[] msg = (string[])e.UserState;
+            int t = e.ProgressPercentage;
+            NotifacationProgress(t, msg);
+
+
+
         }
 
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             RefreshForm();
             button1.Enabled = true;
-            actionControler = new ActionControler(this);
+            actionControler = new ActionControler();
             actionControler.RunWorkerCompleted += ActionControler_RunWorkerCompleted;
             actionControler.ProgressChanged += ActionControler_ProgressChanged;
 
@@ -98,12 +104,14 @@ namespace FormSW_Tree
 
         private void ActionControler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            MsgInfo msg = (MsgInfo)e.UserState;
+            int t = e.ProgressPercentage;
+            Notifacation(t, msg);
         }
 
         private void ActionControler_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Alles!");
         }
 
         private byte[] GetImageData(int i)
@@ -325,8 +333,42 @@ namespace FormSW_Tree
                 isBlocked = false;
             }
             RefreshForm();
-        } 
-   
+        }
+
+        private void Notifacation(int typeEvent, MsgInfo msg)
+        {
+            switch (typeEvent)
+            {
+                case 0:       //Error
+                    this.lbMsg.Text = msg.errorMsg;
+                    this.lbNumber.Text = msg.numberCuby;
+
+                    break;
+                case 1:      //LoadActiveModel
+                    this.Text = msg.numberCuby;
+             
+                    break;
+                case 2:      //BeginOperation
+                    this.lbMsg.Text = msg.typeOperation;
+                    this.progressBar1.Maximum = msg.countStep;
+                    this.progressBar1.Minimum = 0;
+                    this.lbCount.Text = msg.countStep.ToString();
+                    
+                    break;
+                case 3:      //StepOperation
+                    this.lbStart.Text = msg.currentStep.ToString();
+                    this.progressBar1.Value = msg.currentStep;
+                    this.lbNumber.Text = msg.numberCuby;
+                    break;
+                case 4:    //EndOperation
+             
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
     }
 
     public struct ViewUser
@@ -346,4 +388,8 @@ namespace FormSW_Tree
         internal string DrawNeedRebuild { get; set; }
         internal string DrawIsLocked { get; set; }
     }
+
+ 
+
+
 }

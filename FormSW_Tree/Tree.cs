@@ -153,8 +153,8 @@ namespace FormSW_Tree
             listComp.Reverse();
             listDraw.Reverse();
 
+            listComp.ForEach(prt => prt.SetState());
             listDraw.ForEach(dr => dr.SetState());
-            listComp.ForEach(prt=>prt.SetState());
             listComp.ForEach(prt => {
                 if (prt.condition.stateModel == StateModel.Clean || prt.condition.stateModel == StateModel.Manufacturing) return;
                 prt.NotificationState(prt.condition.stateModel);

@@ -41,7 +41,7 @@ namespace FormSW_Tree
             bool rf = RevVersion(ref msgRefVers);
             bool isRebuldDraw = (NeedsRebuild || rf) ? true:false;               
             condition = condition.GetState(isRebuldDraw);
-            model.condition = condition.GetState(isRebuldDraw);
+            model.condition = model.condition.GetState(isRebuldDraw);
         }
 
         public void CompareStateFromModel()

@@ -66,10 +66,12 @@ namespace FormSW_Tree
         {
             if (!arg)
             {
-                ReportProgress(0, msg);
+                 ReportProgress(0, msg);
+               
             }
             else
             {
+ 
                 ReportProgress(1, msg);
                 sw.BuildTree();
 

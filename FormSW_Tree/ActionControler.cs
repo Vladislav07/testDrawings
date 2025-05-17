@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing.Text;
 using System.Linq;
 
 namespace FormSW_Tree
@@ -9,13 +10,9 @@ namespace FormSW_Tree
     public partial class ActionControler : BackgroundWorker
     {
         SW sw;
-        InfoF f;
-        string[] msgInfo;
-        public ActionControler(InfoF _f)
+        public ActionControler()
         {
             WorkerReportsProgress = true;
-            f = _f;
-        
         }
 
     
@@ -28,34 +25,54 @@ namespace FormSW_Tree
         {
             sw = new SW();
             sw.connectSw += Sw_connectSw;
-       
+            sw.rebuild += Sw_rebuild;
+            PDM.NotifyPDM += PDM_NotifyPDM;
             sw.btnConnectSW();
+            
             return true;
+        }
+
+        private void Sw_rebuild(int stage, MsgInfo info)
+        {
+            ReportProgress(stage, info);
         }
 
         private void Sw_connectSw(string[] msg, bool arg)
         {
+            MsgInfo info = new MsgInfo();
             if (!arg)
             {
-                ReportProgress(0, msg);
+                info.errorMsg = msg[0];
+                ReportProgress(0, info);
+      
             }
             else
             {
-                ReportProgress(1, msg);
+                info.numberCuby = msg[2];
+                ReportProgress(1, info);
                 sw.CloseDoc();
                 RebuildTree();
 
             }
         }
 
+        private void PDM_NotifyPDM(int stage, MsgInfo msg)
+        {
+           ReportProgress(stage, msg);
+        }
+
         private void RebuildTree()
         {
+            List<Part> listPart = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
+                .Where(d => d.Ext == ".sldprt" || d.Ext == ".SLDPRT")
+                .ToList();
 
             List<Drawing> listPartDraw = Tree.listDraw.Where(d => d.condition.stateModel == StateModel.Rebuild)
                 .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
                 .ToList();
 
             List<Part> listAss = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
+                .Where(d => d.Ext == ".sldasm" || d.Ext == ".SLDASM")
                 .ToList();
 
             List<Drawing> listAssDraw = Tree.listDraw.Where(d => d.condition.stateModel == StateModel.Rebuild)
@@ -64,11 +81,9 @@ namespace FormSW_Tree
 
 
 
-            int CountItemToCheckOut = listAssDraw.Count + listAss.Count + listPartDraw.Count;
+            int CountItemToCheckOut = listAssDraw.Count + listAss.Count + listPartDraw.Count+ listPart.Count;
 
-          /*  msgInfo[0] = "Extract files from storage - CheckOut";
-            msgInfo[1] = CountItemToCheckOut.ToString();
-            Sw_operationSW(msgInfo);*/
+
 
             PDM.CockSelList(CountItemToCheckOut);
             listPartDraw.ForEach(d => d.AddItemToSelList());
@@ -76,20 +91,21 @@ namespace FormSW_Tree
             listAssDraw.ForEach(d => d.AddItemToSelList());
             PDM.BatchGet();
 
-            if (listAssDraw.Count > 0)
+            if (listPartDraw.Count > 0)
             {
-               /* msgInfo[0] = "opening and rebuilding drawings of parts";
-                msgInfo[1] = CountItemToCheckOut.ToString();
-                Sw_operationSW(msgInfo);*/
-                BatchRefreshFile(listPartDraw);
+          
+                List<string> list =listPartDraw.Select(d => d.FullPath).ToList();
+                sw.loopFilesToRebuild(list);
+                PDM.CockSelList(listPartDraw.Count + listPart.Count);
+                listPart.ForEach(d => d.AddItemToSelList());
+                listPartDraw.ForEach(d => d.AddItemToSelList());
+                PDM.DocBatchUnLock();
             }
 
             if (listAss.Count > 0)
             {
-             /*   msgInfo[0] = "opening and rebuilding assemble";
-                msgInfo[1] = CountItemToCheckOut.ToString();
-                Sw_operationSW(msgInfo)*/;
-                listAss.ForEach(d => sw.OpenAndRefresh(d.FullPath));
+                List<string> list = listAss.Select(d => d.FullPath).ToList();
+                sw.loopFilesToRebuild(list);
                 PDM.CockSelList(listAss.Count);
                 listAss.ForEach(d => d.AddItemToSelList());
                 PDM.DocBatchUnLock();
@@ -97,21 +113,18 @@ namespace FormSW_Tree
 
             if (listAssDraw.Count > 0)
             {
-             /*   msgInfo[0] = "opening and rebuilding drawings of Assemble";
-                msgInfo[1] = CountItemToCheckOut.ToString();
-                Sw_operationSW(msgInfo);*/
-                BatchRefreshFile(listAssDraw);
+                List<string> list = listAssDraw.Select(d => d.FullPath).ToList();
+                sw.loopFilesToRebuild(list);
+                PDM.CockSelList(listAssDraw.Count);
+                listAssDraw.ForEach(d => d.AddItemToSelList());
+                PDM.DocBatchUnLock();
+                
             }
 
-
+            
 
         }
-        private void BatchRefreshFile(List<Drawing> listDraw)
-        {
-            listDraw.ForEach(d => sw.OpenAndRefresh(d.FullPath));
-            PDM.CockSelList(listDraw.Count);
-            listDraw.ForEach(d => d.AddItemToSelList());
-            PDM.DocBatchUnLock();
-        }
+    
+       
     }
 }

@@ -17,7 +17,7 @@ namespace FormSW_Tree
     public class SW
     {
         string  TemplateName = "C:\\CUBY_PDM\\library\\templates\\Спецификация.sldbomtbt";
-       // string TemplateName = "A:\\My\\library\\templates\\Спецификация.sldbomtbt";
+  
 
         private SldWorks swApp;
         private ModelDoc2 swMainModel;
@@ -30,13 +30,12 @@ namespace FormSW_Tree
         public event Action<bool> readedTree;
         public event Action<string[]> operationSW;
         public event Action<string[]> loadTree;
-
+        public event Action<int,MsgInfo> rebuild;
         public SW()
         {
             operSW = new string[2];
-            //operSW[0] - операция
-            //operSW[1] - count elements
         }
+     
         public void btnConnectSW()
         {
             string strAttach = swAttach();
@@ -63,6 +62,7 @@ namespace FormSW_Tree
                isInit = true;
             }
             connectSw?.Invoke(statLabel, isInit);
+
         }
 
         string swAttach()
@@ -101,15 +101,13 @@ namespace FormSW_Tree
             //   element 1 = model name with path
             //   element 2 = model name
             //   element 3 = referenced configuration name
-
+          
 
             ModelDoc2 swDoc;
-           // DrawingDoc swDrawDoc;
             swDocumentTypes_e swDocType;
 
             string strModelFile;
             string strModelName;
-            //string strFileExt;
             string strConfigName = null;
 
             string[] strReturn = new string[4];
@@ -123,10 +121,9 @@ namespace FormSW_Tree
             if (swDoc == null)
             {
                 strReturn[0] = "Could not acquire an active document";
+        
                 return (strReturn);
             }
-
-
 
             //Check for the correct doc type
             strModelFile = swDoc.GetPathName();
@@ -136,7 +133,7 @@ namespace FormSW_Tree
 
             if (swDocType != swDocumentTypes_e.swDocASSEMBLY)
             {
-                strReturn[0] = "This program only works with assemblies";
+                strReturn[0] = "This program only works with assemblies";            
                 return (strReturn);
             }
 
@@ -301,6 +298,13 @@ namespace FormSW_Tree
         {
             swApp.CloseAllDocuments(true);
         }
+    
+
+        public void loopFilesToRebuild(List<string>listFiles)
+        {
+            NotifyBeginRebuild(listFiles.Count);
+            listFiles.ForEach(file => OpenAndRefresh(file));
+        }
         public void OpenAndRefresh(string item)
         {
             ModelDoc2 swModelDoc = default(ModelDoc2);
@@ -321,9 +325,10 @@ namespace FormSW_Tree
             {
 
                 fileName = item;
+                NotifyStepRebuild(fileName);
                 string ext = Path.GetExtension(fileName);
 
-                if (ext == ".sldpart" || ext == ".SLDPART")
+                if (ext == ".sldprt" || ext == ".SLDPRT")
                 {
                     type = (int)swDocumentTypes_e.swDocPART;
                 }
@@ -337,9 +342,16 @@ namespace FormSW_Tree
                 }
 
                 swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, type, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                if (swModelDoc == null)
+                {
+                    MsgInfo msgInfo = new MsgInfo();
+                    //msgInfo.errorMsg=errors.n
+                    msgInfo.numberCuby = fileName;
+                    return;
+                }
                 extMod = swModelDoc.Extension;
 
-                if (ext == ".slddrw" || ext == ".SLDDRW")
+         /*       if (ext == ".slddrw" || ext == ".SLDDRW")
                 {
                     swDraw = (DrawingDoc)swModelDoc;
                     vSheetName = (object[])swDraw.GetSheetNames();
@@ -353,7 +365,7 @@ namespace FormSW_Tree
                         Sheet swSheet = default(Sheet);
                         swSheet = (Sheet)swDraw.GetCurrentSheet();
                     }
-                }
+                }*/
                 extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
                 swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
                 swApp.CloseDoc(fileName);
@@ -366,7 +378,28 @@ namespace FormSW_Tree
 
             }
         }
-      
+
+        private void NotifyBeginRebuild( int count)
+        {
+            y = 0;
+            MsgInfo msgInfo = new MsgInfo();
+            msgInfo.typeOperation = "Opening and rebuilding files";
+            msgInfo.countStep = count;
+            rebuild?.Invoke(2, msgInfo);
+
+        }
+        int y;
+        private void NotifyStepRebuild(string file)
+        {
+            y++;
+            MsgInfo msgInfo = new MsgInfo();
+            string numberCuby=Path.GetFileName(file);
+            msgInfo.numberCuby=numberCuby;
+            msgInfo.countStep = y;
+            rebuild?.Invoke(3, msgInfo);
+
+        }
+
     }
 }
 
