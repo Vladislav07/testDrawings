@@ -26,7 +26,7 @@ namespace FormSW_Tree
 
         private string[] operSW;
   
-        public event Action<string[], bool> connectSw;
+        public event Action<MsgInfo, bool> connectSw;
         public event Action<int,MsgInfo> rebuild;
         public SW()
         {
@@ -54,12 +54,15 @@ namespace FormSW_Tree
 
         private void IsConnect(string[] statLabel)
         {   bool isInit = false;
+            MsgInfo info = new MsgInfo();
+            info.errorMsg = statLabel[0];
+            info.numberCuby= statLabel[2];
             if (statLabel[0] == "") {
                isInit = true;
                
                ResolvedLigthWeiht(swMainAssy);
             }
-            connectSw?.Invoke(statLabel, isInit);
+            connectSw?.Invoke(info, isInit);
 
         }
 

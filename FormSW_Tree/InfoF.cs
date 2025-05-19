@@ -10,38 +10,39 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
+
 namespace FormSW_Tree
 {
     public partial class InfoF : Form
     {
-      
+
         ReadControler c;
         ActionControler actionControler;
         DataTable dt;
+        private DataGridView dataGridView;
         public List<ViewUser> userView { get; set; }
-        bool isClean=false;
+        bool isClean = false;
         bool isDispleyRebuild = true;
         bool isImpossible = false;
-        bool isBlocked=false;
+        bool isBlocked = false;
 
         public InfoF()
         {
             InitializeComponent();
-            dt= new DataTable();
-            InitDT();
-            this.dataGridView.AutoGenerateColumns = true;
-            chB_ToRebuild.Checked = true;
-            button1.Enabled = false;
-           
+            dt = new DataTable();
         }
 
         private void InfoF_Load(object sender, EventArgs e)
         {
+            this.Width = 500;
+            this.Height = 250;
+            GenerateLabelsAndProgressBar();
             c = new ReadControler(this);
             c.RunWorkerCompleted += C_RunWorkerCompleted;
             c.ProgressChanged += C_ProgressChanged;
             c.RunWorkerAsync();
-            
+
         }
 
         private void C_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -54,13 +55,16 @@ namespace FormSW_Tree
 
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
-            RefreshForm();
-            button1.Enabled = true;
-            actionControler = new ActionControler();
-            actionControler.RunWorkerCompleted += ActionControler_RunWorkerCompleted;
-            actionControler.ProgressChanged += ActionControler_ProgressChanged;
-
+                if (userView == null) return;
+                DestroyLabelsAndProgressBar();
+               
+                GenerateDataGridView();
+                GenerateNamedCheckBoxes();
+                GeneratedButton();
+                RefreshForm();
+                actionControler = new ActionControler();
+                actionControler.RunWorkerCompleted += ActionControler_RunWorkerCompleted;
+                actionControler.ProgressChanged += ActionControler_ProgressChanged;
         }
 
         private void ActionControler_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -95,40 +99,35 @@ namespace FormSW_Tree
                     break;
             }
             using (MemoryStream ms = new MemoryStream())
-             {
-                 image.Save(ms, ImageFormat.Jpeg);
-                 return ms.ToArray();
-             }
-        }
-        private void FillDataGridView()
-        {
-
-            dataGridView.Cursor = Cursors.WaitCursor;
-            this.bindingSource1.DataSource = dt;
-            SetPropertiesGrig();
-            dataGridView.Cursor = Cursors.Default;
+            {
+                image.Save(ms, ImageFormat.Jpeg);
+                return ms.ToArray();
+            }
         }
 
-        public void button1_Click(object sender, EventArgs e)
+        private Button button1;
+
+        private void GeneratedButton()
         {
+            button1 = new Button();
+            button1.Text = "&Rebuild";
+            button1.Location = new Point(this.Width - button1.Width - 50, 10);
+            button1.Click += Button1_Click;
+            this.Controls.Add(button1);
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            dataGridView.Dispose();
+            chB_ToRebuild.Dispose();
+            chB_Clean.Dispose();
+            checkBox1.Dispose();
+            chB_Impossible.Dispose();
+            button1.Dispose();
             actionControler.RunWorkerAsync();
         }
 
-        private void chB_ToRebuild_CheckedChanged(object sender, EventArgs e)
-        {
-            if (userView == null) return;
-            CheckBox checkBox = (CheckBox)sender; 
-            if (checkBox.Checked == true)
-            {
-                isDispleyRebuild = true;
-            }
-            else
-            {
-                isDispleyRebuild = false;
-              
-            }
-            RefreshForm();
-        }
+
         private void FillToListIsRebuild()
         {
             dt.Clear();
@@ -137,13 +136,13 @@ namespace FormSW_Tree
             foreach (ViewUser v in userView)
             {
                 if (v.State == "Rebuild" && !isDispleyRebuild) continue;
-                if (v.State  == "Clean"  && !isClean) continue;
-                if (v.State  == "Blocked" && !isBlocked) continue;
-                if (v.State  == "Manufacturing" && !isImpossible) continue;
+                if (v.State == "Clean" && !isClean) continue;
+                if (v.State == "Blocked" && !isBlocked) continue;
+                if (v.State == "Manufacturing" && !isImpossible) continue;
 
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
-                if(v.Ext == ".sldprt"|| v.Ext== ".SLDPRT")
+                if (v.Ext == ".sldprt" || v.Ext == ".SLDPRT")
                 {
                     dr[1] = GetImageData(0);
                 }
@@ -158,11 +157,11 @@ namespace FormSW_Tree
                 dr[5] = v.IsLocked;
                 if (v.DrawState != "")
                 {
-                  dr[6] = GetImageData(2);
+                    dr[6] = GetImageData(2);
                 }
                 else
                 {
-                  dr[6] = GetImageData(3);
+                    dr[6] = GetImageData(3);
                 }
                 dr[7] = v.StDrPDM;
                 dr[8] = v.DrawVersRev;
@@ -174,39 +173,49 @@ namespace FormSW_Tree
 
         }
 
-        private void InitDT()
-        {
-            dt.Columns.Add("Cuby_Number", typeof(string));
-            
-            dt.Columns.Add("Type", typeof(byte[]));
-            dt.Columns.Add("Level", typeof(string));
-            dt.Columns.Add("State", typeof(string));
-            dt.Columns.Add("Current Version", typeof(string));
-            dt.Columns.Add("IsLocked", typeof(string));
 
-            dt.Columns.Add("DrawType", typeof(byte[]));
-            dt.Columns.Add("DrawState", typeof(string));         
-            dt.Columns.Add("DrawVersRev", typeof(string));
-            dt.Columns.Add("DrawNeedRebuild", typeof(string));
-            dt.Columns.Add("DrawIsLocked", typeof(string));
+        private CheckBox chB_ToRebuild;
+        private CheckBox chB_Clean;
+        private CheckBox checkBox1;
+        private CheckBox chB_Impossible;
+
+        private void GenerateNamedCheckBoxes()
+        {
+            chB_ToRebuild = new CheckBox();
+            chB_ToRebuild.Checked = true;
+            chB_ToRebuild.Text = "To Rebuild";
+            chB_ToRebuild.Name = "chB_ToRebuild";
+            chB_ToRebuild.Location = new Point(50, 30);
+            chB_ToRebuild.Size = new Size(100, 20);
+            chB_ToRebuild.CheckedChanged += ChB_ToRebuild_CheckedChanged;
+            this.Controls.Add(chB_ToRebuild);
+
+            chB_Clean = new CheckBox();
+            chB_Clean.Text = "Clean";
+            chB_Clean.Name = "chB_Clean";
+            chB_Clean.Location = new Point(170, 30);
+            chB_Clean.Size = new Size(100, 20);
+            chB_Clean.CheckedChanged += ChB_Clean_CheckedChanged;
+            this.Controls.Add(chB_Clean);
+
+            checkBox1 = new CheckBox();
+            checkBox1.Text = "Blocked";
+            checkBox1.Name = "checkBox1";
+            checkBox1.Location = new Point(290, 30);
+            checkBox1.Size = new Size(100, 20);
+            checkBox1.CheckedChanged += CheckBox1_CheckedChanged;
+            this.Controls.Add(checkBox1);
+
+            chB_Impossible = new CheckBox();
+            chB_Impossible.Text = "Manufacturing";
+            chB_Impossible.Name = "chB_Impossible";
+            chB_Impossible.Location = new Point(410, 30);
+            chB_Impossible.Size = new Size(100, 20);
+            chB_Impossible.CheckedChanged += ChB_Impossible_CheckedChanged;
+            this.Controls.Add(chB_Impossible);
         }
 
-        private void chB_Clean_CheckedChanged(object sender, EventArgs e)
-        {
-            if (userView == null) return;
-            CheckBox checkBox = (CheckBox)sender;
-            if (checkBox.Checked == true)
-            {
-                isClean= true;
-            }
-            else
-            {
-                isClean = false;         
-            }
-            RefreshForm();
-        }
-
-        private void chB_Impossible_CheckedChanged(object sender, EventArgs e)
+        private void ChB_Impossible_CheckedChanged(object sender, EventArgs e)
         {
             if (userView == null) return;
             CheckBox checkBox = (CheckBox)sender;
@@ -221,16 +230,64 @@ namespace FormSW_Tree
             RefreshForm();
         }
 
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (userView == null) return;
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                isBlocked = true;
+            }
+            else
+            {
+                isBlocked = false;
+            }
+            RefreshForm();
+        }
+
+        private void ChB_Clean_CheckedChanged(object sender, EventArgs e)
+        {
+            if (userView == null) return;
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                isClean = true;
+            }
+            else
+            {
+                isClean = false;
+            }
+            RefreshForm();
+        }
+
+        private void ChB_ToRebuild_CheckedChanged(object sender, EventArgs e)
+        {
+            if (userView == null) return;
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                isDispleyRebuild = true;
+            }
+            else
+            {
+                isDispleyRebuild = false;
+
+            }
+            RefreshForm();
+        }
+
         private void SetStateForm()
         {
             if (userView == null) return;
             if (userView.Any(v => v.State == "Rebuild"))
             {
                 chB_ToRebuild.Enabled = true;
+                button1.Enabled = true;
             }
             else
             {
                 chB_ToRebuild.Enabled = false;
+                button1.Enabled = false;
             }
             if (userView.Any(v => v.State == "Clean"))
             {
@@ -240,13 +297,15 @@ namespace FormSW_Tree
             {
                 chB_Clean.Enabled = false;
             }
-            if (userView.Any(v =>  v.State == "Blocked"))
+            if (userView.Any(v => v.State == "Blocked"))
             {
                 checkBox1.Enabled = true;
+                button1.Enabled = false;
             }
             else
             {
                 checkBox1.Enabled = false;
+                button1.Enabled = true;
             }
             if (userView.Any(v => (v.State == "Manufacturing")))
             {
@@ -256,14 +315,15 @@ namespace FormSW_Tree
             {
                 chB_Impossible.Enabled = false;
             }
-            
+
 
         }
         private void RefreshForm()
         {
             SetStateForm();
+            // FillDataGridView();
             FillToListIsRebuild();
-            FillDataGridView();
+
             this.Refresh();
         }
         private void SetPropertiesGrig()
@@ -281,20 +341,7 @@ namespace FormSW_Tree
             dataGridView.Columns[10].Width = 70;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (userView == null) return;
-            CheckBox checkBox = (CheckBox)sender;
-            if (checkBox.Checked == true)
-            {
-                isBlocked = true;
-            }
-            else
-            {
-                isBlocked = false;
-            }
-            RefreshForm();
-        }
+
 
         private void Notifacation(int typeEvent, MsgInfo msg)
         {
@@ -303,18 +350,19 @@ namespace FormSW_Tree
                 case 0:       //Error
                     this.lbMsg.Text = msg.errorMsg;
                     this.lbNumber.Text = msg.numberCuby;
+                    lbMsg.ForeColor = Color.Red;
 
                     break;
                 case 1:      //LoadActiveModel
                     this.Text = msg.numberCuby;
-             
+
                     break;
                 case 2:      //BeginOperation
                     this.lbMsg.Text = msg.typeOperation;
                     this.progressBar1.Maximum = msg.countStep;
                     this.progressBar1.Minimum = 0;
                     this.lbCount.Text = msg.countStep.ToString();
-                    
+
                     break;
                 case 3:      //StepOperation
                     this.lbStart.Text = msg.currentStep.ToString();
@@ -322,14 +370,106 @@ namespace FormSW_Tree
                     this.lbNumber.Text = msg.numberCuby;
                     break;
                 case 4:    //EndOperation
-             
+
                     break;
 
                 default:
                     break;
             }
         }
+        private void GenerateDataGridView()
+        {
+            dataGridView = new DataGridView();
+            this.Width = 950;
+            
+            dataGridView.Location = new Point(0, 50);
+            dataGridView.BackgroundColor = Color.White;
+            dataGridView.DefaultCellStyle.ForeColor = Color.Black;
+            dataGridView.Width = this.Width;
+            dataGridView.AutoGenerateColumns = true;
+            dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.None;
+            dataGridView.BackgroundColor = Color.White; 
+            dataGridView.BorderStyle = BorderStyle.None; 
+            dataGridView.GridColor = Color.White;
 
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView.DataBindingComplete += (sender, e) =>
+            {
+                int rowHeight1 = dataGridView.RowTemplate.Height;
+                int headerHeight1 = dataGridView.ColumnHeadersHeight;
+                int rowsHeight1 = dataGridView.Rows.GetRowsHeight(DataGridViewElementStates.Visible);
+                int totalHeight1 = rowsHeight1 + headerHeight1;
+                int maxAllowedHeight1 = 500;
+                int desiredHeight1 = Math.Min(totalHeight1, maxAllowedHeight1);
+                int minHeight1 = rowHeight1 + headerHeight1;
+
+                dataGridView.Height = Math.Max(desiredHeight1, minHeight1);
+                this.Height = 100 + dataGridView.Height;
+            };
+            Controls.Add(dataGridView);
+
+            dt = new DataTable();
+            dt.Columns.Add("Cuby_Number", typeof(string));
+            dt.Columns.Add("Type", typeof(byte[]));
+            dt.Columns.Add("Level", typeof(string));
+            dt.Columns.Add("State", typeof(string));
+            dt.Columns.Add("Current Version", typeof(string));
+            dt.Columns.Add("IsLocked", typeof(string));
+            dt.Columns.Add("DrawType", typeof(byte[]));
+            dt.Columns.Add("DrawState", typeof(string));
+            dt.Columns.Add("DrawVersRev", typeof(string));
+            dt.Columns.Add("DrawNeedRebuild", typeof(string));
+            dt.Columns.Add("DrawIsLocked", typeof(string));
+
+            dataGridView.DataSource = dt;
+
+            SetPropertiesGrig();
+        }
+
+        private Label lbMsg;
+        private ProgressBar progressBar1;
+        private Label lbStart;
+        private Label lbCount;
+        private Label lbNumber;
+        private void GenerateLabelsAndProgressBar()
+        {
+            lbMsg = new Label();
+            lbMsg.Text = "...";
+            lbMsg.Location = new Point(20, 10);
+            lbMsg.Width = 300;
+            this.Controls.Add(lbMsg);
+
+            progressBar1 = new System.Windows.Forms.ProgressBar();
+            progressBar1.Location = new Point(100, 100);
+            progressBar1.Width = 250;
+            progressBar1.Height = 15;
+            this.Controls.Add(progressBar1);
+
+            lbStart = new Label();
+            lbStart.Text = "0";
+            lbStart.Location = new Point(50, 100);
+            this.Controls.Add(lbStart);
+
+            lbCount = new Label();
+           
+            lbCount.Text = "0";
+            lbCount.Location = new Point(370, 100);
+            this.Controls.Add(lbCount);
+
+            lbNumber = new Label();
+            lbNumber.Text = "...";
+            lbNumber.Width = 200;
+            lbNumber.Location = new Point(100, 80);
+            this.Controls.Add(lbNumber);
+        }
+        public void DestroyLabelsAndProgressBar()
+        {
+            lbMsg.Dispose();
+            progressBar1.Dispose();
+            lbStart.Dispose();
+            lbCount.Dispose();
+            lbNumber.Dispose();
+        }
     }
 
     public struct ViewUser

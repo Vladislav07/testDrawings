@@ -41,18 +41,17 @@ namespace FormSW_Tree
         }
 
        
-        private void Sw_connectSw(string[] msg, bool arg)
+        private void Sw_connectSw(MsgInfo info, bool arg)
         {
-            MsgInfo info = new MsgInfo();
-
+          
             if (!arg)
             {
-                 info.errorMsg = msg[0];
-                 ReportProgress(0, msg);              
+                
+                 ReportProgress(0, info);              
             }
             else
             {
-                info.numberCuby = msg[2];
+              
                 ReportProgress(1,info);
                 sw.BuildTree();
                 Tree.SearchParentFromChild();

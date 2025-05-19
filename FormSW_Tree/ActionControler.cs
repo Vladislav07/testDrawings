@@ -37,18 +37,18 @@ namespace FormSW_Tree
             ReportProgress(stage, info);
         }
 
-        private void Sw_connectSw(string[] msg, bool arg)
+        private void Sw_connectSw(MsgInfo info, bool arg)
         {
-            MsgInfo info = new MsgInfo();
+          
             if (!arg)
             {
-                info.errorMsg = msg[0];
+       
                 ReportProgress(0, info);
       
             }
             else
             {
-                info.numberCuby = msg[2];
+         
                 ReportProgress(1, info);
                 sw.CloseDoc();
                 RebuildTree();
