@@ -83,12 +83,15 @@ namespace FormSW_Tree
                     VersionModel = item.File?.CurrentVersion.ToString() ?? "",
                     IsLocked = item.File?.IsLocked.ToString() ?? "",
                     IsChildRefError = item is Assemble ? (item as Assemble).listRefChildError.Count.ToString() : "",
-
+                   
                     DrawState = dr != null ? dr.condition.stateModel.ToString() : "",
                     StDrPDM = dr != null ? dr.File.CurrentState.Name : "",
+
                     DrawNeedRebuild = dr != null ? dr.NeedsRebuild.ToString() : "",
                     DrawVersRev = dr != null ? dr.msgRefVers : "",
-                    DrawIsLocked = dr != null ? dr.File?.IsLocked.ToString() : ""
+                    
+                    DrawIsLocked = dr != null ? dr.File.IsLocked.ToString() : ""
+
                 });
             }
 

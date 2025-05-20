@@ -76,7 +76,11 @@ namespace FormSW_Tree
 
         private void ActionControler_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            MessageBox.Show("Alles!");
+            lbMsg.Text = "Update complete, close the program";
+            lbCount.Text = "";
+            lbStart.Text = "";
+            lbNumber.Text = "";
+
         }
 
         private byte[] GetImageData(int i)
@@ -124,6 +128,9 @@ namespace FormSW_Tree
             checkBox1.Dispose();
             chB_Impossible.Dispose();
             button1.Dispose();
+            this.Width = 500;
+            this.Height = 250;
+            GenerateLabelsAndProgressBar();
             actionControler.RunWorkerAsync();
         }
 
@@ -300,12 +307,12 @@ namespace FormSW_Tree
             if (userView.Any(v => v.State == "Blocked"))
             {
                 checkBox1.Enabled = true;
-                button1.Enabled = false;
+       
             }
             else
             {
                 checkBox1.Enabled = false;
-                button1.Enabled = true;
+         
             }
             if (userView.Any(v => (v.State == "Manufacturing")))
             {
@@ -380,7 +387,7 @@ namespace FormSW_Tree
         private void GenerateDataGridView()
         {
             dataGridView = new DataGridView();
-            this.Width = 950;
+            this.Width = 1000;
             
             dataGridView.Location = new Point(0, 50);
             dataGridView.BackgroundColor = Color.White;
