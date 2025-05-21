@@ -27,7 +27,7 @@ namespace FormSW_Tree
         private string[] operSW;
   
         public event Action<MsgInfo, bool> connectSw;
-        public event Action<int,MsgInfo> rebuild;
+        public event Action<int,MsgInfo> NotifySW;
         public SW()
         {
             operSW = new string[2];
@@ -236,7 +236,7 @@ namespace FormSW_Tree
 
 
             nNumRow = swTableAnn.RowCount;
-
+            NotifyBeginOperation(nNumRow, "Reading TableBOM");
             for (J = 0; J <= nNumRow - 1; J++)
             {
                 ExtractItem(swBOMAnnotation, Configuration, J);
@@ -281,9 +281,7 @@ namespace FormSW_Tree
             {
 
                 Tree.AddNode(AddextendedNumber, PartNumberTrim, PathName);
-               /* result[0] = PartNumberTrim;
-                result[1] = J.ToString();
-                loadTree?.Invoke(result);*/
+                NotifyStepOperation(PathName);
             }
         }
 
@@ -307,11 +305,19 @@ namespace FormSW_Tree
             Configuration = swMainConfig.Name;
             int nbrType = (int)swNumberingType_e.swNumberingType_Detailed;
             int BomType = (int)swBomType_e.swBomType_Indented;
+            try
+            {
+                swBOMAnnotation = Ext.InsertBomTable3(TemplateName, 0, 0, BomType, Configuration, true, nbrType, false);
+                swBOMFeature = swBOMAnnotation.BomFeature;
+                swTableAnn = (TableAnnotation)swBOMAnnotation;
+                NotifyBeginOperation(0, "Extraction TableBOM");
+            }
+            catch (Exception)
+            {
 
-            swBOMAnnotation = Ext.InsertBomTable3(TemplateName, 0, 0, BomType, Configuration, true, nbrType, false);
-            swBOMFeature = swBOMAnnotation.BomFeature;
-
-            swTableAnn = (TableAnnotation)swBOMAnnotation;
+                throw;
+            }
+          
         }
 
         public void CloseDoc()
@@ -322,7 +328,8 @@ namespace FormSW_Tree
 
         public void loopFilesToRebuild(List<string>listFiles)
         {
-            NotifyBeginRebuild(listFiles.Count);
+            string nameOper = "Opening and rebuilding files";
+            NotifyBeginOperation(listFiles.Count, nameOper);
             listFiles.ForEach(file => OpenAndRefresh(file));
         }
         public void OpenAndRefresh(string item)
@@ -345,7 +352,7 @@ namespace FormSW_Tree
             {
 
                 fileName = item;
-                NotifyStepRebuild(fileName);
+                NotifyStepOperation(fileName);
                 string ext = Path.GetExtension(fileName);
 
                 if (ext == ".sldprt" || ext == ".SLDPRT")
@@ -399,24 +406,24 @@ namespace FormSW_Tree
             }
         }
 
-        private void NotifyBeginRebuild( int count)
+        private void NotifyBeginOperation(int count, string nameOper)
         {
             y = 0;
             MsgInfo msgInfo = new MsgInfo();
-            msgInfo.typeOperation = "Opening and rebuilding files";
+            msgInfo.typeOperation = nameOper;
             msgInfo.countStep = count;
-            rebuild?.Invoke(2, msgInfo);
+            NotifySW?.Invoke(2, msgInfo);
 
         }
         int y;
-        private void NotifyStepRebuild(string file)
+        private void NotifyStepOperation(string file)
         {
             y++;
             MsgInfo msgInfo = new MsgInfo();
             string numberCuby=Path.GetFileName(file);
             msgInfo.numberCuby=numberCuby;
             msgInfo.countStep = y;
-            rebuild?.Invoke(3, msgInfo);
+            NotifySW?.Invoke(3, msgInfo);
 
         }
 

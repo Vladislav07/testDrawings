@@ -328,9 +328,7 @@ namespace FormSW_Tree
         private void RefreshForm()
         {
             SetStateForm();
-            // FillDataGridView();
             FillToListIsRebuild();
-
             this.Refresh();
         }
         private void SetPropertiesGrig()
@@ -376,10 +374,6 @@ namespace FormSW_Tree
                     this.progressBar1.Value = msg.currentStep;
                     this.lbNumber.Text = msg.numberCuby;
                     break;
-                case 4:    //EndOperation
-
-                    break;
-
                 default:
                     break;
             }

@@ -13,7 +13,7 @@ namespace FormSW_Tree
        
         public void ProgressBegin(EdmProgressType eType, EdmUnlockEvent eEvent, int lSteps)
         {
-            MsgInfo info = new MsgInfo("",true, "", "CheckOut files", lSteps);
+            MsgInfo info = new MsgInfo("",true, "", "CheckIn files", lSteps);
             PDM.NotifyOperation(2, info);
         }
 
@@ -29,13 +29,14 @@ namespace FormSW_Tree
 
         public bool ProgressStepEvent(EdmProgressType eType, EdmUnlockEventMsg eText, int lProgressPos)
         {
+
             return true;
         }
 
         public void ProgressEnd(EdmProgressType eType)
         {
             MsgInfo info = new MsgInfo();
-            info.typeOperation = "Finish CheckOut";
+            info.typeOperation = "Finish CheckIn";
             info.countStep = 0;
             PDM.NotifyOperation(2, info);
         }

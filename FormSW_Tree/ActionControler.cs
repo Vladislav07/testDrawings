@@ -25,7 +25,7 @@ namespace FormSW_Tree
         {
             sw = new SW();
             sw.connectSw += Sw_connectSw;
-            sw.rebuild += Sw_rebuild;
+            sw.NotifySW += Sw_rebuild;
             PDM.NotifyPDM += PDM_NotifyPDM;
             sw.btnConnectSW();
             
