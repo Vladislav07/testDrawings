@@ -2,6 +2,7 @@
 using SolidWorks.Interop.swconst;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -265,6 +266,7 @@ namespace FormSW_Tree
             if (PartNumberTrim == "") return;
 
             string[] str = (string[])swBOMAnnotation.GetModelPathNames(J, out ItemNumber, out PartNumber);
+
             PathName = str[0];
             designation = Path.GetFileNameWithoutExtension(PathName);
             string regCuby = @"^CUBY-\d{8}$";
@@ -378,22 +380,8 @@ namespace FormSW_Tree
                 }
                 extMod = swModelDoc.Extension;
 
-         /*       if (ext == ".slddrw" || ext == ".SLDDRW")
-                {
-                    swDraw = (DrawingDoc)swModelDoc;
-                    vSheetName = (object[])swDraw.GetSheetNames();
-                    for (i = 0; i < vSheetName.Length; i++)
-
-                    {
-                        sheetName = (string)vSheetName[i];
-                        bRet = swDraw.ActivateSheet(sheetName);
-                        extMod.Rebuild((int)swRebuildOptions_e.swCurrentSheetDisp);
-                        swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
-                        Sheet swSheet = default(Sheet);
-                        swSheet = (Sheet)swDraw.GetCurrentSheet();
-                    }
-                }*/
-                extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
+               // extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
+                extMod.ForceRebuildAll();
                 swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
                 swApp.CloseDoc(fileName);
                 swModelDoc = null;
@@ -426,6 +414,59 @@ namespace FormSW_Tree
             NotifySW?.Invoke(3, msgInfo);
 
         }
+        private void ProcessTableAnn(TableAnnotation swTableAnn, string ConfigName)
+        {
+            int nNumRow = 0;
+            int J = 0;
+            int I = 0;
+            string ItemNumber = null;
+            string PartNumber = null;
+            bool RowLocked;
+            double RowHeight;
+
+            Debug.Print("   Table Title: " + swTableAnn.Title);
+
+            nNumRow = swTableAnn.RowCount;
+
+            BomTableAnnotation swBOMTableAnn = default(BomTableAnnotation);
+            swBOMTableAnn = (BomTableAnnotation)swTableAnn;
+
+            for (J = 0; J <= nNumRow - 1; J++)
+            {
+                RowLocked = swTableAnn.GetLockRowHeight(J);
+                RowHeight = swTableAnn.GetRowHeight(J);
+                Debug.Print("   Row Number " + J + " (height = " + RowHeight + "; height locked = " + RowLocked + ")");
+                Debug.Print("     Component Count: " + swBOMTableAnn.GetComponentsCount2(J, ConfigName, out ItemNumber, out PartNumber));
+                Debug.Print("       Item Number: " + ItemNumber);
+                Debug.Print("       Part Number: " + PartNumber);
+
+                object[] vPtArr = null;
+                Component2 swComp = null;
+                object pt = null;
+
+                vPtArr = (object[])swBOMTableAnn.GetComponents2(J, ConfigName);
+
+                if (((vPtArr != null)))
+                {
+                    for (I = 0; I <= vPtArr.GetUpperBound(0); I++)
+                    {
+                        pt = vPtArr[I];
+                        swComp = (Component2)pt;
+                        if ((swComp != null))
+                        {
+                            Debug.Print("           Component Name: " + swComp.Name2);
+                            Debug.Print("           Configuration Name: " + swComp.ReferencedConfiguration);
+                            Debug.Print("           Component Path: " + swComp.GetPathName());
+                        }
+                        else
+                        {
+                            Debug.Print("  Could not get component.");
+                        }
+                    }
+                }
+            }
+        }
+
 
     }
 }
