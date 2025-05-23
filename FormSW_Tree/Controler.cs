@@ -26,7 +26,7 @@ namespace FormSW_Tree
         }
 
         private void Tree_msgNameOperation(MsgInfo obj)
-        {
+        {   
             ReportProgress(2, obj);
         }
 
@@ -37,7 +37,11 @@ namespace FormSW_Tree
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-           sw.btnConnectSW();
+            sw.btnConnectSW();
+            sw.connectSw-= Sw_connectSw;
+            Tree.msgDataOperation-=Tree_msgDataOperation;
+            Tree.msgNameOperation-=Tree_msgNameOperation;
+            this.Dispose();
         }
 
        
@@ -56,48 +60,15 @@ namespace FormSW_Tree
                 sw.BuildTree();
                 Tree.SearchParentFromChild();
                 Tree.FillCollection();
+                Tree.ReverseTree();
                 Tree.GetInfoPDM();
                 Tree.CompareVersions();
-                f.userView= JoinCompAndDraw();
+                f.userView= Tree.JoinCompAndDraw();
             }
         }
      
   
-        internal  List<ViewUser> JoinCompAndDraw()
-        {
-            List<Part> compList = Tree.listComp;
-            List<Drawing> drawList = Tree.listDraw;
-            List<ViewUser> lv = new List<ViewUser>();
-            foreach (Part item in compList)
-            {
-                Drawing dr = drawList.FirstOrDefault(d => d.CubyNumber == item.CubyNumber);
-
-                lv.Add(new ViewUser
-                {
-                    NameComp = item.CubyNumber,
-                    TypeComp = item.Section,
-                    Ext = item.Ext,
-                    Level = item.Level.ToString(),
-                    StPDM = item.File.CurrentState.Name.ToString(),
-                    State = item.condition.stateModel.ToString(),
-                    VersionModel = item.File?.CurrentVersion.ToString() ?? "",
-                    IsLocked = item.File?.IsLocked.ToString() ?? "",
-                    IsChildRefError = item is Assemble ? (item as Assemble).listRefChildError.Count.ToString() : "",
-                   
-                    DrawState = dr != null ? dr.condition.stateModel.ToString() : "",
-                    StDrPDM = dr != null ? dr.File.CurrentState.Name : "",
-
-                    DrawNeedRebuild = dr != null ? dr.NeedsRebuild.ToString() : "",
-                    DrawVersRev = dr != null ? dr.msgRefVers : "",
-                    
-                    DrawIsLocked = dr != null ? dr.File.IsLocked.ToString() : ""
-
-                });
-            }
-
-     
-            return lv;
-        }
+ 
     }
 
     

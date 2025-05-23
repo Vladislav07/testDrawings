@@ -129,26 +129,59 @@ namespace FormSW_Tree
             }
         }
 
-     
-
         public static void GetInfoPDM()
         {
             int i = 1;
             InfoAboutProcessing("Extract from storage PDM", listComp.Count);
             foreach (Model comp in listComp)
-             {
+            {
                 comp.GetEdmFile();
                 comp.IsDrawings();
                 InfoDataProcessing(comp.CubyNumber, i);
                 i++;
-             }
-            
+            }
+
         }
-        public static void CompareVersions()
+
+        public static void RefreshFileFromPDM()
+        {
+            int i = 1;
+             List<Model> models = listComp.Cast<Model>().Concat(listDraw).ToList();
+             InfoAboutProcessing("Refresh from storage PDM", models.Count);
+     /*       InfoAboutProcessing("Refresh from storage PDM", listComp.Count+listDraw.Count);
+            foreach (Part item in listComp)
+            {
+                InfoDataProcessing(item.CubyNumber, i);
+                PDM.RefreshFile(item);
+                item.condition = null;
+                
+                i++;
+            }
+            foreach (Drawing item in listDraw)
+            {
+                InfoDataProcessing(item.CubyNumber, i);
+                PDM.RefreshFile(item);
+                item.condition = null;
+                i++;
+            }*/
+              foreach (Model comp in models)
+               {
+                  InfoDataProcessing(comp.CubyNumber, i);
+                  PDM.RefreshFile(comp);
+                  comp.condition = null;
+
+                  i++;
+               }
+
+        }
+
+        public static void ReverseTree()
         {
             listComp.Reverse();
             listDraw.Reverse();
-
+        }
+        public static void CompareVersions()
+        {        
             listComp.ForEach(prt => prt.SetState());
             listDraw.ForEach(dr => dr.SetState());
             listComp.ForEach(prt => {
@@ -173,6 +206,41 @@ namespace FormSW_Tree
             mdata.numberCuby=nameCuby;
             mdata.currentStep = i;
             msgDataOperation.Invoke(mdata);
+        }
+        public static List<ViewUser> JoinCompAndDraw()
+        {
+            List<Part> compList = Tree.listComp;
+            List<Drawing> drawList = Tree.listDraw;
+            List<ViewUser> lv = new List<ViewUser>();
+            foreach (Part item in compList)
+            {
+                Drawing dr = drawList.FirstOrDefault(d => d.CubyNumber == item.CubyNumber);
+
+                lv.Add(new ViewUser
+                {
+                    NameComp = item.CubyNumber,
+                    TypeComp = item.Section,
+                    Ext = item.Ext,
+                    Level = item.Level.ToString(),
+                    StPDM = item.File.CurrentState.Name.ToString(),
+                    State = item.condition.stateModel.ToString(),
+                    VersionModel = item.File?.CurrentVersion.ToString() ?? "",
+                    IsLocked = item.File?.IsLocked.ToString() ?? "",
+                    IsChildRefError = item is Assemble ? (item as Assemble).listRefChildError.Count.ToString() : "",
+
+                    DrawState = dr != null ? dr.condition.stateModel.ToString() : "",
+                    StDrPDM = dr != null ? dr.File.CurrentState.Name : "",
+
+                    DrawNeedRebuild = dr != null ? dr.NeedsRebuild.ToString() : "",
+                    DrawVersRev = dr != null ? dr.msgRefVers : "",
+
+                    DrawIsLocked = dr != null ? dr.File.IsLocked.ToString() : ""
+
+                });
+            }
+
+
+            return lv;
         }
 
     }

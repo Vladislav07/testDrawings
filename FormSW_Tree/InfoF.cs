@@ -80,7 +80,27 @@ namespace FormSW_Tree
             lbCount.Text = "";
             lbStart.Text = "";
             lbNumber.Text = "";
+            StatusCheckControler scc=new StatusCheckControler(this);
+            scc.ProgressChanged += Scc_ProgressChanged;
+            scc.RunWorkerCompleted += Scc_RunWorkerCompleted;
+            scc.RunWorkerAsync();
+        }
 
+        private void Scc_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (userView == null) return;
+            DestroyLabelsAndProgressBar();
+            GenerateDataGridView();
+            GenerateNamedCheckBoxes();
+            GeneratedButton();
+            RefreshForm();
+        }
+
+        private void Scc_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            MsgInfo msg = (MsgInfo)e.UserState;
+            int t = e.ProgressPercentage;
+            Notifacation(t, msg);
         }
 
         private byte[] GetImageData(int i)

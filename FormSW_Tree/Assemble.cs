@@ -20,6 +20,7 @@ namespace FormSW_Tree
 
         public override void SetState()
         {
+            listRefChildError.Clear();
             base.SetState();
             this.GetReferenceFromAssemble();
 

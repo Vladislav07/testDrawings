@@ -89,6 +89,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ModelCondition.cs" />
+    <Compile Include="StatusCheckControler.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StatusCheckControler.Designer.cs">
+      <DependentUpon>StatusCheckControler.cs</DependentUpon>
+    </Compile>
     <Compile Include="SW.cs" />
     <Compile Include="Tree.cs" />
     <EmbeddedResource Include="InfoF.resx">

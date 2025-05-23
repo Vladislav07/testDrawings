@@ -51,8 +51,12 @@ namespace FormSW_Tree
          
                 ReportProgress(1, info);
                 sw.CloseDoc();
-                RebuildTree();
-
+                // RebuildTree();
+                RebuildTreeLoopLevel();
+                sw.connectSw-= Sw_connectSw;
+                sw.NotifySW-= Sw_rebuild;
+                PDM.NotifyPDM-= PDM_NotifyPDM;
+                this.Dispose();
             }
         }
 
@@ -61,7 +65,7 @@ namespace FormSW_Tree
            ReportProgress(stage, msg);
         }
 
-        private void RebuildTree()
+        /*private void RebuildTree()
         {
             List<Part> listPart = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
                 .Where(d => d.Ext == ".sldprt" || d.Ext == ".SLDPRT")
@@ -123,8 +127,62 @@ namespace FormSW_Tree
 
             
 
+        }*/
+        private void RebuildTreeLoopLevel()
+        {
+            List<Part> listPart = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
+                .Where(d => d.Ext == ".sldprt" || d.Ext == ".SLDPRT")
+                .ToList();
+
+            List<Drawing> listPartDraw = Tree.listDraw.Where(d => d.condition.stateModel == StateModel.Rebuild)
+                .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
+                .ToList();
+
+            List<Part> listAss = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
+                .Where(d => d.Ext == ".sldasm" || d.Ext == ".SLDASM")
+                .ToList();
+
+            List<Drawing> listAssDraw = Tree.listDraw.Where(d => d.condition.stateModel == StateModel.Rebuild)
+                .Where(d => d.model.Ext == ".sldasm" || d.model.Ext == ".SLDASM")
+                .ToList();
+
+            List<Model> models = listAss.Cast<Model>().Concat(listAssDraw).ToList();
+            var groupedModels = models.GroupBy(m => m.Level);
+
+            int CountItemToCheckOut = listAssDraw.Count + listAss.Count + listPartDraw.Count + listPart.Count;
+
+
+
+            PDM.CockSelList(CountItemToCheckOut);
+            listPartDraw.ForEach(d => d.AddItemToSelList());
+            listAss.ForEach(d => d.AddItemToSelList());
+            listAssDraw.ForEach(d => d.AddItemToSelList());
+            PDM.BatchGet();
+
+            if (listPartDraw.Count > 0)
+            {
+
+                List<string> list = listPartDraw.Select(d => d.FullPath).ToList();
+                sw.loopFilesToRebuild(list);
+                PDM.CockSelList(listPartDraw.Count + listPart.Count);
+                listPart.ForEach(d => d.AddItemToSelList());
+                listPartDraw.ForEach(d => d.AddItemToSelList());
+                PDM.DocBatchUnLock();
+            }
+
+            foreach (var group in groupedModels)
+            {
+                List<string> list = group.Select(d => d.FullPath).ToList();
+
+                sw.loopFilesToRebuild(list);
+                PDM.CockSelList(list.Count);
+                group.ToList().ForEach(d => d.AddItemToSelList());
+                PDM.DocBatchUnLock();
+
+            }
+
         }
-    
-       
+
+
     }
 }

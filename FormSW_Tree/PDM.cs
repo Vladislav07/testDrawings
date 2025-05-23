@@ -220,6 +220,7 @@ namespace FormSW_Tree
                 if (bFile != null)                                         
                 {                
                     Drawing draw = new Drawing(comp.CubyNumber, p, comp, bFile, bFolder.ID);
+                    draw.Level=comp.Level;
                     Tree.listDraw.Add(draw);
                
                     return true;
@@ -255,6 +256,11 @@ namespace FormSW_Tree
                 }
             }
             return refDrToModel;
+        }
+
+        public static void RefreshFile(this Model model)
+        {
+            model.File.Refresh();
         }
     }
 }
