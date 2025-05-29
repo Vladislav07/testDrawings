@@ -154,6 +154,7 @@ namespace FormSW_Tree
 
 
             PDM.CockSelList(CountItemToCheckOut);
+            listPart.ForEach(d => d.AddItemToSelList());
             listPartDraw.ForEach(d => d.AddItemToSelList());
             listAss.ForEach(d => d.AddItemToSelList());
             listAssDraw.ForEach(d => d.AddItemToSelList());
