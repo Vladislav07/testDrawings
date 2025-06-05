@@ -14,8 +14,12 @@ namespace FormSW_Tree
             listParent = new List<string>();
         }
 
-        
-   
+    /*    public override void SetState()
+        {
+            base.SetState();
+        }*/
+
+
         public void NotificationState(StateModel mode)
         {
          

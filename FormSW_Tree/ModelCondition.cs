@@ -28,6 +28,7 @@ namespace FormSW_Tree
         {
             ModelCondition mode = null;
             if (isMode) {
+
                 mode = new ModeRebuild(); 
             }
             else
