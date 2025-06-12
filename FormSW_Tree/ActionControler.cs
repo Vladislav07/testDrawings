@@ -160,6 +160,12 @@ namespace FormSW_Tree
             listAssDraw.ForEach(d => d.AddItemToSelList());
             PDM.BatchGet();
 
+            if (listPart.Count > 0)
+            {
+
+                List<string> list = listPart.Select(d => d.FullPath).ToList();
+                sw.loopFilesToRebuild(list);
+            }
             if (listPartDraw.Count > 0)
             {
 
