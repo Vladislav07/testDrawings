@@ -26,7 +26,7 @@ namespace FormSW_Tree
         bool isDispleyRebuild = true;
         bool isImpossible = false;
         bool isBlocked = false;
-
+        string msgError ="";
         public InfoF()
         {
             InitializeComponent();
@@ -37,6 +37,7 @@ namespace FormSW_Tree
         {
             this.Width = 500;
             this.Height = 250;
+            GenerateLblMsg();
             GenerateLabelsAndProgressBar();
             c = new ReadControler(this);
             c.RunWorkerCompleted += C_RunWorkerCompleted;
@@ -55,16 +56,16 @@ namespace FormSW_Tree
 
         private void C_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-                if (userView == null) return;
-                DestroyLabelsAndProgressBar();
-               
-                GenerateDataGridView();
-                GenerateNamedCheckBoxes();
-                GeneratedButton();
-                RefreshForm();
-                actionControler = new ActionControler();
-                actionControler.RunWorkerCompleted += ActionControler_RunWorkerCompleted;
-                actionControler.ProgressChanged += ActionControler_ProgressChanged;
+            if (userView == null) return;
+            DestroyLabelsAndProgressBar(); 
+            lbMsg.Text=msgError;
+            GenerateDataGridView();
+            GenerateNamedCheckBoxes();
+            GeneratedButton();
+            RefreshForm();
+            c.RunWorkerCompleted -= C_RunWorkerCompleted;
+            c.ProgressChanged -= C_ProgressChanged;
+
         }
 
         private void ActionControler_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -81,6 +82,8 @@ namespace FormSW_Tree
             lbStart.Text = "";
             lbNumber.Text = "";
             StatusCheckControler scc=new StatusCheckControler(this);
+            actionControler.RunWorkerCompleted-= ActionControler_RunWorkerCompleted;
+            actionControler.ProgressChanged-= ActionControler_ProgressChanged;
             scc.ProgressChanged += Scc_ProgressChanged;
             scc.RunWorkerCompleted += Scc_RunWorkerCompleted;
             scc.RunWorkerAsync();
@@ -135,7 +138,7 @@ namespace FormSW_Tree
         {
             button1 = new Button();
             button1.Text = "&Rebuild";
-            button1.Location = new Point(this.Width - button1.Width - 50, 10);
+            button1.Location = new Point(this.Width - button1.Width - 50, lbMsg.Bottom+10);
             button1.Click += Button1_Click;
             this.Controls.Add(button1);
         }
@@ -151,6 +154,9 @@ namespace FormSW_Tree
             this.Width = 500;
             this.Height = 250;
             GenerateLabelsAndProgressBar();
+            actionControler = new ActionControler();
+            actionControler.RunWorkerCompleted += ActionControler_RunWorkerCompleted;
+            actionControler.ProgressChanged += ActionControler_ProgressChanged;
             actionControler.RunWorkerAsync();
         }
 
@@ -206,13 +212,23 @@ namespace FormSW_Tree
         private CheckBox checkBox1;
         private CheckBox chB_Impossible;
 
+        private void GenerateLblMsg()
+        {
+            lbMsg = new Label();
+            lbMsg.Text = "...";
+            lbMsg.Location = new Point(20, 10);
+            lbMsg.Width = 300;
+            lbMsg.ForeColor = Color.Green;
+            lbMsg.AutoSize = true;
+            this.Controls.Add(lbMsg);
+        }
         private void GenerateNamedCheckBoxes()
         {
             chB_ToRebuild = new CheckBox();
             chB_ToRebuild.Checked = true;
             chB_ToRebuild.Text = "To Rebuild";
             chB_ToRebuild.Name = "chB_ToRebuild";
-            chB_ToRebuild.Location = new Point(50, 30);
+            chB_ToRebuild.Location = new Point(50, lbMsg.Bottom+50);
             chB_ToRebuild.Size = new Size(100, 20);
             chB_ToRebuild.CheckedChanged += ChB_ToRebuild_CheckedChanged;
             this.Controls.Add(chB_ToRebuild);
@@ -220,7 +236,7 @@ namespace FormSW_Tree
             chB_Clean = new CheckBox();
             chB_Clean.Text = "Clean";
             chB_Clean.Name = "chB_Clean";
-            chB_Clean.Location = new Point(170, 30);
+            chB_Clean.Location = new Point(170, lbMsg.Bottom + 50);
             chB_Clean.Size = new Size(100, 20);
             chB_Clean.CheckedChanged += ChB_Clean_CheckedChanged;
             this.Controls.Add(chB_Clean);
@@ -228,7 +244,7 @@ namespace FormSW_Tree
             checkBox1 = new CheckBox();
             checkBox1.Text = "Blocked";
             checkBox1.Name = "checkBox1";
-            checkBox1.Location = new Point(290, 30);
+            checkBox1.Location = new Point(290, lbMsg.Bottom + 50);
             checkBox1.Size = new Size(100, 20);
             checkBox1.CheckedChanged += CheckBox1_CheckedChanged;
             this.Controls.Add(checkBox1);
@@ -236,7 +252,7 @@ namespace FormSW_Tree
             chB_Impossible = new CheckBox();
             chB_Impossible.Text = "Manufacturing";
             chB_Impossible.Name = "chB_Impossible";
-            chB_Impossible.Location = new Point(410, 30);
+            chB_Impossible.Location = new Point(410, lbMsg.Bottom + 50);
             chB_Impossible.Size = new Size(100, 20);
             chB_Impossible.CheckedChanged += ChB_Impossible_CheckedChanged;
             this.Controls.Add(chB_Impossible);
@@ -376,7 +392,7 @@ namespace FormSW_Tree
                     this.lbMsg.Text = msg.errorMsg;
                     this.lbNumber.Text = msg.numberCuby;
                     lbMsg.ForeColor = Color.Red;
-
+                    msgError = msgError + msg.errorMsg +"\n";
                     break;
                 case 1:      //LoadActiveModel
                     this.Text = msg.numberCuby;
@@ -403,11 +419,12 @@ namespace FormSW_Tree
             dataGridView = new DataGridView();
             this.Width = 1000;
             
-            dataGridView.Location = new Point(0, 50);
+            dataGridView.Location = new Point(0, lbMsg.Bottom + 75); ;
             dataGridView.BackgroundColor = Color.White;
             dataGridView.DefaultCellStyle.ForeColor = Color.Black;
             dataGridView.Width = this.Width;
             dataGridView.AutoGenerateColumns = true;
+            dataGridView.AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.None;
             dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.None;
             dataGridView.BackgroundColor = Color.White; 
             dataGridView.BorderStyle = BorderStyle.None; 
@@ -425,7 +442,7 @@ namespace FormSW_Tree
                 int minHeight1 = rowHeight1 + headerHeight1;
 
                 dataGridView.Height = Math.Max(desiredHeight1, minHeight1);
-                this.Height = 100 + dataGridView.Height;
+                this.Height = 200 + dataGridView.Height;
             };
             Controls.Add(dataGridView);
 
@@ -454,12 +471,6 @@ namespace FormSW_Tree
         private Label lbNumber;
         private void GenerateLabelsAndProgressBar()
         {
-            lbMsg = new Label();
-            lbMsg.Text = "...";
-            lbMsg.Location = new Point(20, 10);
-            lbMsg.Width = 300;
-            this.Controls.Add(lbMsg);
-
             progressBar1 = new System.Windows.Forms.ProgressBar();
             progressBar1.Location = new Point(100, 100);
             progressBar1.Width = 250;
@@ -485,7 +496,6 @@ namespace FormSW_Tree
         }
         public void DestroyLabelsAndProgressBar()
         {
-            lbMsg.Dispose();
             progressBar1.Dispose();
             lbStart.Dispose();
             lbCount.Dispose();

@@ -114,16 +114,21 @@ namespace FormSW_Tree
             int level_ = 0;
             var uniqueModelByGroup = ModelTree
             .GroupBy(pair => pair.Key.Count(o => o == s))
-            .Select(group => group.Select(g => g.Value).Distinct().ToList()).ToList();
-                                                                           
+            .Select(group => group.Select(g => g.Value).Distinct().ToList());                                                             
             foreach (var item in uniqueModelByGroup)
             {
+                
                 foreach (Part comp in item)
                 {
                    
-                    comp.Level = level_; 
-                    if(listComp.Contains(comp))continue;
+                    comp.Level = level_;
+                      if (listComp.Contains(comp))
+                   {
+                      continue;
+                   }
+                   else { 
                     listComp.Add(comp);
+                   }
                 }
                 level_++;
             }
@@ -148,22 +153,6 @@ namespace FormSW_Tree
             int i = 1;
              List<Model> models = listComp.Cast<Model>().Concat(listDraw).ToList();
              InfoAboutProcessing("Refresh from storage PDM", models.Count);
-     /*       InfoAboutProcessing("Refresh from storage PDM", listComp.Count+listDraw.Count);
-            foreach (Part item in listComp)
-            {
-                InfoDataProcessing(item.CubyNumber, i);
-                PDM.RefreshFile(item);
-                item.condition = null;
-                
-                i++;
-            }
-            foreach (Drawing item in listDraw)
-            {
-                InfoDataProcessing(item.CubyNumber, i);
-                PDM.RefreshFile(item);
-                item.condition = null;
-                i++;
-            }*/
               foreach (Model comp in models)
                {
                   InfoDataProcessing(comp.CubyNumber, i);

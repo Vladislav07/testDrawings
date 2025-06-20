@@ -24,16 +24,12 @@ namespace FormSW_Tree
         private ModelDoc2 swMainModel;
         private AssemblyDoc swMainAssy;
         private Configuration swMainConfig;
-
-        private string[] operSW;
+        private Frame pFrame;
+        public string PathRootDoc {get;set;}
   
         public event Action<MsgInfo, bool> connectSw;
         public event Action<int,MsgInfo> NotifySW;
-        public SW()
-        {
-            operSW = new string[2];
-        }
-     
+  
         public void btnConnectSW()
         {
             string strAttach = swAttach();
@@ -71,18 +67,16 @@ namespace FormSW_Tree
         {
 
             string strMessage;
-            //bool blnStatus = true;
 
-            //Check for the status of existing solidworks apps
             if (System.Diagnostics.Process.GetProcessesByName("sldworks").Length < 1)
             {
                 strMessage = "Solidworks instance not detected.";
-                //blnStatus = false;
+     
             }
             else if (System.Diagnostics.Process.GetProcessesByName("sldworks").Length > 1)
             {
                 strMessage = "Multiple instances of Solidworks detected.";
-                //blnStatus = false;
+
             }
             else
             {
@@ -97,14 +91,6 @@ namespace FormSW_Tree
         }
         string[] LoadActiveModel()
         {
-
-            // returns string array
-            //   element 0 = error message
-            //   element 1 = model name with path
-            //   element 2 = model name
-            //   element 3 = referenced configuration name
-          
-
             ModelDoc2 swDoc;
             swDocumentTypes_e swDocType;
 
@@ -117,7 +103,6 @@ namespace FormSW_Tree
             int intErrors = 0;
             int intWarnings = 0;
 
-            // Get the active document
             swDoc = (ModelDoc2)swApp.ActiveDoc;
 
             if (swDoc == null)
@@ -127,7 +112,6 @@ namespace FormSW_Tree
                 return (strReturn);
             }
 
-            //Check for the correct doc type
             strModelFile = swDoc.GetPathName();
             strModelName = strModelFile.Substring(strModelFile.LastIndexOf("\\") + 1, strModelFile.Length - strModelFile.LastIndexOf("\\") - 1);
             swDocType = (swDocumentTypes_e)swDoc.GetType();
@@ -138,8 +122,8 @@ namespace FormSW_Tree
                 strReturn[0] = "This program only works with assemblies";            
                 return (strReturn);
             }
+            PathRootDoc = strModelFile;
 
-            // Try to load the model file
             try
             {
                 swMainModel = swApp.OpenDoc6(strModelFile, (int)swDocType, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, strConfigName, ref intErrors, ref intWarnings);
@@ -150,7 +134,7 @@ namespace FormSW_Tree
                 return (strReturn);
             }
 
-            // Write model info to shared variables
+
             if (strConfigName != null)
             {
                 swMainConfig = (Configuration)swMainModel.GetConfigurationByName(strConfigName);
@@ -330,29 +314,29 @@ namespace FormSW_Tree
 
         public void loopFilesToRebuild(List<string>listFiles)
         {
-            string nameOper = "Opening and rebuilding files";
-            NotifyBeginOperation(listFiles.Count, nameOper);
-            listFiles.ForEach(file => OpenAndRefresh(file));
+             string nameOper = "Opening and rebuilding files";
+             NotifyBeginOperation(listFiles.Count, nameOper);
+             listFiles.ForEach(file => {
+                 ModelDoc2 swModelDoc = OpenFile(file);
+                 if (swModelDoc != null)
+                 {
+                     // RefreshFile(swModelDoc);
+                     swApp.CloseDoc(file);
+                     swModelDoc = null;
+                 }
+              
+             });
         }
-        public void OpenAndRefresh(string item)
+        public ModelDoc2 OpenFile(string item)
         {
-            ModelDoc2 swModelDoc = default(ModelDoc2);
+            ModelDoc2 swModelDoc = null;
             int errors = 0;
             int warnings = 0;
-            int lErrors = 0;
-            int lWarnings = 0;
-            ModelDocExtension extMod;
             string fileName = null;
-            DrawingDoc swDraw = default(DrawingDoc);
-            object[] vSheetName = null;
-            string sheetName;
-            int i = 0;
-            bool bRet = false;
             int type = -1;
 
             try
             {
-
                 fileName = item;
                 NotifyStepOperation(fileName);
                 string ext = Path.GetExtension(fileName);
@@ -370,28 +354,34 @@ namespace FormSW_Tree
                     type = (int)swDocumentTypes_e.swDocDRAWING;
                 }
 
-                swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, type, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName+"1", type, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                swModelDoc = (ModelDoc2)swApp.ActivateDoc2(fileName, true, ref errors);
                 if (swModelDoc == null)
                 {
                     MsgInfo msgInfo = new MsgInfo();
-                    //msgInfo.errorMsg=errors.n
+                    msgInfo.errorMsg=errors.ToString();
                     msgInfo.numberCuby = fileName;
-                    return;
-                }
-                extMod = swModelDoc.Extension;
-
-               // extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
-                extMod.ForceRebuildAll();
-                swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
-                swApp.CloseDoc(fileName);
-                swModelDoc = null;
-
+                    NotifySW?.Invoke(0, msgInfo);
+                }           
             }
             catch (Exception error)
             {
-                MessageBox.Show(error.ToString());
-
+                MsgInfo msgInfo = new MsgInfo();
+                msgInfo.errorMsg = error.Message;
+                msgInfo.numberCuby = fileName;
+                NotifySW?.Invoke(0, msgInfo);
             }
+            return swModelDoc;
+        }
+
+        private void RefreshFile(ModelDoc2 swModelDoc)
+        {
+            int lErrors = 0;
+            int lWarnings = 0;
+            ModelDocExtension extMod = swModelDoc.Extension;
+            extMod.ForceRebuildAll();
+            swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
+          
         }
 
         private void NotifyBeginOperation(int count, string nameOper)
@@ -415,6 +405,28 @@ namespace FormSW_Tree
 
         }
 
+        public void InvisibleApp()
+        {
+            try
+            {
+                swApp.UserControl = false;
+                swApp.Visible = false;
+                pFrame = (Frame)swApp.Frame();
+                pFrame.KeepInvisible = true;
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Invisible");
+            }        
+         
+        }
+
+        public void UnInvisibleApp()
+        {
+            pFrame.KeepInvisible = false;
+            swApp.Visible = true;
+        }
     }
 }
 
