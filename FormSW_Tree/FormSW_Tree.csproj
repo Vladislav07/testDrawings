@@ -120,7 +120,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\Resources\assembly.png" />
+    <None Include="Properties\Resources\Warning.bmp" />
+    <None Include="Properties\Resources\x.bmp" />
+    <None Include="Properties\Resources\part_bmp.bmp" />
+    <None Include="Properties\Resources\free-icon-closed-sign-2872193.png" />
+    <None Include="Properties\Resources\free-icon-ok-9307134.png" />
+    <None Include="Properties\Resources\free-icon-repairing-10068922.png" />
+    <None Include="Properties\Resources\free-icon-ok.bmp" />
+    <None Include="Properties\Resources\assembly_bmp.bmp" />
+    <None Include="Properties\Resources\Drawings.bmp" />
+    <None Include="Properties\Resources\closed.bmp" />
+    <None Include="Properties\Resources\free-icon-repairing.bmp" />
+    <None Include="Properties\Resources\empty.png" />
     <Content Include="Properties\Resources\part.png" />
+    <None Include="Properties\Resources\warning %281%29.png" />
     <None Include="Resources\x.png" />
     <None Include="Resources\SWXUiSWV1Drawings.png" />
   </ItemGroup>

@@ -222,9 +222,7 @@ namespace FormSW_Tree
 
                     DrawNeedRebuild = dr != null ? dr.NeedsRebuild.ToString() : "",
                     DrawVersRev = dr != null ? dr.msgRefVers : "",
-
-                    DrawIsLocked = dr != null ? dr.File.IsLocked.ToString() : ""
-
+                    DrawIsLocked= dr!=null?dr.File.IsLocked.ToString() :""
                 });
             }
 

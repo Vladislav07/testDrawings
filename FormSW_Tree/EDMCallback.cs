@@ -38,6 +38,7 @@ namespace FormSW_Tree
             MsgInfo info = new MsgInfo();
             info.typeOperation = "Finish CheckIn";
             info.countStep = 0;
+            info.currentStep = 0;
             PDM.NotifyOperation(2, info);
         }
 

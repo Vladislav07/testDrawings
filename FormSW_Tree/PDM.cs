@@ -143,7 +143,7 @@ namespace FormSW_Tree
                 batchGetter.AddSelection((EdmVault5)vault1, ppoSelection);
                 if ((batchGetter != null))
                 {
-                    batchGetter.CreateTree(0, (int)EdmGetCmdFlags.Egcf_Lock + (int)EdmGetCmdFlags.Egcf_SkipOpenFileChecks);// + (int)EdmGetCmdFlags.Egcf_IncludeAutoCacheFiles);  
+                    batchGetter.CreateTree(0, (int)EdmGetCmdFlags.Egcf_Nothing); //(int)EdmGetCmdFlags.Egcf_Lock + (int)EdmGetCmdFlags.Egcf_SkipOpenFileChecks);// + (int)EdmGetCmdFlags.Egcf_IncludeAutoCacheFiles);  
                    // batchGetter.ShowDlg(0);
                     batchGetter.GetFiles(0, cbGet);
                 }

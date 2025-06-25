@@ -156,11 +156,24 @@ namespace FormSW_Tree
         }
         private void ResolvedLigthWeiht(AssemblyDoc ass)
         {
-            int countLigthWeiht = ass.GetLightWeightComponentCount();
+         /*   int countLigthWeiht = ass.GetLightWeightComponentCount();
             if (countLigthWeiht > 0)
+            {*/
+             int res=ass.ResolveAllLightWeightComponents(true);
+            switch (res)
             {
-                ass.ResolveAllLightweight();
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                default:
+                    break;
             }
+            // }
         }
         private void TraverseComponent(Component2 swComp)
         {
@@ -354,24 +367,29 @@ namespace FormSW_Tree
                     type = (int)swDocumentTypes_e.swDocDRAWING;
                 }
 
-                swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName+"1", type, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+                swModelDoc = (ModelDoc2)swApp.OpenDoc6(fileName, type, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
                 swModelDoc = (ModelDoc2)swApp.ActivateDoc2(fileName, true, ref errors);
                 if (swModelDoc == null)
                 {
-                    MsgInfo msgInfo = new MsgInfo();
-                    msgInfo.errorMsg=errors.ToString();
-                    msgInfo.numberCuby = fileName;
-                    NotifySW?.Invoke(0, msgInfo);
-                }           
+                    NotifyError(fileName);
+                }
             }
             catch (Exception error)
             {
                 MsgInfo msgInfo = new MsgInfo();
                 msgInfo.errorMsg = error.Message;
-                msgInfo.numberCuby = fileName;
+                msgInfo.numberCuby = Path.GetFileName(fileName);
                 NotifySW?.Invoke(0, msgInfo);
             }
             return swModelDoc;
+        }
+
+        private void NotifyError(string fileName)
+        {
+            MsgInfo msgInfo = new MsgInfo();
+            msgInfo.errorMsg = "Error Open file - " + Path.GetFileName(fileName);
+            msgInfo.numberCuby = fileName;
+            NotifySW?.Invoke(0, msgInfo);
         }
 
         private void RefreshFile(ModelDoc2 swModelDoc)

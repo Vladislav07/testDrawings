@@ -12,7 +12,10 @@ namespace FormSW_Tree
     {
         public void ProgressBegin(EdmProgressType eType, int lSteps)
         {
-            MsgInfo info = new MsgInfo("", true, "", "CheckOut files", lSteps);
+            MsgInfo info = new MsgInfo();
+            info.numberCuby=eType.ToString();
+            info.countStep = lSteps;
+            info.typeOperation = "CheckOut files";
             PDM.NotifyOperation(2, info);
         }
 
@@ -21,7 +24,7 @@ namespace FormSW_Tree
             MsgInfo info = new MsgInfo();
             string nameFile=Path.GetFileName(bsMessage);
             info.numberCuby = nameFile;
-            info.currentStep = lProgressPos + 1;
+            info.currentStep = lProgressPos;
             PDM.NotifyOperation(3, info);
             return true;
         }
@@ -31,6 +34,7 @@ namespace FormSW_Tree
             MsgInfo info = new MsgInfo();
             info.typeOperation = "Finish CheckOut";
             info.countStep = 0;
+            info.currentStep = 0;
             PDM.NotifyOperation(2, info);
         }
 
@@ -46,7 +50,11 @@ namespace FormSW_Tree
 
         public bool ReportFailure(int lFileID, string bsPath, int hError, string bsDetails)
         {
-            throw new NotImplementedException();
+            MsgInfo info = new MsgInfo();
+            info.errorMsg = bsDetails;
+            info.numberCuby = Path.GetFileName(bsPath);
+            PDM.NotifyOperation(0, info);
+            return true;
         }
     }
 }

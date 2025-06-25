@@ -27,16 +27,41 @@ namespace FormSW_Tree
         bool isImpossible = false;
         bool isBlocked = false;
         string msgError ="";
+        TabControl tabControl;
+        TabPage tab1;
+        TabPage tab2;
+        TextBox lbLogger;
+        int numberLogger;
+        
         public InfoF()
         {
             InitializeComponent();
+            tabControl = new TabControl();
+            tabControl.Dock = DockStyle.Fill;
+            tab1 = new TabPage("Main");
+           // tab1.Width = 100; 
+            tabControl.TabPages.Add(tab1);
+
+            tab2 = new TabPage("Loger");
+            lbLogger = new TextBox();
+            lbLogger.Text = "...";
+            lbLogger.Dock = DockStyle.Fill;
+            lbLogger.Multiline = true;
+            lbLogger.ScrollBars = ScrollBars.Vertical;
+            lbLogger.ForeColor = Color.Green;
+            lbLogger.AutoSize = true;
+            tab2.Controls.Add(lbLogger);
+            tabControl.TabPages.Add(tab2);
+            this.Controls.Add(tabControl);
             dt = new DataTable();
+            numberLogger = 0;
+         
         }
 
         private void InfoF_Load(object sender, EventArgs e)
         {
-            this.Width = 500;
-            this.Height = 250;
+            tab1.Width = 500;
+            tab1.Height = 250;
             GenerateLblMsg();
             GenerateLabelsAndProgressBar();
             c = new ReadControler(this);
@@ -113,18 +138,34 @@ namespace FormSW_Tree
             switch (i)
             {
                 case 0:
-                    image = Properties.Resources.part;
+                    image = Properties.Resources.part_bmp;
                     break;
                 case 1:
-                    image = Properties.Resources.assembly;
+                    image = Properties.Resources.assembly_bmp;
                     break;
                 case 2:
-                    image = Properties.Resources.SWXUiSWV1Drawings;
+                    image = Properties.Resources.Drawings;
+                    break;
+                case 3:
+                    image = Properties.Resources.free_icon_ok;
+                    break;
+                case 4:
+                    image = Properties.Resources.free_icon_repairing;
+                    break;
+                case 5:
+                    image = Properties.Resources.closed;
+                    break;
+                case 6:
+                    image = Properties.Resources.Warning;
+                    break;
+                case 7:
+                    image = Properties.Resources.x1;
                     break;
                 default:
-                    image = Properties.Resources.x;
+                    image = Properties.Resources.empty;
                     break;
             }
+        
             using (MemoryStream ms = new MemoryStream())
             {
                 image.Save(ms, ImageFormat.Jpeg);
@@ -140,7 +181,7 @@ namespace FormSW_Tree
             button1.Text = "&Rebuild";
             button1.Location = new Point(this.Width - button1.Width - 50, lbMsg.Bottom+10);
             button1.Click += Button1_Click;
-            this.Controls.Add(button1);
+            tab1.Controls.Add(button1);
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -151,8 +192,8 @@ namespace FormSW_Tree
             checkBox1.Dispose();
             chB_Impossible.Dispose();
             button1.Dispose();
-            this.Width = 500;
-            this.Height = 250;
+            tab1.Width = 500;
+            tab1.Height = 250;
             GenerateLabelsAndProgressBar();
             actionControler = new ActionControler();
             actionControler.RunWorkerCompleted += ActionControler_RunWorkerCompleted;
@@ -186,22 +227,85 @@ namespace FormSW_Tree
 
                 dr[2] = v.Level;
                 dr[3] = v.StPDM;
-                dr[4] = v.State;
-                dr[5] = v.IsLocked;
+                switch (v.State)
+                {
+                    case "Clean":
+                        dr[4] = GetImageData(3);
+                        break;
+                    case "Manufacturing":
+                        dr[4] = GetImageData(5);
+                        break;
+                    case "Blocked":
+                        dr[4] = GetImageData(6);
+                        break;
+                    case "Rebuild":
+                        dr[4] = GetImageData(4);
+                        break;
+                    default:
+                        dr[4] = GetImageData(10);
+                        break;
+                }
+                if (v.IsLocked == "True")
+                {
+                    dr[5] = "CheckIn";
+                }
+                else
+                {
+                    dr[5] = "";
+                }
+              
                 if (v.DrawState != "")
                 {
                     dr[6] = GetImageData(2);
                 }
                 else
                 {
-                    dr[6] = GetImageData(3);
+                    dr[6] = GetImageData(10);
                 }
                 dr[7] = v.StDrPDM;
                 dr[8] = v.DrawVersRev;
-                dr[9] = v.DrawNeedRebuild;
-                dr[10] = v.DrawState;
+                if (v.DrawNeedRebuild == "")
+                {
+                    dr[9] = "";
+                }
+                else if (v.DrawNeedRebuild == "True")
+                {
+                   dr[9] = "Yes";
+                }
+                else
+                {
+                   dr[9] = "No";
+                }
+          
+               
+                switch (v.DrawState)
+                {
+                    case "Clean":
+                        dr[10] = GetImageData(3);
+                        break;
+                    case "Manufacturing":
+                        dr[10] = GetImageData(5);
+                        break;
+                    case "Blocked":
+                        dr[10] = GetImageData(6);
+                        break;
+                    case "Rebuild":
+                        dr[10] = GetImageData(4);
+                        break;
+                    default:
+                        dr[10] = GetImageData(10);
+                        break;
+                }
+                if (v.IsLocked == "True")
+                {
+                    dr[11] = "CheckIn";
+                }
+                else
+                {
+                    dr[11] = "";
+                }
 
-                dt.Rows.Add(dr);
+                    dt.Rows.Add(dr);
             }
 
         }
@@ -220,7 +324,7 @@ namespace FormSW_Tree
             lbMsg.Width = 300;
             lbMsg.ForeColor = Color.Green;
             lbMsg.AutoSize = true;
-            this.Controls.Add(lbMsg);
+            tab1.Controls.Add(lbMsg);
         }
         private void GenerateNamedCheckBoxes()
         {
@@ -231,7 +335,7 @@ namespace FormSW_Tree
             chB_ToRebuild.Location = new Point(50, lbMsg.Bottom+50);
             chB_ToRebuild.Size = new Size(100, 20);
             chB_ToRebuild.CheckedChanged += ChB_ToRebuild_CheckedChanged;
-            this.Controls.Add(chB_ToRebuild);
+            tab1.Controls.Add(chB_ToRebuild);
 
             chB_Clean = new CheckBox();
             chB_Clean.Text = "Clean";
@@ -239,7 +343,7 @@ namespace FormSW_Tree
             chB_Clean.Location = new Point(170, lbMsg.Bottom + 50);
             chB_Clean.Size = new Size(100, 20);
             chB_Clean.CheckedChanged += ChB_Clean_CheckedChanged;
-            this.Controls.Add(chB_Clean);
+            tab1.Controls.Add(chB_Clean);
 
             checkBox1 = new CheckBox();
             checkBox1.Text = "Blocked";
@@ -247,7 +351,7 @@ namespace FormSW_Tree
             checkBox1.Location = new Point(290, lbMsg.Bottom + 50);
             checkBox1.Size = new Size(100, 20);
             checkBox1.CheckedChanged += CheckBox1_CheckedChanged;
-            this.Controls.Add(checkBox1);
+            tab1.Controls.Add(checkBox1);
 
             chB_Impossible = new CheckBox();
             chB_Impossible.Text = "Manufacturing";
@@ -255,7 +359,7 @@ namespace FormSW_Tree
             chB_Impossible.Location = new Point(410, lbMsg.Bottom + 50);
             chB_Impossible.Size = new Size(100, 20);
             chB_Impossible.CheckedChanged += ChB_Impossible_CheckedChanged;
-            this.Controls.Add(chB_Impossible);
+            tab1.Controls.Add(chB_Impossible);
         }
 
         private void ChB_Impossible_CheckedChanged(object sender, EventArgs e)
@@ -363,9 +467,23 @@ namespace FormSW_Tree
         }
         private void RefreshForm()
         {
-            SetStateForm();
-            FillToListIsRebuild();
-            this.Refresh();
+            this.SuspendLayout();
+            try
+            {
+                SetStateForm();
+                FillToListIsRebuild();
+                this.Refresh();
+            }
+            catch (Exception)
+            {
+
+                
+            }
+            finally
+            {
+                this.ResumeLayout();
+            }
+           
         }
         private void SetPropertiesGrig()
         {
@@ -389,26 +507,40 @@ namespace FormSW_Tree
             switch (typeEvent)
             {
                 case 0:       //Error
-                    this.lbMsg.Text = msg.errorMsg;
-                    this.lbNumber.Text = msg.numberCuby;
+                    numberLogger++;
+                    string msgText = numberLogger.ToString() + " - " + msg.errorMsg + Environment.NewLine + 
+                                     msg.typeError + Environment.NewLine +
+                                     msg.numberCuby + Environment.NewLine;
                     lbMsg.ForeColor = Color.Red;
-                    msgError = msgError + msg.errorMsg +"\n";
+                    lbMsg.Text = msgText;                            
+                    lbLogger.ForeColor = Color.Red; 
+                    lbLogger.Text = lbLogger.Text + msgText;
+                   
                     break;
                 case 1:      //LoadActiveModel
-                    this.Text = msg.numberCuby;
+                    Text = msg.numberCuby;
 
                     break;
                 case 2:      //BeginOperation
-                    this.lbMsg.Text = msg.typeOperation;
-                    this.progressBar1.Maximum = msg.countStep;
-                    this.progressBar1.Minimum = 0;
-                    this.lbCount.Text = msg.countStep.ToString();
-
+                    numberLogger++;
+                    lbMsg.ForeColor = Color.Green;
+                    lbMsg.Text =  msg.typeOperation;
+                    progressBar1.Maximum = msg.countStep;
+                    progressBar1.Minimum = 0;
+                    lbCount.Text = msg.countStep.ToString();
+                    string msgOper = numberLogger.ToString() + " - " + msg.typeOperation + 
+                                  ": " + msg.countStep + Environment.NewLine;
+                    lbLogger.Text = lbLogger.Text + msgOper;
+                   
                     break;
                 case 3:      //StepOperation
-                    this.lbStart.Text = msg.currentStep.ToString();
-                    this.progressBar1.Value = msg.currentStep;
-                    this.lbNumber.Text = msg.numberCuby;
+              
+                    lbStart.Text = msg.currentStep.ToString();
+                    progressBar1.Value = msg.currentStep;
+                    lbNumber.Text = msg.numberCuby;
+                    string msgStep = numberLogger.ToString() + "." + msg.currentStep.ToString() +
+                                 " - " + msg.numberCuby + Environment.NewLine;
+                    lbLogger.Text = lbLogger.Text + msgStep;
                     break;
                 default:
                     break;
@@ -417,20 +549,20 @@ namespace FormSW_Tree
         private void GenerateDataGridView()
         {
             dataGridView = new DataGridView();
-            this.Width = 1000;
+           // this.Width = 1200;
             
             dataGridView.Location = new Point(0, lbMsg.Bottom + 75); ;
             dataGridView.BackgroundColor = Color.White;
             dataGridView.DefaultCellStyle.ForeColor = Color.Black;
-            dataGridView.Width = this.Width;
+            
             dataGridView.AutoGenerateColumns = true;
-            dataGridView.AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.None;
             dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.None;
             dataGridView.BackgroundColor = Color.White; 
             dataGridView.BorderStyle = BorderStyle.None; 
             dataGridView.GridColor = Color.White;
 
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+           // dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+           
             dataGridView.DataBindingComplete += (sender, e) =>
             {
                 int rowHeight1 = dataGridView.RowTemplate.Height;
@@ -444,24 +576,34 @@ namespace FormSW_Tree
                 dataGridView.Height = Math.Max(desiredHeight1, minHeight1);
                 this.Height = 200 + dataGridView.Height;
             };
-            Controls.Add(dataGridView);
+            tab1.Controls.Add(dataGridView);
 
             dt = new DataTable();
             dt.Columns.Add("Cuby_Number", typeof(string));
             dt.Columns.Add("Type", typeof(byte[]));
             dt.Columns.Add("Level", typeof(string));
-            dt.Columns.Add("State", typeof(string));
-            dt.Columns.Add("Current Version", typeof(string));
+            dt.Columns.Add("PDM", typeof(string));
+            dt.Columns.Add("IsState", typeof(byte[]));
             dt.Columns.Add("IsLocked", typeof(string));
             dt.Columns.Add("DrawType", typeof(byte[]));
             dt.Columns.Add("DrawState", typeof(string));
             dt.Columns.Add("DrawVersRev", typeof(string));
-            dt.Columns.Add("DrawNeedRebuild", typeof(string));
+            dt.Columns.Add("DrawingNeedsRebuild", typeof(string));
+            dt.Columns.Add("IsStateDraw", typeof(byte[]));
             dt.Columns.Add("DrawIsLocked", typeof(string));
 
             dataGridView.DataSource = dt;
 
-            SetPropertiesGrig();
+           // SetPropertiesGrig();
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
+            int totalColumnsWidth = 0;
+            foreach (DataGridViewColumn column in dataGridView.Columns)
+            {
+                totalColumnsWidth += column.Width;
+            }
+
+            dataGridView.Width = totalColumnsWidth + 50;
+            this.Width = totalColumnsWidth + 75;
         }
 
         private Label lbMsg;
@@ -475,24 +617,24 @@ namespace FormSW_Tree
             progressBar1.Location = new Point(100, 100);
             progressBar1.Width = 250;
             progressBar1.Height = 15;
-            this.Controls.Add(progressBar1);
+            tab1.Controls.Add(progressBar1);
 
             lbStart = new Label();
             lbStart.Text = "0";
             lbStart.Location = new Point(50, 100);
-            this.Controls.Add(lbStart);
+            tab1.Controls.Add(lbStart);
 
             lbCount = new Label();
            
             lbCount.Text = "0";
             lbCount.Location = new Point(370, 100);
-            this.Controls.Add(lbCount);
+            tab1.Controls.Add(lbCount);
 
             lbNumber = new Label();
             lbNumber.Text = "...";
             lbNumber.Width = 200;
             lbNumber.Location = new Point(100, 80);
-            this.Controls.Add(lbNumber);
+            tab1.Controls.Add(lbNumber);
         }
         public void DestroyLabelsAndProgressBar()
         {
@@ -518,6 +660,7 @@ namespace FormSW_Tree
         internal string StDrPDM { get; set; }
         internal string DrawVersRev { get; set; }
         internal string DrawNeedRebuild { get; set; }
+        internal string DrawIsState { get; set; }
         internal string DrawIsLocked { get; set; }
     }
 
