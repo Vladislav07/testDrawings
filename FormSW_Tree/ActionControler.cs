@@ -10,9 +10,11 @@ namespace FormSW_Tree
     public partial class ActionControler : BackgroundWorker
     {
         SW sw;
-        public ActionControler()
+        bool isVisble;
+        public ActionControler(bool _isVisible)
         {
             WorkerReportsProgress = true;
+            isVisble = _isVisible;
         }
 
     
@@ -48,12 +50,12 @@ namespace FormSW_Tree
             {
                 ReportProgress(1, info);               
                 sw.CloseDoc();
-                sw.InvisibleApp();
+                sw.InvisibleApp(isVisble);
                 RebuildTreeLoopLevel();
                 sw.connectSw-= Sw_connectSw;
                 sw.NotifySW-= Sw_rebuild;
                 PDM.NotifyPDM-= PDM_NotifyPDM;
-                sw.UnInvisibleApp();
+                sw.UnInvisibleApp(isVisble);
                 sw.OpenFile(sw.PathRootDoc);
                 this.Dispose();
                

@@ -16,6 +16,7 @@ namespace FormSW_Tree
             Tree.msgNameOperation += Tree_msgNameOperation;
             Tree.msgDataOperation += Tree_msgDataOperation;
             WorkerReportsProgress = true;
+       
         }
 
         private void Tree_msgDataOperation(MsgInfo obj)
@@ -34,8 +35,11 @@ namespace FormSW_Tree
             Tree.CompareVersions();
             f.userView.Clear();
             f.userView = Tree.JoinCompAndDraw();
+             Tree.msgDataOperation-= Tree_msgDataOperation;
+            Tree.msgNameOperation-= Tree_msgNameOperation;
+             this.Dispose();
             
-            this.Dispose();
         }
+    
     }
 }

@@ -423,8 +423,9 @@ namespace FormSW_Tree
 
         }
 
-        public void InvisibleApp()
+        public void InvisibleApp( bool isVisible)
         {
+            if (!isVisible) return;
             try
             {
                 swApp.UserControl = false;
@@ -440,8 +441,9 @@ namespace FormSW_Tree
          
         }
 
-        public void UnInvisibleApp()
+        public void UnInvisibleApp(bool isVisible)
         {
+            if (!isVisible) return;
             pFrame.KeepInvisible = false;
             swApp.Visible = true;
         }

@@ -19,6 +19,7 @@ namespace FormSW_Tree
 
         ReadControler c;
         ActionControler actionControler;
+        StatusCheckControler scc;
         DataTable dt;
         private DataGridView dataGridView;
         public List<ViewUser> userView { get; set; }
@@ -26,7 +27,7 @@ namespace FormSW_Tree
         bool isDispleyRebuild = true;
         bool isImpossible = false;
         bool isBlocked = false;
-        string msgError ="";
+        bool isVisible = false;
         TabControl tabControl;
         TabPage tab1;
         TabPage tab2;
@@ -39,7 +40,6 @@ namespace FormSW_Tree
             tabControl = new TabControl();
             tabControl.Dock = DockStyle.Fill;
             tab1 = new TabPage("Main");
-           // tab1.Width = 100; 
             tabControl.TabPages.Add(tab1);
 
             tab2 = new TabPage("Loger");
@@ -83,10 +83,10 @@ namespace FormSW_Tree
         {
             if (userView == null) return;
             DestroyLabelsAndProgressBar(); 
-            lbMsg.Text=msgError;
             GenerateDataGridView();
             GenerateNamedCheckBoxes();
             GeneratedButton();
+           // GeneratedButtonInfo();
             RefreshForm();
             c.RunWorkerCompleted -= C_RunWorkerCompleted;
             c.ProgressChanged -= C_ProgressChanged;
@@ -106,22 +106,28 @@ namespace FormSW_Tree
             lbCount.Text = "";
             lbStart.Text = "";
             lbNumber.Text = "";
-            StatusCheckControler scc=new StatusCheckControler(this);
+           
             actionControler.RunWorkerCompleted-= ActionControler_RunWorkerCompleted;
             actionControler.ProgressChanged-= ActionControler_ProgressChanged;
+            
+            scc = new StatusCheckControler(this);
             scc.ProgressChanged += Scc_ProgressChanged;
             scc.RunWorkerCompleted += Scc_RunWorkerCompleted;
             scc.RunWorkerAsync();
+
         }
 
         private void Scc_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (userView == null) return;
+            scc.RunWorkerCompleted-= Scc_RunWorkerCompleted;
+            scc.ProgressChanged -= Scc_ProgressChanged;
             DestroyLabelsAndProgressBar();
             GenerateDataGridView();
             GenerateNamedCheckBoxes();
             GeneratedButton();
             RefreshForm();
+           
         }
 
         private void Scc_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -174,7 +180,7 @@ namespace FormSW_Tree
         }
 
         private Button button1;
-
+        private Button button2;
         private void GeneratedButton()
         {
             button1 = new Button();
@@ -182,6 +188,24 @@ namespace FormSW_Tree
             button1.Location = new Point(this.Width - button1.Width - 50, lbMsg.Bottom+10);
             button1.Click += Button1_Click;
             tab1.Controls.Add(button1);
+        }
+
+        private void GeneratedButtonInfo()
+        {
+            button2 = new Button();
+            button2.Text = "&Info";
+            button2.Location = new Point(this.Width - button1.Width - 150, lbMsg.Bottom + 10);
+            button2.Click += Button2_Click;
+            tab1.Controls.Add(button2);
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+       /*     StatusCheckControler scc;
+            scc = new StatusCheckControler(this);
+            scc.ProgressChanged += Scc_ProgressChanged;
+            scc.RunWorkerCompleted += Scc_RunWorkerCompleted;
+            scc.RunWorkerAsync();*/
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -195,7 +219,7 @@ namespace FormSW_Tree
             tab1.Width = 500;
             tab1.Height = 250;
             GenerateLabelsAndProgressBar();
-            actionControler = new ActionControler();
+            actionControler = new ActionControler(isVisible);
             actionControler.RunWorkerCompleted += ActionControler_RunWorkerCompleted;
             actionControler.ProgressChanged += ActionControler_ProgressChanged;
             actionControler.RunWorkerAsync();
@@ -315,7 +339,7 @@ namespace FormSW_Tree
         private CheckBox chB_Clean;
         private CheckBox checkBox1;
         private CheckBox chB_Impossible;
-
+        private CheckBox chB_IsVisible;
         private void GenerateLblMsg()
         {
             lbMsg = new Label();
@@ -328,6 +352,15 @@ namespace FormSW_Tree
         }
         private void GenerateNamedCheckBoxes()
         {
+            chB_IsVisible = new CheckBox();
+            chB_IsVisible.Checked = false;
+            chB_IsVisible.Text = "IsVisible";
+            chB_IsVisible.Name = "chB_IsVisible";
+            chB_IsVisible.Location = new Point(250, lbMsg.Bottom + 10);
+            chB_IsVisible.Size = new Size(100, 20);
+            chB_IsVisible.CheckedChanged += ChB_IsVisible_CheckedChanged;
+            tab1.Controls.Add(chB_IsVisible);
+
             chB_ToRebuild = new CheckBox();
             chB_ToRebuild.Checked = true;
             chB_ToRebuild.Text = "To Rebuild";
@@ -360,6 +393,20 @@ namespace FormSW_Tree
             chB_Impossible.Size = new Size(100, 20);
             chB_Impossible.CheckedChanged += ChB_Impossible_CheckedChanged;
             tab1.Controls.Add(chB_Impossible);
+        }
+
+        private void ChB_IsVisible_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                isVisible = true;
+            }
+            else
+            {
+                isVisible = false;
+            }
+            RefreshForm();
         }
 
         private void ChB_Impossible_CheckedChanged(object sender, EventArgs e)
