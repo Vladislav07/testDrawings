@@ -635,7 +635,7 @@ namespace FormSW_Tree
             dt.Columns.Add("DrawType", typeof(byte[]));
             dt.Columns.Add("DrawState", typeof(string));
             dt.Columns.Add("DrawVersRev", typeof(string));
-            dt.Columns.Add("DrawingNeedsRebuild", typeof(string));
+            dt.Columns.Add("NeedsRebuild", typeof(string));
             dt.Columns.Add("IsStateDraw", typeof(byte[]));
             dt.Columns.Add("DrawIsLocked", typeof(string));
 

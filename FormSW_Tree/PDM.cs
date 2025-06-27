@@ -97,13 +97,16 @@ namespace FormSW_Tree
                 }
             }
 
-            catch (Exception p)
+            catch (System.Runtime.InteropServices.COMException ex)
             {
-
-               // MessageBox.Show("uuu" + p.Message);
+                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
             }
-           
-            
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
         }
 
         public static void CockSelList(int count)
@@ -143,7 +146,10 @@ namespace FormSW_Tree
                 batchGetter.AddSelection((EdmVault5)vault1, ppoSelection);
                 if ((batchGetter != null))
                 {
-                    batchGetter.CreateTree(0, (int)EdmGetCmdFlags.Egcf_Nothing); //(int)EdmGetCmdFlags.Egcf_Lock + (int)EdmGetCmdFlags.Egcf_SkipOpenFileChecks);// + (int)EdmGetCmdFlags.Egcf_IncludeAutoCacheFiles);  
+                    batchGetter.CreateTree(0, (int)EdmGetCmdFlags.Egcf_Lock +
+                        (int)EdmGetCmdFlags.Egcf_SkipOpenFileChecks + (int)EdmGetCmdFlags.Egcf_SkipLockRefFiles 
+                        + (int)EdmGetCmdFlags.Egcf_ForViewer); 
+                    int fileCount = batchGetter.FileCount;
                    // batchGetter.ShowDlg(0);
                     batchGetter.GetFiles(0, cbGet);
                 }

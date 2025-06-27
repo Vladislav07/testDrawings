@@ -8,10 +8,11 @@ using EPDM.Interop.epdm;
 
 namespace FormSW_Tree
 {
-    public class EdmCallbackGet: IEdmGetOpCallback
+    public class EdmCallbackGet: IEdmGetOpCallback3
     {
         public void ProgressBegin(EdmProgressType eType, int lSteps)
         {
+            if (eType != EdmProgressType.Ept_Operation) return;
             MsgInfo info = new MsgInfo();
             info.numberCuby=eType.ToString();
             info.countStep = lSteps;
@@ -31,6 +32,7 @@ namespace FormSW_Tree
 
         public void ProgressEnd(EdmProgressType eType)
         {
+            if (eType != EdmProgressType.Ept_Operation) return;
             MsgInfo info = new MsgInfo();
             info.typeOperation = "Finish CheckOut";
             info.countStep = 0;
@@ -40,12 +42,13 @@ namespace FormSW_Tree
 
         public void LogMessage(EdmGetOpMsg eMsgID, int hCode, string bsDetails)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(eMsgID.ToString() + " - " + bsDetails + " -  " + hCode.ToString());
         }
 
         public bool ConfirmReplace(EdmGetConfirmReason eReason, string bsPath)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(eReason.ToString() + " - " + bsPath);
+            return true;
         }
 
         public bool ReportFailure(int lFileID, string bsPath, int hError, string bsDetails)
@@ -55,6 +58,31 @@ namespace FormSW_Tree
             info.numberCuby = Path.GetFileName(bsPath);
             PDM.NotifyOperation(0, info);
             return true;
+        }
+
+        public EdmGetOpReply ReportFailureEx(int lFileID, int lVersionNo, string bsPath, EdmGetOpError eError, object oArg1, object oArg2, object oArg3)
+        {
+            MsgInfo info = new MsgInfo();
+            info.typeOperation = eError.ToString();
+            info.numberCuby = bsPath;
+            info.errorMsg = " Error Get File from PDM";
+            PDM.NotifyOperation(0, info);
+            return EdmGetOpReply.EdmGetRep_Process;
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetProgressMessage(string bsMessage)
+        {
+            Console.Write(bsMessage);
+        }
+
+        public void IsCancelPressed()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -333,7 +333,7 @@ namespace FormSW_Tree
                  ModelDoc2 swModelDoc = OpenFile(file);
                  if (swModelDoc != null)
                  {
-                     // RefreshFile(swModelDoc);
+                      RefreshFile(swModelDoc);
                      swApp.CloseDoc(file);
                      swModelDoc = null;
                  }
