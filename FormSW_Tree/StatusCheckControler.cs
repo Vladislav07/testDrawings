@@ -35,9 +35,9 @@ namespace FormSW_Tree
             Tree.CompareVersions();
             f.userView.Clear();
             f.userView = Tree.JoinCompAndDraw();
-             Tree.msgDataOperation-= Tree_msgDataOperation;
+            Tree.msgDataOperation-= Tree_msgDataOperation;
             Tree.msgNameOperation-= Tree_msgNameOperation;
-             this.Dispose();
+            this.Dispose();
             
         }
     

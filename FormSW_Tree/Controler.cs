@@ -22,7 +22,12 @@ namespace FormSW_Tree
               
             Tree.msgDataOperation += Tree_msgDataOperation;
             Tree.msgNameOperation += Tree_msgNameOperation;
-    
+            Tree.msgWarnings += Tree_msgWarnings;
+        }
+
+        private void Tree_msgWarnings(MsgInfo obj)
+        {
+            ReportProgress(4, obj);
         }
 
         private void Tree_msgNameOperation(MsgInfo obj)
@@ -63,6 +68,7 @@ namespace FormSW_Tree
                 Tree.ReverseTree();
                 Tree.GetInfoPDM();
                 Tree.CompareVersions();
+                Tree.isCheckOut();
                 f.userView= Tree.JoinCompAndDraw();
             }
         }

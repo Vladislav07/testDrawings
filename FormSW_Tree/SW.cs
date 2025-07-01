@@ -156,10 +156,7 @@ namespace FormSW_Tree
         }
         private void ResolvedLigthWeiht(AssemblyDoc ass)
         {
-         /*   int countLigthWeiht = ass.GetLightWeightComponentCount();
-            if (countLigthWeiht > 0)
-            {*/
-             int res=ass.ResolveAllLightWeightComponents(true);
+             int res = ass.ResolveAllLightWeightComponents(true);
             switch (res)
             {
                 case 0:
@@ -173,7 +170,7 @@ namespace FormSW_Tree
                 default:
                     break;
             }
-            // }
+           
         }
         private void TraverseComponent(Component2 swComp)
         {
@@ -245,9 +242,6 @@ namespace FormSW_Tree
             bool boolstatus = TableBomClose(Ext, BomName);
 
         }
-
- 
-
         private void ExtractItem(BomTableAnnotation swBOMAnnotation, string Configuration, int J)
         {
             string ItemNumber;
@@ -283,7 +277,6 @@ namespace FormSW_Tree
                 NotifyStepOperation(PathName);
             }
         }
-
         private bool TableBomClose(ModelDocExtension Ext, string BomName)
         {
             bool boolstatus;
@@ -293,8 +286,8 @@ namespace FormSW_Tree
             swMainModel.ClearSelection2(true);
             return boolstatus;
         }
-
-        private void ExtractomTable(out ModelDocExtension Ext, out BomFeature swBOMFeature, out BomTableAnnotation swBOMAnnotation, out string Configuration, out TableAnnotation swTableAnn)
+        private void ExtractomTable(out ModelDocExtension Ext, out BomFeature swBOMFeature,
+            out BomTableAnnotation swBOMAnnotation, out string Configuration, out TableAnnotation swTableAnn)
         {
             Ext = default(ModelDocExtension);
             Ext = swMainModel.Extension;
@@ -318,7 +311,6 @@ namespace FormSW_Tree
             }
           
         }
-
         public void CloseDoc()
         {
             swApp.CloseAllDocuments(true);
@@ -333,7 +325,7 @@ namespace FormSW_Tree
                  ModelDoc2 swModelDoc = OpenFile(file);
                  if (swModelDoc != null)
                  {
-                      RefreshFile(swModelDoc);
+                    //  RefreshFile(swModelDoc);
                      swApp.CloseDoc(file);
                      swModelDoc = null;
                  }
@@ -350,7 +342,7 @@ namespace FormSW_Tree
 
             try
             {
-                fileName = item;
+                fileName = item;  
                 NotifyStepOperation(fileName);
                 string ext = Path.GetExtension(fileName);
 
@@ -371,24 +363,25 @@ namespace FormSW_Tree
                 swModelDoc = (ModelDoc2)swApp.ActivateDoc2(fileName, true, ref errors);
                 if (swModelDoc == null)
                 {
-                    NotifyError(fileName);
+                    NotifyError("Error", "Open file", fileName);
                 }
             }
             catch (Exception error)
             {
-                MsgInfo msgInfo = new MsgInfo();
-                msgInfo.errorMsg = error.Message;
-                msgInfo.numberCuby = Path.GetFileName(fileName);
-                NotifySW?.Invoke(0, msgInfo);
+                NotifyError(error.GetType().ToString(), error.Message, fileName);
             }
             return swModelDoc;
         }
 
-        private void NotifyError(string fileName)
+        private void NotifyError(string msg, string typeOper="", string fileName="")
         {
             MsgInfo msgInfo = new MsgInfo();
-            msgInfo.errorMsg = "Error Open file - " + Path.GetFileName(fileName);
-            msgInfo.numberCuby = fileName;
+            msgInfo.typeError=typeOper;
+            msgInfo.errorMsg = msg;
+            if (fileName != "")
+            {
+                msgInfo.numberCuby = Path.GetFileName(fileName);
+            }        
             NotifySW?.Invoke(0, msgInfo);
         }
 
@@ -422,6 +415,7 @@ namespace FormSW_Tree
             NotifySW?.Invoke(3, msgInfo);
 
         }
+      
 
         public void InvisibleApp( bool isVisible)
         {

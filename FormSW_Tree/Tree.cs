@@ -22,6 +22,7 @@ namespace FormSW_Tree
         static Dictionary<string, string> structuralNumbers;
         internal static event Action<MsgInfo> msgDataOperation;
         internal static event Action<MsgInfo> msgNameOperation;
+        internal static event Action<MsgInfo> msgWarnings;
         static Tree()
         {
            
@@ -71,8 +72,6 @@ namespace FormSW_Tree
             comp.CascadingUpdate(isBlocedchild);
    
         }
-
-       
 
         public  static int Part_IsChild(string cubyNumber, int VersChild)
           {
@@ -228,6 +227,21 @@ namespace FormSW_Tree
 
 
             return lv;
+        }
+        public static bool isCheckOut()
+        {
+            bool isCheck = false;
+            List<Model> models = listComp.Cast<Model>().Concat(listDraw).ToList();
+            isCheck = models.Any(m=>m.isCheckOut());
+            if (isCheck) InfoWarning("One or more files extracted");
+            return  isCheck;
+        }
+
+        private static void InfoWarning(string message)
+        {
+            MsgInfo msgInfo = new MsgInfo();
+            msgInfo.errorMsg = message;
+            msgWarnings.Invoke(msgInfo);
         }
 
     }

@@ -72,6 +72,9 @@
     <Compile Include="Drawing.cs" />
     <Compile Include="EDMCallback.cs" />
     <Compile Include="EdmCallbackGet.cs" />
+    <Compile Include="InfoExtention.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="InfoF.cs">
       <SubType>Form</SubType>
     </Compile>

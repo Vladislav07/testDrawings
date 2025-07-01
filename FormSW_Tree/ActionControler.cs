@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing.Text;
 using System.Linq;
+using static System.Windows.Forms.AxHost;
 
 namespace FormSW_Tree
 {
@@ -11,10 +12,12 @@ namespace FormSW_Tree
     {
         SW sw;
         bool isVisble;
-        public ActionControler(bool _isVisible)
+        bool isAll;
+        public ActionControler(bool _isVisible, bool _isAll)
         {
             WorkerReportsProgress = true;
             isVisble = _isVisible;
+            isAll = _isAll;
         }
 
     
@@ -48,7 +51,9 @@ namespace FormSW_Tree
             }
             else
             {
-                ReportProgress(1, info);               
+                ReportProgress(1, info); 
+                 
+
                 sw.CloseDoc();
                 sw.InvisibleApp(isVisble);
                 RebuildTreeLoopLevel();
@@ -57,6 +62,7 @@ namespace FormSW_Tree
                 PDM.NotifyPDM-= PDM_NotifyPDM;
                 sw.UnInvisibleApp(isVisble);
                 sw.OpenFile(sw.PathRootDoc);
+                
                 this.Dispose();
                
             }
@@ -71,19 +77,23 @@ namespace FormSW_Tree
         private void RebuildTreeLoopLevel()
         {
          
-            List<Part> listPart = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
+            List<Part> listPart = Tree.listComp.Where(d => !isAll ? d.condition.stateModel == StateModel.Rebuild :
+            d.condition.stateModel == StateModel.Clean || d.condition.stateModel == StateModel.Rebuild)
                 .Where(d => d.Ext == ".sldprt" || d.Ext == ".SLDPRT")
                 .ToList();
 
-            List<Drawing> listPartDraw = Tree.listDraw.Where(d => d.condition.stateModel == StateModel.Rebuild)
+            List<Drawing> listPartDraw = Tree.listDraw.Where(d => !isAll ? d.condition.stateModel == StateModel.Rebuild :
+            d.condition.stateModel == StateModel.Clean || d.condition.stateModel == StateModel.Rebuild)
                 .Where(d => d.model.Ext == ".sldprt" || d.model.Ext == ".SLDPRT")
                 .ToList();
 
-            List<Part> listAss = Tree.listComp.Where(c => c.condition.stateModel == StateModel.Rebuild)
+            List<Part> listAss = Tree.listComp.Where(d => !isAll ? d.condition.stateModel == StateModel.Rebuild :
+            d.condition.stateModel == StateModel.Clean || d.condition.stateModel == StateModel.Rebuild)
                 .Where(d => d.Ext == ".sldasm" || d.Ext == ".SLDASM")
                 .ToList();
 
-            List<Drawing> listAssDraw = Tree.listDraw.Where(d => d.condition.stateModel == StateModel.Rebuild)
+            List<Drawing> listAssDraw = Tree.listDraw.Where(d => !isAll ? d.condition.stateModel == StateModel.Rebuild :
+            d.condition.stateModel == StateModel.Clean || d.condition.stateModel == StateModel.Rebuild)
                 .Where(d => d.model.Ext == ".sldasm" || d.model.Ext == ".SLDASM")
                 .ToList();
 

@@ -188,8 +188,6 @@ namespace FormSW_Tree
 
         }
 
-    
-
         static void  ConnectingPDM()
          {
             try
@@ -268,6 +266,11 @@ namespace FormSW_Tree
         public static void RefreshFile(this Model model)
         {
             model.File.Refresh();
+        }
+        public static bool isCheckOut(this Model model)
+        {
+          return  model.File.IsLocked == true ? true : false;
+           
         }
     }
 }

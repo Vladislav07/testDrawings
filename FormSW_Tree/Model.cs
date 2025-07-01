@@ -10,6 +10,7 @@ namespace FormSW_Tree
     {
         Rebuild=0,   
         Manufacturing=1,  
+        Standart,
         Clean=4,         
         Blocked=5,
       
@@ -45,18 +46,18 @@ namespace FormSW_Tree
         {
            
             switch (File.CurrentState.Name)
-            {
-                case "Check library item":
-                case "Kanban":
-                case "Approved to use":
+            {              
                 case "In work":
                     condition = new ModeClear();
                     break;
 
                 case "Initiated":
+                case "Check library item":
+                case "Kanban":
+                case "Approved to use":
                     condition = new ModeBloced();
                     break;
-
+              
                 case "Pending Express Manufacturing":
                 case "Express Manufacturing":
                 case "Reset to in Work":
