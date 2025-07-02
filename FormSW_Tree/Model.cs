@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 
 
 namespace FormSW_Tree
@@ -52,20 +53,24 @@ namespace FormSW_Tree
                     break;
 
                 case "Initiated":
-                case "Check library item":
-                case "Kanban":
-                case "Approved to use":
+                case "Use is forbidden":
                     condition = new ModeBloced();
                     break;
               
                 case "Pending Express Manufacturing":
                 case "Express Manufacturing":
                 case "Reset to in Work":
+                case "Approved to use":
                     condition = new ModeManufacturing();
+                    break;
+ 
+                case "Check library item":
+                case "Kanban":            
+                    condition = new ModeStandart();
                     break;
 
                 default:
-                    condition = new ModeClear();
+                    MessageBox.Show("NotState" + this.CubyNumber);
                     break;
             }
 

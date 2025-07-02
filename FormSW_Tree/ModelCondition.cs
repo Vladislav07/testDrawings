@@ -98,7 +98,7 @@ namespace FormSW_Tree
     }
     internal class ModeManufacturing : ModelCondition
     {
-        
+
         public ModeManufacturing()
         {
             stateModel = StateModel.Manufacturing;
@@ -118,8 +118,28 @@ namespace FormSW_Tree
         }
 
         public override ModelCondition GetStateFromChild(StateModel isModeFromChild)
-        {           
-             return new ModeBloced();
+        {
+            return new ModeBloced();
         }
+    }
+    internal class ModeStandart : ModelCondition
+    {
+
+        public ModeStandart()
+        {
+            stateModel = StateModel.Standart;
+        }
+        public override ModelCondition GetState(bool isMode)
+        {
+
+            return this;
+        }
+
+        public override ModelCondition GetStateFromChild(StateModel isModeFromChild)
+        {
+            return null;
+        }
+    
+        
     }
 }

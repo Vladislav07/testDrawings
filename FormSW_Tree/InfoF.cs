@@ -46,12 +46,14 @@ namespace FormSW_Tree
                 case StateFopm.Init:
                     tabControl.TabPages[0].Enabled = true;
                     tabControl.TabPages[1].Enabled = false;
+                    tabControl.TabPages[2].Enabled = false;
                     tabControl.SelectTab(0);
                     lv.Items.Clear();
                     break;
                 case StateFopm.Display:
                     tabControl.TabPages[1].Enabled = true;
                     tabControl.TabPages[0].Enabled = false;
+                    tabControl.TabPages[2].Enabled = true;
                     tabControl.SelectTab(1);
                    
                     break;
@@ -63,30 +65,11 @@ namespace FormSW_Tree
             }
         }
 
-        private void BtnRecordToFile_Click(object sender, EventArgs e)
-        {
-            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
-            {
-                if (folderDialog.ShowDialog() == DialogResult.OK)
-                {
-                    string filePath = Path.Combine(folderDialog.SelectedPath, "ListBoxItems.txt");
-
-                    using (StreamWriter writer = new StreamWriter(filePath))
-                    {
-                        foreach (var item in lbLogger.Items)
-                        {
-                            
-                            writer.WriteLine(((ListBox)item).Text);
-                        }
-                    }
-
-                    MessageBox.Show("ListBox items saved to file: " + filePath, "File Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-        }
+        
                
         private void InfoF_Load(object sender, EventArgs e)
         {
+            this.FormClosing += InfoF_FormClosing;
             stateFopm=StateFopm.Init;
             tabControl.SelectedIndex = 1;
             tabControl.SelectedIndex = 0;
@@ -97,6 +80,26 @@ namespace FormSW_Tree
             c.RunWorkerAsync();
 
         }
+
+        private void InfoF_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(c!=null && c.IsBusy)
+            {
+                c.CancelAsync();
+                c.Dispose();
+            }
+            if (actionControler != null && actionControler.IsBusy)
+            {
+                actionControler.CancelAsync();
+                actionControler.Dispose();
+            }
+            if (scc != null && scc.IsBusy)
+            {
+                scc.CancelAsync();
+                scc.Dispose();
+            }
+        }
+
         private void C_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             MsgInfo msg = (MsgInfo)e.UserState;
@@ -129,9 +132,7 @@ namespace FormSW_Tree
             scc = new StatusCheckControler(this);
             scc.ProgressChanged += Scc_ProgressChanged;
             scc.RunWorkerCompleted += Scc_RunWorkerCompleted;
-            scc.RunWorkerAsync();
-          
-
+            scc.RunWorkerAsync();         
         }
         private void Scc_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -140,6 +141,7 @@ namespace FormSW_Tree
             scc.ProgressChanged -= Scc_ProgressChanged;
             stateFopm = StateFopm.Display;
             SetDispley();
+            RefreshForm();
         }
         private void Scc_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -167,7 +169,7 @@ namespace FormSW_Tree
                 if (v.State == "Rebuild" && !isDispleyRebuild) continue;
                 if (v.State == "Clean" && !isClean) continue;
                 if (v.State == "Blocked" && !isBlocked) continue;
-                if (v.State == "Manufacturing" && !isImpossible) continue;
+                if ((v.State == "Standart"|| v.State == "Manufacturing") && !isImpossible) continue;
 
                 DataRow dr = dt.NewRow();
                 dr[0] = v.NameComp;
@@ -190,6 +192,9 @@ namespace FormSW_Tree
                     case "Manufacturing":
                         dr[4] = GetImageData(5);
                         break;
+                    case "Standart":
+                        dr[4] = GetImageData(8);
+                        break;
                     case "Blocked":
                         dr[4] = GetImageData(6);
                         break;
@@ -207,8 +212,7 @@ namespace FormSW_Tree
                 else
                 {
                     dr[5] = "";
-                }
-              
+                }            
                 if (v.DrawState != "")
                 {
                     dr[6] = GetImageData(2);
@@ -295,7 +299,7 @@ namespace FormSW_Tree
                 checkBox1.Enabled = false;
          
             }
-            if (userView.Any(v => (v.State == "Manufacturing")))
+            if (userView.Any(v => (v.State == "Manufacturing"|| v.State == "Standart")))
             {
                 chB_Impossible.Enabled = true;
             }
@@ -306,7 +310,7 @@ namespace FormSW_Tree
 
 
         }
-        private void RefreshForm()
+        public void RefreshForm()
         {
             this.SuspendLayout();
             try
@@ -316,9 +320,9 @@ namespace FormSW_Tree
                 SetStateForm();
                 this.Refresh();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                string msgText = numberLogger.ToString() + " Error refresh Form ";
+                string msgText = numberLogger.ToString() + " Error refresh Form " + e.Message;
                 lbMsg.ForeColor = Color.Red;
                 lbMsg.Text = msgText;
                 AddItemWithColor(msgText, Color.Red);

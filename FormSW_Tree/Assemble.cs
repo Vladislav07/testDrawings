@@ -31,7 +31,7 @@ namespace FormSW_Tree
         }
         public void CascadingUpdate(StateModel isBlocrdChild)
         {
-         
+            if(isBlocrdChild==StateModel.Standart) return;
             condition = condition.GetStateFromChild(isBlocrdChild);
             
         }

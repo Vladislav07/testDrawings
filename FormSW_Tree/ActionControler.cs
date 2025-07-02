@@ -16,6 +16,7 @@ namespace FormSW_Tree
         public ActionControler(bool _isVisible, bool _isAll)
         {
             WorkerReportsProgress = true;
+            WorkerSupportsCancellation = true;
             isVisble = _isVisible;
             isAll = _isAll;
         }

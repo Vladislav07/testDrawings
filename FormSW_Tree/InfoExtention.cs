@@ -43,8 +43,25 @@ namespace FormSW_Tree
             GenerateTabTwo();         
             GenerateTabThree();
             tabControl.SelectedIndexChanged += TabControl_SelectedIndexChanged;
+            tabControl.Selecting += TabControl_Selecting;
             numberLogger = 0;
 
+        }
+
+        private void TabControl_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            if (e.TabPageIndex == 1 && stateFopm==StateFopm.Init)
+            {
+                e.Cancel = true; 
+            }
+            if (e.TabPageIndex == 0 && stateFopm == StateFopm.Display)
+            {
+                e.Cancel = true;
+            }
+            if (e.TabPageIndex == 2 && stateFopm == StateFopm.Init)
+            {
+                e.Cancel = true;
+            }
         }
 
         private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -105,7 +122,6 @@ namespace FormSW_Tree
             lbLogger = new ListBox();
             lbLogger.Dock = DockStyle.Fill;
             lbLogger.Anchor = AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;
-            lbLogger.AutoSize = true;
             lbLogger.DrawMode = DrawMode.OwnerDrawFixed;
             lbLogger.MultiColumn = false;
             lbLogger.DrawItem += LbLogger_DrawItem;
@@ -388,6 +404,9 @@ namespace FormSW_Tree
                 case 7:
                     image = Properties.Resources.x1;
                     break;
+                case 8:
+                    image = Properties.Resources.bolts;
+                    break;
                 default:
                     image = Properties.Resources.empty;
                     break;
@@ -431,7 +450,36 @@ namespace FormSW_Tree
             int totalItemsHeight = lbLogger.Items.Count * itemHeight; 
             int maxHeight = Math.Min(totalItemsHeight, 800);
             lbLogger.Height = maxHeight;
-            this.Height = maxHeight + 150;
+          
+            this.Height = maxHeight + 100;
+        }
+        private void BtnRecordToFile_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+            {
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    DateTime now = DateTime.Now;
+                    string formattedDateTime = now.ToString("yyyy-MM-dd HH-mm");
+                    string nameFile = this.Text.Substring(0,13)  + "-" + formattedDateTime + "-Log.txt";
+                    string filePath = Path.Combine(folderDialog.SelectedPath, nameFile);
+                    int startIndex;
+                    int endIndex;
+                    using (StreamWriter writer = new StreamWriter(filePath))
+                    {
+                        foreach (var item in lbLogger.Items)
+                        {
+                            string line = item.ToString();
+                            startIndex = line.IndexOf("= ") + 2;
+                            endIndex = line.LastIndexOf(",");
+                            string text = line.Substring(startIndex, endIndex - startIndex).Trim();
+                            writer.WriteLine(text);
+                        }
+                    }
+
+                    MessageBox.Show("ListBox items saved to file: " + filePath, "File Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
 
     }

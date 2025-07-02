@@ -135,6 +135,7 @@
     <None Include="Properties\Resources\closed.bmp" />
     <None Include="Properties\Resources\free-icon-repairing.bmp" />
     <None Include="Properties\Resources\empty.png" />
+    <None Include="Properties\Resources\bolts.bmp" />
     <Content Include="Properties\Resources\part.png" />
     <None Include="Properties\Resources\warning %281%29.png" />
     <None Include="Resources\x.png" />

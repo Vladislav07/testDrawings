@@ -15,7 +15,7 @@ namespace FormSW_Tree
         public ReadControler(InfoF _f)
         {
             WorkerReportsProgress = true;
- 
+            WorkerSupportsCancellation = true;
             f = _f;
             sw = new SW();
             sw.connectSw += Sw_connectSw;
@@ -46,6 +46,7 @@ namespace FormSW_Tree
             sw.connectSw-= Sw_connectSw;
             Tree.msgDataOperation-=Tree_msgDataOperation;
             Tree.msgNameOperation-=Tree_msgNameOperation;
+            Tree.msgWarnings-=Tree_msgWarnings;
             this.Dispose();
         }
 
