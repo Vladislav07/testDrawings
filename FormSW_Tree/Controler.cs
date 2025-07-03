@@ -19,10 +19,15 @@ namespace FormSW_Tree
             f = _f;
             sw = new SW();
             sw.connectSw += Sw_connectSw;
-              
+            sw.NotifySW += Sw_NotifySW;  
             Tree.msgDataOperation += Tree_msgDataOperation;
             Tree.msgNameOperation += Tree_msgNameOperation;
             Tree.msgWarnings += Tree_msgWarnings;
+        }
+
+        private void Sw_NotifySW(int arg1, MsgInfo arg2)
+        {
+            ReportProgress(arg1, arg2);
         }
 
         private void Tree_msgWarnings(MsgInfo obj)

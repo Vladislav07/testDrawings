@@ -157,15 +157,25 @@ namespace FormSW_Tree
         private void ResolvedLigthWeiht(AssemblyDoc ass)
         {
              int res = ass.ResolveAllLightWeightComponents(true);
+             string msg;
             switch (res)
             {
+                
                 case 0:
+                    msg = "Components resolved okay";
+                    NotifyBeginOperation(0, msg);
                     break;
                 case 1:
+                    msg = "User aborted resolving the components";
+                    NotifyError(msg);
                     break;
                 case 2:
+                    msg = "Some of the components did not get resolved despite the user requesting it";
+                    NotifyError(msg);
                     break;
                 case 3:
+                    msg = "Not used";
+                    NotifyError(msg);
                     break;
                 default:
                     break;
@@ -212,9 +222,7 @@ namespace FormSW_Tree
         {
        
             string rootPath = swMainModel.GetPathName();
-            string nameRoot = Path.GetFileNameWithoutExtension(rootPath);
-          
-
+            string nameRoot = Path.GetFileNameWithoutExtension(rootPath);        
             Tree.AddNode("0", nameRoot, rootPath);
         }
         private void GetBomTable()
@@ -225,13 +233,12 @@ namespace FormSW_Tree
             string Configuration;
             TableAnnotation swTableAnn;
             ExtractomTable(out Ext, out swBOMFeature, out swBOMAnnotation, out Configuration, out swTableAnn);
-
+            if (swBOMFeature == null) return;
             int nNumRow = 0;
             int J = 0;
 
-
             nNumRow = swTableAnn.RowCount;
-            NotifyBeginOperation(nNumRow, "Reading TableBOM");
+            NotifyBeginOperation(nNumRow, "Reading TableBOM, total lines");
             for (J = 0; J <= nNumRow - 1; J++)
             {
                 ExtractItem(swBOMAnnotation, Configuration, J);
@@ -240,7 +247,7 @@ namespace FormSW_Tree
 
             string BomName = swBOMFeature.Name;
             bool boolstatus = TableBomClose(Ext, BomName);
-
+            NotifyBeginOperation(0, "TableBOM");
         }
         private void ExtractItem(BomTableAnnotation swBOMAnnotation, string Configuration, int J)
         {
@@ -304,10 +311,10 @@ namespace FormSW_Tree
                 swTableAnn = (TableAnnotation)swBOMAnnotation;
                 NotifyBeginOperation(0, "Extraction TableBOM");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                throw;
+                swTableAnn = null;
+                NotifyError(e.Message,e.TargetSite.ToString(), e.Source.ToString());
             }
           
         }

@@ -78,7 +78,7 @@ namespace FormSW_Tree
             c.RunWorkerCompleted += C_RunWorkerCompleted;
             c.ProgressChanged += C_ProgressChanged;
             c.RunWorkerAsync();
-
+            this.Width = 500;
         }
 
         private void InfoF_FormClosing(object sender, FormClosingEventArgs e)
@@ -115,6 +115,7 @@ namespace FormSW_Tree
             c.ProgressChanged -= C_ProgressChanged;
             stateFopm = StateFopm.Display;
             SetDispley();
+           
             RefreshForm();
            
         }
@@ -371,7 +372,21 @@ namespace FormSW_Tree
                 case 3:      //StepOperation
               
                     lbStart.Text = msg.currentStep.ToString();
-                    progressBar1.Value = msg.currentStep;
+                    try
+                    {
+                       progressBar1.Value = msg.currentStep;
+                    }
+                    catch (Exception)
+                    {
+                        lbNumber.Text = msg.numberCuby;
+                        string msgErr = "overflow error - " + msg.currentStep.ToString() +
+                                     " - " + msg.numberCuby + Environment.NewLine;
+                        lv.ForeColor = Color.Red;
+                        lv.Items.Add(msgErr);
+                        AddItemWithColor(msgErr, Color.Red);
+
+                    }
+                   
                     lbNumber.Text = msg.numberCuby;
                     string msgStep = numberLogger.ToString() + "." + msg.currentStep.ToString() +
                                  " - " + msg.numberCuby + Environment.NewLine;

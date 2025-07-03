@@ -84,6 +84,7 @@ namespace FormSW_Tree
       
         public static void SearchParentFromChild()
         {
+          
             string StructureNumberChild;
             string ParentStructurenumber;
             int index = 0;
@@ -103,11 +104,13 @@ namespace FormSW_Tree
                 parentNumber = structuralNumbers[ParentStructurenumber];
                   if (child.listParent.Contains(parentNumber))continue;
                 child.listParent.Add(parentNumber);
-            }      
+            }
+            InfoAboutProcessing("SearchParentFromChild", structuralNumbers.Count);
         }
       
         public static void FillCollection()
         {
+            
             listComp.Clear();
             char s = new char[] { '.' }[0];
             int level_ = 0;
@@ -131,6 +134,7 @@ namespace FormSW_Tree
                 }
                 level_++;
             }
+             InfoAboutProcessing("Collection recalculated, unique elements of the model", listComp.Count);
         }
 
         public static void GetInfoPDM()
@@ -144,7 +148,8 @@ namespace FormSW_Tree
                 InfoDataProcessing(comp.CubyNumber, i);
                 i++;
             }
-
+            int count=listComp.Count+listDraw.Count;
+            InfoAboutProcessing("unique models and drawings of everything", count);
         }
 
         public static void RefreshFileFromPDM()
@@ -169,7 +174,7 @@ namespace FormSW_Tree
             listDraw.Reverse();
         }
         public static void CompareVersions()
-        {        
+        {
             listComp.ForEach(prt => prt.SetState());
             listDraw.ForEach(dr => dr.SetState());
             listComp.ForEach(prt => {
@@ -177,7 +182,7 @@ namespace FormSW_Tree
                 prt.NotificationState(prt.condition.stateModel);
             });
             listDraw.ForEach(dr => dr.CompareStateFromModel());
-
+            
         }
 
         private static void InfoAboutProcessing(string nameOper, int countCycl)
@@ -197,6 +202,7 @@ namespace FormSW_Tree
         }
         public static List<ViewUser> JoinCompAndDraw()
         {
+         
             List<Part> compList = Tree.listComp;
             List<Drawing> drawList = Tree.listDraw;
             List<ViewUser> lv = new List<ViewUser>();
@@ -225,15 +231,17 @@ namespace FormSW_Tree
                 });
             }
 
-
+            InfoAboutProcessing("Completed", lv.Count);
             return lv;
         }
         public static bool isCheckOut()
         {
+           
             bool isCheck = false;
             List<Model> models = listComp.Cast<Model>().Concat(listDraw).ToList();
             isCheck = models.Any(m=>m.isCheckOut());
-            if (isCheck) InfoWarning("One or more files extracted");
+            InfoAboutProcessing("isCheckOut", models.Count);
+            if (isCheck) InfoWarning("One or more files extracted");          
             return  isCheck;
         }
 

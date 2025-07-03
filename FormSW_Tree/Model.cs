@@ -70,7 +70,7 @@ namespace FormSW_Tree
                     break;
 
                 default:
-                    MessageBox.Show("NotState" + this.CubyNumber);
+                    condition = new ModeClear();
                     break;
             }
 

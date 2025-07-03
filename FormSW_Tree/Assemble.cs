@@ -25,21 +25,21 @@ namespace FormSW_Tree
             this.GetReferenceFromAssemble();
 
             bool isRebuildAsm = isNeedsRebuld();
-  
-            if (isRebuildAsm) condition=condition.GetState(true);
-          
+
+            if (isRebuildAsm) condition = condition.GetState(true);
+
         }
         public void CascadingUpdate(StateModel isBlocrdChild)
         {
-            if(isBlocrdChild==StateModel.Standart) return;
+            if (isBlocrdChild == StateModel.Standart) return;
             condition = condition.GetStateFromChild(isBlocrdChild);
-            
+
         }
 
         bool isNeedsRebuld()
         {
             if (listRefChild.Count == 0) return false;
-          
+
             foreach (KeyValuePair<string, int> item in listRefChild)
             {
 
@@ -55,6 +55,6 @@ namespace FormSW_Tree
             return (listRefChildError.Count > 0) ? true : false;
 
         }
-      
+
     }
 }

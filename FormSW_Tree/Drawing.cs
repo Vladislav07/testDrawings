@@ -36,12 +36,21 @@ namespace FormSW_Tree
 
 
         public override void SetState()
-        {  
-            base.SetState();
-            bool rf = RevVersion(ref msgRefVers);
-            bool isRebuldDraw = (NeedsRebuild || rf) ? true:false;               
-            condition = condition.GetState(isRebuldDraw);
-            model.condition = model.condition.GetState(isRebuldDraw);
+        {
+            try
+            {
+                base.SetState();
+                bool rf = RevVersion(ref msgRefVers);
+                bool isRebuldDraw = (NeedsRebuild || rf) ? true:false;               
+                condition = condition.GetState(isRebuldDraw);
+                model.condition = model.condition.GetState(isRebuldDraw);
+            }
+            catch (Exception)
+            {
+
+               
+            }
+          
         }
 
         public void CompareStateFromModel()

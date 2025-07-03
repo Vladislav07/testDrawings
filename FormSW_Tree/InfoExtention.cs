@@ -39,20 +39,18 @@ namespace FormSW_Tree
             InitializeComponent();
             tabControl = new TabControl();
             tabControl.Dock = DockStyle.Fill;
-            GenerateTabOne();          
-            GenerateTabTwo();         
+            GenerateTabOne();
+            GenerateTabTwo();
             GenerateTabThree();
             tabControl.SelectedIndexChanged += TabControl_SelectedIndexChanged;
             tabControl.Selecting += TabControl_Selecting;
             numberLogger = 0;
-
         }
-
         private void TabControl_Selecting(object sender, TabControlCancelEventArgs e)
         {
-            if (e.TabPageIndex == 1 && stateFopm==StateFopm.Init)
+            if (e.TabPageIndex == 1 && stateFopm == StateFopm.Init)
             {
-                e.Cancel = true; 
+                e.Cancel = true;
             }
             if (e.TabPageIndex == 0 && stateFopm == StateFopm.Display)
             {
@@ -63,7 +61,6 @@ namespace FormSW_Tree
                 e.Cancel = true;
             }
         }
-
         private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             TabControl tabControl = (TabControl)sender;
@@ -71,14 +68,12 @@ namespace FormSW_Tree
             switch (selectedTab.Text)
             {
                 case "Process":
-                    this.Height = 300;
-                    this.Width = 500;
+                    this.Size = new Size(500, 300);
                     break;
                 case "Data":
                     SetDispleyTabTwo();
                     break;
                 case "Loger":
-                    this.Width = 500;
                     SetDispleyListBox();
                     break;
                 default:
@@ -86,12 +81,11 @@ namespace FormSW_Tree
             }
             selectedTab.Invalidate();
         }
-
         private void GenerateTabOne()
         {
-
             tab1 = new TabPage("Process");
             tab1.Dock = DockStyle.Fill;
+         
             GenerateLblMsg();
             progressBar1 = new ProgressBar();
             progressBar1.Location = new Point(100, 100);
@@ -104,7 +98,7 @@ namespace FormSW_Tree
             lbStart.Location = new Point(50, 100);
             tab1.Controls.Add(lbStart);
 
-            lbCount = new Label();         
+            lbCount = new Label();
             lbCount.Text = "0";
             lbCount.Location = new Point(370, 100);
             tab1.Controls.Add(lbCount);
@@ -113,15 +107,16 @@ namespace FormSW_Tree
             lbNumber.Text = "...";
             lbNumber.Width = 200;
             lbNumber.Location = new Point(100, 80);
-            tab1.Controls.Add(lbNumber);  
+            tab1.Controls.Add(lbNumber);
             tabControl.TabPages.Add(tab1);
         }
         private void GenerateTabThree()
         {
             tab3 = new TabPage("Loger");
+            tab3.Dock = DockStyle.Fill;
             lbLogger = new ListBox();
-            lbLogger.Dock = DockStyle.Fill;
-            lbLogger.Anchor = AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right;
+            lbLogger.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+            lbLogger.Top = 50;
             lbLogger.DrawMode = DrawMode.OwnerDrawFixed;
             lbLogger.MultiColumn = false;
             lbLogger.DrawItem += LbLogger_DrawItem;
@@ -129,8 +124,9 @@ namespace FormSW_Tree
 
             btnRecordToFile = new Button();
             btnRecordToFile.Name = "btnRecordToFile";
-            btnRecordToFile.Text = "btnRecordToFile";
+            btnRecordToFile.Text = "&RecordToFile";
             btnRecordToFile.Location = new Point(0, 0);
+            btnRecordToFile.Width = 125;
             btnRecordToFile.Click += BtnRecordToFile_Click;
             tab3.Controls.Add(btnRecordToFile);
             tabControl.TabPages.Add(tab3);
@@ -143,19 +139,19 @@ namespace FormSW_Tree
             GenerateNamedCheckBoxes();
             GenerateDataGridView();
             tabControl.TabPages.Add(tab2);
-        }   
+        }
         private void GenerateDataGridView()
         {
             dataGridView = new DataGridView();
             dataGridView.Location = new Point(0, 75);
             dataGridView.BackgroundColor = Color.White;
             dataGridView.DefaultCellStyle.ForeColor = Color.Black;
-            
+
             dataGridView.AutoGenerateColumns = true;
             dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.None;
-            dataGridView.BackgroundColor = Color.White; 
-            dataGridView.BorderStyle = BorderStyle.None; 
-            dataGridView.GridColor = Color.White; 
+            dataGridView.BackgroundColor = Color.White;
+            dataGridView.BorderStyle = BorderStyle.None;
+            dataGridView.GridColor = Color.White;
 
             dt = new DataTable();
             dt.Columns.Add("Cuby_Number", typeof(string));
@@ -172,14 +168,13 @@ namespace FormSW_Tree
             dt.Columns.Add("DrawIsLocked", typeof(string));
 
             dataGridView.DataSource = dt;
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;      
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
             dataGridView.DataBindingComplete += (sender, e) =>
             {
                 SetDispleyTabTwo();
             };
             tab2.Controls.Add(dataGridView);
         }
-
         private void SetDispleyTabTwo()
         {
             int rowHeight1 = dataGridView.RowTemplate.Height;
@@ -200,7 +195,6 @@ namespace FormSW_Tree
             dataGridView.Width = totalColumnsWidth + 50;
             this.Width = totalColumnsWidth + 75;
         }
-
         private void GenerateNamedCheckBoxes()
         {
             lv = new ListBox();
@@ -269,7 +263,6 @@ namespace FormSW_Tree
             tab2.Controls.Add(button1);
 
         }
-
         private void ChB_IsAll_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox checkBox = (CheckBox)sender;
@@ -283,7 +276,6 @@ namespace FormSW_Tree
             }
             RefreshForm();
         }
-
         private void GenerateLblMsg()
         {
             lbMsg = new Label();
@@ -411,7 +403,7 @@ namespace FormSW_Tree
                     image = Properties.Resources.empty;
                     break;
             }
-        
+
             using (MemoryStream ms = new MemoryStream())
             {
                 image.Save(ms, ImageFormat.Jpeg);
@@ -424,19 +416,11 @@ namespace FormSW_Tree
                 return;
 
             e.DrawBackground();
-
-            // Получаем текст элемента и цвет из объекта
             var item = (dynamic)lbLogger.Items[e.Index];
             string itemText = item.Text;
             Color itemColor = item.Color;
-
-            // Создаем кисть для текста нужного цвета
             Brush brush = new SolidBrush(itemColor);
-
-            // Рисуем текст элемента
             e.Graphics.DrawString(itemText, e.Font, brush, e.Bounds);
-
-            // Освобождаем ресурсы
             brush.Dispose();
         }
         private void AddItemWithColor(string text, Color color)
@@ -446,12 +430,13 @@ namespace FormSW_Tree
         }
         private void SetDispleyListBox()
         {
-            int itemHeight = lbLogger.ItemHeight; 
-            int totalItemsHeight = lbLogger.Items.Count * itemHeight; 
+            int itemHeight = lbLogger.ItemHeight;
+            int totalItemsHeight = lbLogger.Items.Count * itemHeight;
             int maxHeight = Math.Min(totalItemsHeight, 800);
             lbLogger.Height = maxHeight;
-          
             this.Height = maxHeight + 100;
+            lbLogger.Top = 35;
+            this.Width = 500;
         }
         private void BtnRecordToFile_Click(object sender, EventArgs e)
         {
@@ -459,9 +444,11 @@ namespace FormSW_Tree
             {
                 if (folderDialog.ShowDialog() == DialogResult.OK)
                 {
+                    string computerName = Environment.MachineName; 
+                    string userName = Environment.UserName; 
                     DateTime now = DateTime.Now;
                     string formattedDateTime = now.ToString("yyyy-MM-dd HH-mm");
-                    string nameFile = this.Text.Substring(0,13)  + "-" + formattedDateTime + "-Log.txt";
+                    string nameFile = this.Text.Substring(0, 13) + "_" + formattedDateTime +"_"+ Environment.UserName+"_" + Environment.MachineName + ".txt";
                     string filePath = Path.Combine(folderDialog.SelectedPath, nameFile);
                     int startIndex;
                     int endIndex;

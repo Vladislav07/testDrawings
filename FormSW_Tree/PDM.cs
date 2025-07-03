@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -62,10 +63,14 @@ namespace FormSW_Tree
                      item.Section = val != null? (string)val: "none";
                 }
             }
-            catch (Exception)
+            catch (System.Runtime.InteropServices.COMException ex)
             {
-                
-            }         
+                ErrorMsg("HRESULT = 0x" + ex.ErrorCode.ToString("X"), ex.Message);
+            }
+            catch (Exception ex)
+            {
+                ErrorMsg(ex.Message, "GetEdmFile-" + item.CubyNumber);
+            }
         }
 
         internal static void GetReferenceFromAssemble(this Assemble ass)
@@ -99,11 +104,11 @@ namespace FormSW_Tree
 
             catch (System.Runtime.InteropServices.COMException ex)
             {
-                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
+                ErrorMsg("HRESULT = 0x" + ex.ErrorCode.ToString("X"), ex.Message);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                ErrorMsg(ex.Message, "GetReferenceFromAssembl-" + ass.CubyNumber);
             }
 
 
@@ -128,11 +133,12 @@ namespace FormSW_Tree
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {
-                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
+                ErrorMsg("HRESULT = 0x" + ex.ErrorCode.ToString("X"), ex.Message);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+
+                ErrorMsg(ex.Message, "AddItemToSelList - " + item.CubyNumber);
             }
         }
 
@@ -157,11 +163,11 @@ namespace FormSW_Tree
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {
-                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
+                ErrorMsg("HRESULT = 0x" + ex.ErrorCode.ToString("X"), ex.Message);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                ErrorMsg(ex.Message, "BatchGet");
             }
         }
 
@@ -179,11 +185,11 @@ namespace FormSW_Tree
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {
-                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
+                ErrorMsg("HRESULT = 0x" + ex.ErrorCode.ToString("X"), ex.Message);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                ErrorMsg(ex.Message, "DocBatchUnLock");
             }
 
         }
@@ -197,14 +203,17 @@ namespace FormSW_Tree
                     vault1.LoginAuto(NAME_PDM, 0);    
                 }
                 vault = (IEdmVault7)vault1;
+               
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {
-                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
+                ErrorMsg("HRESULT = 0x" + ex.ErrorCode.ToString("X"), ex.Message);
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "connecting");
+                ErrorMsg(ex.Message, "connecting");
+             
             }
 
         }
@@ -234,8 +243,8 @@ namespace FormSW_Tree
             }
             catch (Exception ex)
             {
-
-                MessageBox.Show(ex.Message + "connecting to CUBY_PDM");
+                ErrorMsg(ex.Message, "IsDrawings");
+             
             }
            return false; 
         }
@@ -271,6 +280,13 @@ namespace FormSW_Tree
         {
           return  model.File.IsLocked == true ? true : false;
            
+        }
+        private static void ErrorMsg(string typeError, string msg)
+        {
+            MsgInfo info = new MsgInfo();
+            info.errorMsg = msg;
+            info.typeError = typeError;
+            NotifyPDM(0, info);
         }
     }
 }
