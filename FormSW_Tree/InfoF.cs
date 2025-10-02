@@ -208,7 +208,7 @@ namespace FormSW_Tree
                 }
                 if (v.IsLocked == "True")
                 {
-                    dr[5] = "CheckIn";
+                    dr[5] = "CheckOut";
                 }
                 else
                 {
@@ -256,9 +256,9 @@ namespace FormSW_Tree
                         dr[10] = GetImageData(10);
                         break;
                 }
-                if (v.IsLocked == "True")
+                if (v.DrawIsLocked == "True")
                 {
-                    dr[11] = "CheckIn";
+                    dr[11] = "CheckIOut";
                 }
                 else
                 {

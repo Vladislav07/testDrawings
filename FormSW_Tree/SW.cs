@@ -397,9 +397,10 @@ namespace FormSW_Tree
             int lErrors = 0;
             int lWarnings = 0;
             ModelDocExtension extMod = swModelDoc.Extension;
-            extMod.ForceRebuildAll();
+            extMod.Rebuild((int)swRebuildOptions_e.swRebuildAll);
             swModelDoc.Save3((int)swSaveAsOptions_e.swSaveAsOptions_UpdateInactiveViews, ref lErrors, ref lWarnings);
-          
+           
+
         }
 
         private void NotifyBeginOperation(int count, string nameOper)

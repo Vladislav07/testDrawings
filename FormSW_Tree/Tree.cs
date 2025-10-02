@@ -241,7 +241,13 @@ namespace FormSW_Tree
             List<Model> models = listComp.Cast<Model>().Concat(listDraw).ToList();
             isCheck = models.Any(m=>m.isCheckOut());
             InfoAboutProcessing("isCheckOut", models.Count);
-            if (isCheck) InfoWarning("One or more files extracted");          
+            if (isCheck) InfoWarning("One or more files extracted");  
+            bool isForbidden=false;
+            isForbidden = listComp.Any(m => m.File.CurrentState.Name == "Use is forbidden");
+            if (isForbidden) InfoWarning("one or more elements are in the state - Use is forbidden");
+            bool isInitiated = false;
+            isInitiated = listComp.Any(m => m.File.CurrentState.Name == "Initiated");
+            if (isInitiated) InfoWarning("one or more elements are in the state - Initiated");
             return  isCheck;
         }
 

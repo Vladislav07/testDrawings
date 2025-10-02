@@ -157,7 +157,7 @@ namespace FormSW_Tree
             dt.Columns.Add("Cuby_Number", typeof(string));
             dt.Columns.Add("Type", typeof(byte[]));
             dt.Columns.Add("Level", typeof(string));
-            dt.Columns.Add("PDM", typeof(string));
+            dt.Columns.Add("   PDM         ", typeof(string));
             dt.Columns.Add("IsState", typeof(byte[]));
             dt.Columns.Add("IsLocked", typeof(string));
             dt.Columns.Add("DrawType", typeof(byte[]));
