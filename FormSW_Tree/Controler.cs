@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
@@ -23,6 +24,12 @@ namespace FormSW_Tree
             Tree.msgDataOperation += Tree_msgDataOperation;
             Tree.msgNameOperation += Tree_msgNameOperation;
             Tree.msgWarnings += Tree_msgWarnings;
+            PDM.NotifyPDM += PDM_NotifyPDM;
+        }
+
+        private void PDM_NotifyPDM(int stage, MsgInfo msg)
+        {
+            ReportProgress(stage, msg);
         }
 
         private void Sw_NotifySW(int arg1, MsgInfo arg2)
@@ -52,6 +59,7 @@ namespace FormSW_Tree
             Tree.msgDataOperation-=Tree_msgDataOperation;
             Tree.msgNameOperation-=Tree_msgNameOperation;
             Tree.msgWarnings-=Tree_msgWarnings;
+            PDM.NotifyPDM -= PDM_NotifyPDM;
             this.Dispose();
         }
 

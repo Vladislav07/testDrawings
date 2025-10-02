@@ -83,7 +83,7 @@ namespace FormSW_Tree
                 strMessage = null;
                 //swApp = System.Diagnostics.Process.GetProcessesByName("SldWorks.Application");
                 swApp = (SldWorks)System.Runtime.InteropServices.Marshal.GetActiveObject("SldWorks.Application");
-                //swApp = (SolidWorks.Interop.sldworks.Application)
+                
             }
 
             return (strMessage);
@@ -112,6 +112,7 @@ namespace FormSW_Tree
                 return (strReturn);
             }
 
+
             strModelFile = swDoc.GetPathName();
             strModelName = strModelFile.Substring(strModelFile.LastIndexOf("\\") + 1, strModelFile.Length - strModelFile.LastIndexOf("\\") - 1);
             swDocType = (swDocumentTypes_e)swDoc.GetType();
@@ -123,6 +124,13 @@ namespace FormSW_Tree
                 return (strReturn);
             }
             PathRootDoc = strModelFile;
+
+          
+            if (!Dialog())
+            {
+                strReturn[0] = "Close the program and save all documents.";
+                return (strReturn);
+            }
 
             try
             {
@@ -153,6 +161,21 @@ namespace FormSW_Tree
             strReturn[3] = strConfigName;
             return (strReturn);
 
+        }
+        private bool Dialog()
+        {
+            Frame frame = swApp.Frame();
+            int count = frame.GetModelWindowCount();
+            if(count == 1) return true;
+             DialogResult result = MessageBox.Show("There are " + count + " documents open in the SolidWorks session." +
+                 " They will be closed and all unsaved changes will be lost. Continue working?", "Confirmation", MessageBoxButtons.OKCancel);
+
+            if (result == DialogResult.Cancel)
+            {
+              return false; 
+            }
+            return true;
+         
         }
         private void ResolvedLigthWeiht(AssemblyDoc ass)
         {
@@ -257,14 +280,39 @@ namespace FormSW_Tree
             string e;
             string designation;
             string[] result = new string[2];
-            swBOMAnnotation.GetComponentsCount2(J, Configuration, out ItemNumber, out PartNumber);
+            object[] vPtArr = null;
+            object pt = null;
+            Component2 swComp = null;
+
+            int countComp = swBOMAnnotation.GetComponentsCount2(J, Configuration, out ItemNumber, out PartNumber);
 
             if (PartNumber == null) return;
             string PartNumberTrim = PartNumber.Trim();
             if (PartNumberTrim == "") return;
 
             string[] str = (string[])swBOMAnnotation.GetModelPathNames(J, out ItemNumber, out PartNumber);
+            vPtArr = (object[])swBOMAnnotation.GetComponents2(J, Configuration);
+            if (vPtArr != null)
+            {
+                if (((vPtArr != null)))
+                {
+                    for (int I = 0; I <= vPtArr.GetUpperBound(0); I++)
+                    {
+                        pt = vPtArr[I];
+                        swComp = (Component2)pt;
+                        if ((swComp != null))
+                        {
+                            if (swComp.IsVirtual)
+                            {
+                                NotifyError("IsVirtual", "is not excluded from the specification", PartNumberTrim);
+                                return;
+                            }
+                        }
 
+                    }
+                }
+                
+            }
             PathName = str[0];
             designation = Path.GetFileNameWithoutExtension(PathName);
             string regCuby = @"^CUBY-\d{8}$";
@@ -283,6 +331,7 @@ namespace FormSW_Tree
                 Tree.AddNode(AddextendedNumber, PartNumberTrim, PathName);
                 NotifyStepOperation(PathName);
             }
+
         }
         private bool TableBomClose(ModelDocExtension Ext, string BomName)
         {

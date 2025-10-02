@@ -30,6 +30,7 @@ namespace FormSW_Tree
         bool isBlocked = false;
         bool isVisible = false;
         bool isAll = false;
+        bool isVirtual=false;
         int  numberLogger;
 
         private enum StateFopm
@@ -275,12 +276,12 @@ namespace FormSW_Tree
             if (userView.Any(v => v.State == "Rebuild"))
             {
                 chB_ToRebuild.Enabled = true;
-                button1.Enabled = true;
+               
             }
             else
             {
                 chB_ToRebuild.Enabled = false;
-                button1.Enabled = false;
+      
             }
             if (userView.Any(v => v.State == "Clean"))
             {
@@ -307,6 +308,14 @@ namespace FormSW_Tree
             else
             {
                 chB_Impossible.Enabled = false;
+            }
+            if (isVirtual || isBlocked || !isDispleyRebuild)
+            {
+              button1.Enabled = false;
+            }
+            else
+            {
+                button1.Enabled = true;
             }
 
 
@@ -349,9 +358,13 @@ namespace FormSW_Tree
                     lbMsg.ForeColor = Color.Red;
                     lbMsg.Text = msgText;
                     AddItemWithColor(msgText, Color.Red);
-
+                 
                     lv.ForeColor = Color.Red;
                     lv.Items.Add(msgText);
+                    if (msg.errorMsg == "IsVirtual")
+                    {
+                        isVirtual = true;
+                    }
                     break;
                 case 1:      //LoadActiveModel
                     Text = msg.numberCuby;

@@ -27,6 +27,7 @@ namespace FormSW_Tree
         public int bFolder { get; set; }
         public int bFile { get; set; }
         public int Level { get; set; }
+        public bool IsVirtual { get; set; } = false;
 
         public List<string> listParent;
 
